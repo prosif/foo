@@ -1,5 +1,6 @@
-var Sprite = function(game, settings) {
-   var defaults = {
+define(function(require){
+var Player = function(game, settings) {
+    var defaults = {
         center: { x:0, y:0 },
         size: { x:10, y:10 },
         zindex: 0,
@@ -16,7 +17,7 @@ var Sprite = function(game, settings) {
            this[prop] = defaults[prop];
        }
     }
- 
+     
     var c = game.c, 
         ctx = c.renderer.getCtx();
 
@@ -55,5 +56,7 @@ var Sprite = function(game, settings) {
                    , rect.size.x
                    , rect.size.y);
 
+        }
     }
-}
+    return Player;
+});
