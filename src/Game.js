@@ -2,6 +2,8 @@ define(function(require) {
 
     var Coquette = require("coquette");
     var config = require("world/config");
+    var player = require("player/Player");
+    var pConfig = require("player/config");
 
     var Game = function() {
         var self = this;
@@ -22,6 +24,7 @@ define(function(require) {
         //}
 
         //this.scener.start("Load");
+        this.c.entities.create(player, pConfig);
 
     };
     return Game;
