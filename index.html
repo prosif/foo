@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="node_modules/coquette/coquette.js"></script>
+        <script type="text/javascript" src="src/Resourcer.js"></script>
+        <script type="text/javascript" src="src/Camera.js"></script>
+        <script type="text/javascript" src="src/Timer.js"></script>
+        <script type="text/javascript" src="src/Animation.js"></script>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+    </body>
+    <script>
+
+        // Create coquette
+        this.c = c = new Coquette(this, "canvas", 800, 400);
+
+        this.camera = new Camera(this);
+        camera.transform({
+            scale: 4,
+            x: 12,
+            time: 2000,
+        });
+
+        // pixels
+        var ctx = c.renderer.getCtx();
+        ctx.imageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
+
+        var resources = [{
+            name: "walk",
+            url: "assets/lamb.png",
+        }, {
+            name: "sit",
+            url: "assets/lamb.png",
+        }, {
+            name: "bahh",
+            url: "assets/lamb.png",
+        }]
+
+        var animations = [{
+            name: "walk",
+            repeat: true,
+            frames: [0, 1, 2, 3],
+        }, {
+            name: "sit",
+            fps:5,
+            frames: [4, 5, 6, 7, 8],
+        }, {
+            name: "bahh",
+            fps:1,
+            repeat: true,
+            frames: [8, 9],
+        }]
+
+        // create Lamb sprite
+        var Lamb = function(game, settings) {
+            this.anim = settings.anim;
+            this.center = { x: 400, y: 200 }
+            this.size = { x : 12, y: 9 };
+
+            this.animator = Animator(this, game, animations);
+
+            this.update = function(delta) {
+                this.animator.update(delta);
+            }
+
+            this.draw = function(ctx) {
+                this.animator.push(this.anim);
+                this.animator.draw(ctx);
+            };
+        }
+
+        this.resourcer = new Resourcer(resources, function() {
+            self.c.entities.create(Lamb, { anim: "walk" });
+            var b = self.c.entities.create(Lamb, { anim: "sit" });
+            b.center.x += 14
+            var c = self.c.entities.create(Lamb, { anim: "bahh" });
+            c.center.x = b.center.x + 14
+        });
+        this.resourcer.load();
+
+        // create game loop
+        this.update = function(delta) {
+            camera.update(delta);
+        };
+
+    </script>
+</html>

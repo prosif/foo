@@ -1,0 +1,21 @@
+{
+  "name": "foo",
+  "version": "0.0.1",
+  "description": "foo - a bit shooter",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prosif/foo.git"
+  },
+  "dependencies": {
+      "coquette" : "git://github.com/cdosborn/coquette.git"
+  },
+  "author": "Joseph Garcia",
+  "license": "Do what you want?",
+  "bugs": {
+    "url": "https://github.com/prosif/foo/issues"
+  },
+  "homepage": "https://github.com/prosif/foo"
+}
