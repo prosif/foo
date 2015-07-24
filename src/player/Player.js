@@ -31,7 +31,7 @@ var Player = function(game, settings) {
 
         this.center.x += this.vel.x * 17 / delta;
         this.center.y += this.vel.y * 17 / delta;
-        this.color = "#fff";
+        this.color = "#000";
         //console.log(this.center);
     };
 

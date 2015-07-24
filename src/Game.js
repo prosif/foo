@@ -24,7 +24,7 @@ define(function(require) {
         //}
 
         //this.scener.start("Load");
-        this.c.entities.create(player, pConfig);
+        this.c.entities.create(player, pConfig.Player);
 
     };
     return Game;
