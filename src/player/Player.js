@@ -6,7 +6,7 @@ var Player = function(game, settings) {
         zindex: 0,
         walk: 6,
         grav: 0,
-        color : "#fff",
+        color : "pink",
         vel: { x: 0, y: 0 }
     }
 
