@@ -7,7 +7,7 @@ define(function(require) {
         var self = this;
 
         // Main coquette modules
-        this.c = new Coquette(this, "canvas", config.Game.Width, config.Game.Height);
+        this.c = new Coquette(this, "canvas", config.Game.Width, config.Game.Height, "pink");
 
         //// Project specific modules
         //this.timer     = new Timer();

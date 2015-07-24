@@ -2,8 +2,8 @@ define(function(require) {
 
     var Config = {
         Game: {
-            Width: 640,
-            Height: 480
+            Width: 800,
+            Height: 400
         }
     }
 
