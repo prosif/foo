@@ -2,6 +2,7 @@ define(function(require){
 
     var Bullet = require("bullet/Bullet");
     var Timer = require("engine/Timer");
+    var Timer = require("../Timer.js");
     var Lurker = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
@@ -37,8 +38,6 @@ define(function(require){
             }
             
             this.followTarget(delta, this.target);
-            //timer.update(delta);
-            //timer.every(5000, this.shoot());
         };
 
         this.shoot = function(){
@@ -85,13 +84,12 @@ define(function(require){
                        , rect.center.y - rect.size.y/2
                        , rect.size.x
                        , rect.size.y);
-
         }
+        
         this.timer.every(5000, function(){
             console.log("THE FUCK");
             self.shoot();
         });
     }
- 
     return Lurker;
 });
