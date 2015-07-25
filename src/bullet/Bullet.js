@@ -38,7 +38,7 @@ define(function(require){
                        , rect.size.x
                        , rect.size.y);
 
-            }
         }
+    }
     return Bullet;
 });
