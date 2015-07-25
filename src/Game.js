@@ -9,6 +9,7 @@ define(function(require) {
     var pConfig  = require("player/config");
     var Enemy    = require("enemy/Enemy");
     var eConfig  = require("enemy/config");
+    var Lurker  = require("enemy/Lurker");
 
     var Game = function() {
         var self = this;
@@ -27,7 +28,15 @@ define(function(require) {
                 center : { x: rx, y: ry },
                 size : { x: 20, y: 20 }
             });
-        }, 3000)
+        }, 3000);
+        setInterval(function() {
+            rx = Math.random() * config.Game.Width;
+            ry = Math.random() * config.Game.Height;
+            c.entities.create(Lurker, {
+                center : { x: rx, y: ry },
+                size : { x: 15, y: 15 }
+            });
+        }, 7500);
         c.entities.create(Player, pConfig.Player);
         c.entities.create(Enemy, eConfig.Enemy);
 
