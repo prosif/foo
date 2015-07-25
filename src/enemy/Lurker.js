@@ -39,8 +39,8 @@ define(function(require){
                 else
                     return
             }
-            
-            this.followTarget(delta, this.target);
+            this.move(delta);
+            //this.followTarget(delta, this.target);
         };
 
         this.shoot = function(){
@@ -94,6 +94,11 @@ define(function(require){
             game.c.entities.create(EnemyBullet, Utils.extend(bullet4Settings, bConfig.Bullet)); 
         }
 
+        this.move = function(delta){
+            this.center.x += Math.random();
+            this.center.y += Math.random();
+        }
+
         this.followTarget = function(delta, target) {
             // The initial enemy/target position diffs 
             // (x/y/hypotenuse)
@@ -124,7 +129,7 @@ define(function(require){
         }
 
         var drawRect = function(rect, ctx, color) {
-            ctx.fillStyle = color || "black";
+            ctx.fillStyle = "black";
             ctx.fillRect(rect.center.x - rect.size.x/2
                        , rect.center.y - rect.size.y/2
                        , rect.size.x
