@@ -20,7 +20,6 @@ define(["require",
         this.shielded = false;
 
         this.toggleShield = function() {
-            console.log("WOOT");
             self.shielded = !self.shielded;
         }
 
