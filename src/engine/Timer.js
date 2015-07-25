@@ -1,4 +1,4 @@
-;(function(exports) {
+define(function(require) {
     var Timer = function() {
         var time = 0;
         return {
@@ -8,5 +8,5 @@
         }
     }
 
-    exports.Timer = Timer;
-})(this);
+    return Timer;
+});

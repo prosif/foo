@@ -1,6 +1,7 @@
 define(function(require) {
 
     var Coquette = require("coquette");
+    var Timer    = require("engine/Timer");
     var config   = require("world/config");
     var Wall     = require("world/Wall");
     var Player   = require("player/Player");
@@ -25,16 +26,14 @@ define(function(require) {
         c.entities.create(Player, pConfig.Player);
         c.entities.create(Enemy, eConfig.Enemy);
         //// Project specific modules
-        //this.timer     = new Timer();
+        this.timer     = new Timer();
         //this.resourcer = new Resourcer(config.Game.Resources);
         //this.scener    = new Scener(this, config.Game.Scenes);
         //this.sequencer = new ButtonSequencer(this);
 
-        //this.update = function(delta) { 
-        //    this.timer.add(delta);
-        //    this.sequencer.update(delta, this.c.inputter.getEvents());
-        //    this.scener.update(delta);
-        //}
+        this.update = function(delta) { 
+            this.timer.add(delta);
+        }
 
         //this.scener.start("Load");
 

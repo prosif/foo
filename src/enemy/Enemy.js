@@ -1,5 +1,6 @@
 define(function(require){
 
+    var Bullet = require("bullet/Bullet");
     var Enemy = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
@@ -56,7 +57,8 @@ define(function(require){
         }
 
         this.collision = function(other) {
-            // console.log("You hit a thing");
+            if (other instanceof Bullet)
+                game.c.entities.destroy(this);
             //outside(this, other);
             //this.color = "#f00";
             //var intersection = this.outside(other);

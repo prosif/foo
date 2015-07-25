@@ -2,29 +2,17 @@ define(function(require){
 
     var Wall = require("world/Wall");
     var Enemy = require("enemy/Enemy");
+    var Bullet = require("bullet/Bullet");
+    var bConfig = require("bullet/Config");
 
     var Player = function(game, settings) {
-        var defaults = {
-            center: { x:0, y:0 },
-            size: { x:10, y:10 },
-            boundingBox : game.c.collider.CIRCLE,
-            color : "#000",
-            speed: 40 / 17 // pixels per 17ms 
-        }
 
-        for (var prop in defaults) {
-           if (settings[prop] !== undefined) {
-               this[prop] = settings[prop];
-           } else {
-               this[prop] = defaults[prop];
-           }
+        for (var prop in settings) {
+           this[prop] = settings[prop];
         }
          
-        var c = game.c, 
-            ctx = c.renderer.getCtx();
-
-        this.center = settings.center;
-        this.size = settings.size;
+        this.lastBullet = 0;
+        this.boundingBox = game.c.collider.CIRCLE,
 
         this.update = function(delta) {
 
@@ -33,6 +21,28 @@ define(function(require){
             var xdir, ydir;
             xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
             ydir = (c.inputter.isDown(c.inputter.S) ? 1 : (c.inputter.isDown(c.inputter.W) ? -1 : 0));
+
+            // The direction of bullet attack
+            var bxdir, bydir;
+            var left = c.inputter.isDown(c.inputter.LEFT_ARROW) || c.inputter.isDown(c.inputter.H); 
+            var right = c.inputter.isDown(c.inputter.RIGHT_ARROW) || c.inputter.isDown(c.inputter.L); 
+            var up = c.inputter.isDown(c.inputter.UP_ARROW) || c.inputter.isDown(c.inputter.K); 
+            var down = c.inputter.isDown(c.inputter.DOWN_ARROW) || c.inputter.isDown(c.inputter.J); 
+            bxdir = (right ? 1 : left ? -1 : 0);
+            bydir = (down ? 1 : up ? -1 : 0);
+
+            // console.log(game.timer.getTime(), this.lastBullet, this.bulletDelay);
+            if (bxdir || bydir) {
+                if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
+                    this.lastBullet = game.timer.getTime();
+                    bConfig.Bullet.theta = Math.atan2(bydir, bxdir);
+                    bConfig.Bullet.center = {
+                        x: this.center.x,
+                        y: this.center.y,
+                    }
+                    game.c.entities.create(Bullet, bConfig.Bullet); 
+                }
+            }
 
             // The diffs of initial/final player position
             // (x/y/hypotenuse)
