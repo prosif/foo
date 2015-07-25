@@ -1,17 +1,29 @@
 define(function(require) {
 
     var Coquette = require("coquette");
-    var config = require("world/config");
-    var Wall = require("world/Wall");
-    var Player = require("player/Player");
-    var pConfig = require("player/config");
+    var config   = require("world/config");
+    var Wall     = require("world/Wall");
+    var Player   = require("player/Player");
+    var pConfig  = require("player/config");
+    var Enemy    = require("enemy/Enemy");
+    var eConfig  = require("enemy/config");
 
     var Game = function() {
         var self = this;
 
         // Main coquette modules
         this.c = new Coquette(this, "canvas", config.Game.Width, config.Game.Height, "pink");
-
+        var rx,ry;
+        setInterval(function() {
+            rx = Math.random() * config.Game.Width;
+            ry = Math.random() * config.Game.Height;
+            c.entities.create(Enemy, {
+                center : { x: rx, y: ry },
+                size : { x: 20, y: 20 }
+            });
+        }, 3000)
+        c.entities.create(Player, pConfig.Player);
+        c.entities.create(Enemy, eConfig.Enemy);
         //// Project specific modules
         //this.timer     = new Timer();
         //this.resourcer = new Resourcer(config.Game.Resources);
@@ -25,8 +37,7 @@ define(function(require) {
         //}
 
         //this.scener.start("Load");
-        this.c.entities.create(Player, pConfig.Player);
-        
+
         // Create world boundaries
         var target = { 
             center : this.c.renderer.getViewCenter(),

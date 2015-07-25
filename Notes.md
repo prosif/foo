@@ -7,3 +7,7 @@ undefined/throw an error
 
 07/24/15 If player has velocity, and user right-clicks the player will
 continue with said velocity. It cannot be reversed ??.
+
+07/24/15 It might be interesting to have a cloak behavior, where all enemies
+lose sight of the target and continue heading along current trajectory. This
+could allow for some awesome juking behavior.
