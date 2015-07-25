@@ -1,0 +1,72 @@
+define(function(require) {
+
+    // A wall is a simple boundary for the bounds of the world
+    // 
+    // If a player collides with a wall and calls alignPlayer passing itself
+    // then that player will be be moved. If wall.type == Wall.RIGHT, then the
+    // character will be moved to the left side of the wall, etc.
+
+    var Wall = function(game, settings) {
+
+        if (settings.type == undefined || 
+                settings.target == undefined) {
+            throw("Error: Wall settings must include target, and type");
+        }
+
+        var target = settings.target;
+
+        for (var i in settings) {
+          this[i] = settings[i];
+        }
+
+        var defaults = {
+            width : 10
+        }
+
+        this.boundingBox = game.c.collider.RECTANGLE;
+        this.center = { x: 0, y: 0 };
+        this.size = { x: 0, y: 0 };
+
+        if (this.type == Wall.LEFT) {
+            this.center.x = target.center.x - target.size.x / 2 - defaults.width / 2;
+            this.center.y = target.center.y;
+            this.size.x = defaults.width;
+            this.size.y = target.size.y;
+        } else if (this.type == Wall.RIGHT) {
+            this.center.x = target.center.x + target.size.x / 2 + defaults.width / 2;
+            this.center.y = target.center.y;
+            this.size.x = defaults.width;
+            this.size.y = target.size.y;
+        } else if (this.type == Wall.TOP) {
+            this.center.x = target.center.x;
+            this.center.y = target.center.y - target.size.y / 2 - defaults.width / 2;
+            this.size.x = target.size.x;
+            this.size.y = defaults.width 
+        } else if (this.type == Wall.BOTTOM) {
+            this.center.x = target.center.x;
+            this.center.y = target.center.y + target.size.y / 2 + defaults.width / 2;
+            this.size.x = target.size.x;
+            this.size.y = defaults.width 
+        }
+    }
+
+    Wall.prototype = {};
+    Wall.prototype.alignPlayer = function(player) {
+        // console.log("alignPlayer");
+        if (this.type == Wall.LEFT)
+            player.center.x = this.center.x - this.size.x / 2 + player.size.x;
+        else if (this.type == Wall.RIGHT)
+            player.center.x = this.center.x + this.size.x / 2 - player.size.x;
+        else if (this.type == Wall.TOP)
+            player.center.y = this.center.y - this.size.y / 2 + player.size.y;
+        else if (this.type == Wall.BOTTOM)
+            player.center.y = this.center.y + this.size.y / 2 - player.size.y;
+    }
+        
+    Wall.LEFT   = 0;
+    Wall.RIGHT  = 1;
+    Wall.TOP    = 2;
+    Wall.BOTTOM = 3;
+
+    return Wall;
+})

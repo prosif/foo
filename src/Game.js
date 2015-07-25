@@ -2,7 +2,8 @@ define(function(require) {
 
     var Coquette = require("coquette");
     var config = require("world/config");
-    var player = require("player/Player");
+    var Wall = require("world/Wall");
+    var Player = require("player/Player");
     var pConfig = require("player/config");
 
     var Game = function() {
@@ -24,8 +25,29 @@ define(function(require) {
         //}
 
         //this.scener.start("Load");
-        this.c.entities.create(player, pConfig.Player);
-
+        this.c.entities.create(Player, pConfig.Player);
+        
+        // Create world boundaries
+        var target = { 
+            center : this.c.renderer.getViewCenter(),
+            size : this.c.renderer.getViewSize()
+        }
+        this.c.entities.create(Wall, {
+            type: Wall.LEFT,
+            target: target
+        });
+        this.c.entities.create(Wall, {
+            type: Wall.RIGHT,
+            target: target
+        });
+        this.c.entities.create(Wall, {
+            type: Wall.TOP,
+            target: target
+        });
+        this.c.entities.create(Wall, {
+            type: Wall.BOTTOM,
+            target: target
+        });
     };
     return Game;
 });
