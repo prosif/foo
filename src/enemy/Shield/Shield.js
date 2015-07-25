@@ -1,15 +1,20 @@
-define(function(require){
+define(["require", 
+        "player/Player", 
+        "bullet/Bullet",
+        "engine/Timer",
+        "engine/Utils",
+        ],
 
-    var Bullet = require("bullet/Bullet");
-    var Timer = require("engine/Timer");
-    var Utils = require("engine/Utils");
+    function(require, 
+             Player,
+             Bullet,
+             Timer,
+             Utils) {
+
     var Enemy = function(game, settings) {
         var self = this;
 
         Utils.extend(this, settings);
-
-        // Avoid circular dependencies (don't place before Enemy)
-        var Player = require("player/Player");
 
         this.timer = new Timer();
         this.shielded = false;

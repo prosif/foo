@@ -1,11 +1,16 @@
-define(function(require){
+define(["require", 
+        "engine/Utils", 
+        "enemy/Shield/Shield",
+        "world/Wall",
+        "bullet/Config",
+        "bullet/Bullet"],
 
-    var Utils = require("engine/Utils");
-    var Wall = require("world/Wall");
-    var Enemy = require("enemy/Enemy");
-    // var ShieldEnemy = require("enemy/Shield/Shield");
-    var Bullet = require("bullet/Bullet");
-    var bConfig = require("bullet/Config");
+    function(require, 
+             Utils,
+             ShieldEnemy,
+             Wall,
+             bConfig,
+             Bullet) {
 
     var Player = function(game, settings) {
 
@@ -76,7 +81,7 @@ define(function(require){
             if (other instanceof Wall)
                 other.alignPlayer(this);
 
-            if (other instanceof Enemy)
+            if (other instanceof ShieldEnemy)
                 game.c.entities.destroy(this);
         }
         this.draw = function(ctx) {

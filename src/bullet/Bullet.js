@@ -3,8 +3,6 @@ define(function(require){
     var Wall = require("world/Wall");
     var Bullet = function(game, settings) {
 
-        // var Enemy    = ;
-
         if (settings.vel == undefined)
             throw("Bullet requires a velocity from settings");
 

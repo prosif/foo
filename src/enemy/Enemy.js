@@ -1,6 +1,5 @@
 define(function(require){
 
-    var Bullet = require("bullet/Bullet");
     var Enemy = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)

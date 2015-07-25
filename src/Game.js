@@ -28,7 +28,7 @@ define(function(require) {
                 center : { x: rx, y: ry },
                 size : { x: 20, y: 20 }
             }, eConfig.Enemy));
-        }, 3000)
+        }, 1000)
         c.entities.create(Player, pConfig.Player);
         c.entities.create(Enemy, Utils.extend({
                 center : { x: 100, y: 100 },
