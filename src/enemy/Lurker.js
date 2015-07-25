@@ -1,6 +1,7 @@
 define(function(require){
 
     var Bullet = require("bullet/Bullet");
+    var Timer = require("../Timer.js");
     var Lurker = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
@@ -33,13 +34,6 @@ define(function(require){
                     return
             }
             
-            if(!this.mounted){
-                setInterval(function(){
-                    this.shoot();
-                }.bind(this), 5000);
-                this.mounted = true;
-            }
-         
             this.followTarget(delta, this.target);
             //this.avoidBullets(delta);
             //console.log(this.center);
@@ -71,6 +65,7 @@ define(function(require){
         this.collision = function(other) {
             if (other instanceof Bullet)
                 game.c.entities.destroy(this);
+                this.mounted = false;
             //outside(this, other);
             //this.color = "#f00";
             //var intersection = this.outside(other);
