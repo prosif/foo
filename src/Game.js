@@ -38,7 +38,7 @@ define(function(require) {
         //this.sequencer = new ButtonSequencer(this);
 
         this.update = function(delta) { 
-            this.timer.add(delta);
+            this.timer.update(delta);
         }
 
         //this.scener.start("Load");

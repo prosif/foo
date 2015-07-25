@@ -34,7 +34,7 @@ var Camera = function(game) {
     transformation = {};      // current settings of transform
 
     var update = function(delta) {
-        timer.add(delta);
+        timer.update(delta);
 
         var ratio, curTime, totalTime;
         curTime = timer.getTime();
