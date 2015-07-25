@@ -1,7 +1,7 @@
 define(function(require){
 
     var Bullet = require("bullet/Bullet");
-    var Timer = require("../Timer.js");
+    var Timer = require("engine/Timer");
     var Lurker = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
@@ -14,6 +14,8 @@ define(function(require){
             speed : 24 / 17 // pixels per 17ms
         }
 
+        this.timer = new Timer();
+
         for (var prop in defaults) {
            if (settings[prop] !== undefined) {
                this[prop] = settings[prop];
@@ -24,7 +26,7 @@ define(function(require){
 
         this.update = function(delta) {
             var temp;
-
+            timer.update(delta);
             // Try to set enemy to target Player
             if (!this.target) {
                 temp = game.c.entities.all(Player);
@@ -35,8 +37,8 @@ define(function(require){
             }
             
             this.followTarget(delta, this.target);
-            //this.avoidBullets(delta);
-            //console.log(this.center);
+            //timer.update(delta);
+            //timer.every(5000, this.shoot());
         };
 
         this.shoot = function(){
@@ -84,7 +86,12 @@ define(function(require){
                        , rect.size.x
                        , rect.size.y);
 
-            }
         }
+        this.timer.every(5000, function(){
+            console.log("THE FUCK");
+            self.shoot();
+        });
+    }
+ 
     return Lurker;
 });
