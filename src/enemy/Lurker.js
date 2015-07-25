@@ -44,45 +44,54 @@ define(function(require){
         };
 
         this.shoot = function(){
-            // TODO: move this to config
-         
-            //var xdir = 0;
-            //var ydir = 0;
-            // The direction of bullet attack
-            //var bxdir, bydir, btheta;
-            //bxdir = 1//(right ? 1 : left ? -1 : 0);
-            //bydir = 0//(down ? 1 : up ? -1 : 0);
-            //btheta = Math.atan2(bydir, bxdir);
+            var bullet1Settings = {
+                center: {
+                    x: this.center.x,
+                    y: this.center.y,
+                },
+                vel: {
+                    x: -1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
+                    y: 0// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                }
+            };          
 
-            // console.log(game.timer.getTime(), this.lastBullet, this.bulletDelay);
+            var bullet2Settings = {
+                center: {
+                    x: this.center.x,
+                    y: this.center.y,
+                },
+                vel: {
+                    x: 1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
+                    y: 0// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                }
+            };         
+            
+            var bullet3Settings = {
+                center: {
+                    x: this.center.x,
+                    y: this.center.y,
+                },
+                vel: {
+                    x: 0,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
+                    y: 1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                }
+            };         
 
-            // The diffs of initial/final player position
-            // theta is the angle of motion relative to the ground 
-            //var x, y, h, theta;
-            //h = this.speed / 17;
-            //theta = Math.atan2(ydir, xdir);
-            //this.vel.x = h * Math.cos(theta) * (xdir == 0 ? 0 : 1);
-            //this.vel.y = h * Math.sin(theta);
+            var bullet4Settings = {
+                center: {
+                    x: this.center.x,
+                    y: this.center.y,
+                },
+                vel: {
+                    x: 0,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
+                    y: -1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                }
+            };         
 
-            //this.center.x += this.vel.x * delta;
-            //this.center.y += this.vel.y * delta;
-
-            // Shoot bullets after position is updated
-            //if (bxdir || bydir) {
-
-      //          if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
-      //              this.lastBullet = game.timer.getTime();
-                    var bulletSettings = {
-                        center: {
-                            x: this.center.x,
-                            y: this.center.y,
-                        },
-                        vel: {
-                            x: 1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
-                            y: 1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
-                        }
-                    };              
-                    game.c.entities.create(EnemyBullet, Utils.extend(bulletSettings, bConfig.Bullet)); 
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet1Settings, bConfig.Bullet)); 
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet2Settings, bConfig.Bullet)); 
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet3Settings, bConfig.Bullet)); 
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet4Settings, bConfig.Bullet)); 
         }
 
         this.followTarget = function(delta, target) {
@@ -108,13 +117,8 @@ define(function(require){
             if (other instanceof Bullet)
                 game.c.entities.destroy(this);
                 this.mounted = false;
-            //outside(this, other);
-            //this.color = "#f00";
-            //var intersection = this.outside(other);
-            //var temp = rectangleFromRectangleIntersection(this, other); 
-            //temp && drawRect(temp, ctx, "#f00");
-            //intersection && drawPoint(intersection, ctx, "#fff");
         }
+
         this.draw = function(ctx) {
             drawRect(this, ctx, this.color);
         }
@@ -128,7 +132,6 @@ define(function(require){
         }
         
         this.timer.every(5000, function(){
-            console.log("THE FUCK");
             this.shoot();
         }.bind(this));
     }
