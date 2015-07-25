@@ -4,6 +4,7 @@ define(function(require){
     var Wall = require("world/Wall");
     var Enemy = require("enemy/Enemy");
     var Bullet = require("bullet/Bullet");
+    var EnemyBullet = require("bullet/EnemyBullet");
     var bConfig = require("bullet/Config");
 
     var Player = function(game, settings) {
@@ -75,8 +76,8 @@ define(function(require){
             if (other instanceof Wall)
                 other.alignPlayer(this);
 
-            if (other instanceof Enemy)
-                game.c.entities.destroy(this);
+            if (other instanceof Enemy || other instanceof EnemyBullet)
+                game.c.entities.destroy(this); 
             // console.log(other.constructor);
             // console.log(other);
             //this.color = "#f00";
