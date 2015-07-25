@@ -27,7 +27,7 @@ define(function(require){
 
         this.update = function(delta) {
             var temp;
-            timer.update(delta);
+            this.timer.update(delta);
             // Try to set enemy to target Player
             if (!this.target) {
                 temp = game.c.entities.all(Player);
@@ -88,8 +88,8 @@ define(function(require){
         
         this.timer.every(5000, function(){
             console.log("THE FUCK");
-            self.shoot();
-        });
+            this.shoot();
+        }.bind(this));
     }
     return Lurker;
 });
