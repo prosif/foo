@@ -2,6 +2,7 @@ define(function(require) {
 
     var Coquette = require("coquette");
     var Timer    = require("engine/Timer");
+    var Pauser   = require("engine/Pauser");
     var config   = require("world/config");
     var Wall     = require("world/Wall");
     var Player   = require("player/Player");
@@ -14,6 +15,10 @@ define(function(require) {
 
         // Main coquette modules
         this.c = new Coquette(this, "canvas", config.Game.Width, config.Game.Height, "pink");
+
+        // Hacky bind to pause/resume coquette on (P keypress)
+        Pauser(this);
+
         var rx,ry;
         setInterval(function() {
             rx = Math.random() * config.Game.Width;
@@ -25,7 +30,8 @@ define(function(require) {
         }, 3000)
         c.entities.create(Player, pConfig.Player);
         c.entities.create(Enemy, eConfig.Enemy);
-        //// Project specific modules
+
+        // Project specific modules
         this.timer     = new Timer();
         //this.resourcer = new Resourcer(config.Game.Resources);
         //this.scener    = new Scener(this, config.Game.Scenes);

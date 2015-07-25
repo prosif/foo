@@ -1,6 +1,6 @@
 /* 
 
-   Cameraman allows for cinematic transforms of the view, like panning, zooming, etc.
+   Camera allows for cinematic transforms of the view, like panning, zooming, etc.
 
    NOTES ON SETTINGS: 
         x, y are transforms of the center of the viewport
