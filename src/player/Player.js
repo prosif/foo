@@ -32,17 +32,6 @@ define(function(require){
             bydir = (down ? 1 : up ? -1 : 0);
 
             // console.log(game.timer.getTime(), this.lastBullet, this.bulletDelay);
-            if (bxdir || bydir) {
-                if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
-                    this.lastBullet = game.timer.getTime();
-                    bConfig.Bullet.theta = Math.atan2(bydir, bxdir);
-                    bConfig.Bullet.center = {
-                        x: this.center.x,
-                        y: this.center.y,
-                    }
-                    game.c.entities.create(Bullet, bConfig.Bullet); 
-                }
-            }
 
             // The diffs of initial/final player position
             // (x/y/hypotenuse)
@@ -56,6 +45,21 @@ define(function(require){
             // console.log("xdir:", xdir, "ydir:", ydir, "theta:", theta);
             this.center.x += x;
             this.center.y += y;
+
+            // Shoot bullets after position is update
+            if (bxdir || bydir) {
+                if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
+                    this.lastBullet = game.timer.getTime();
+                    bConfig.Bullet.theta = Math.atan2(bydir, bxdir);
+                    bConfig.Bullet.center = {
+                        x: this.center.x,
+                        y: this.center.y,
+                    }
+                    game.c.entities.create(Bullet, bConfig.Bullet); 
+                }
+            }
+
+
         };
 
         this.collision = function(other) {

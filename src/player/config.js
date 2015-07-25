@@ -5,7 +5,7 @@ define(function(require) {
             size: {x: 20, y: 20},
             color : "#000",
             speed: 40 / 17, // pixels per 17ms 
-            center: {x:10, y: 10},
+            center: {x:400, y: 200},
             bulletDelay: 50
         }
     }
