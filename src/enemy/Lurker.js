@@ -2,7 +2,7 @@ define(function(require){
 
     var Bullet = require("bullet/Bullet");
     var Timer = require("engine/Timer");
-    var Timer = require("../Timer.js");
+//    var Timer = require("../Timer.js");
     var Lurker = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
