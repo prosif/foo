@@ -3,6 +3,7 @@ define(function(require){
     var Utils = require("engine/Utils");
     var Wall = require("world/Wall");
     var Enemy = require("enemy/Enemy");
+    // var ShieldEnemy = require("enemy/Shield/Shield");
     var Bullet = require("bullet/Bullet");
     var bConfig = require("bullet/Config");
 
@@ -77,12 +78,6 @@ define(function(require){
 
             if (other instanceof Enemy)
                 game.c.entities.destroy(this);
-            // console.log(other.constructor);
-            // console.log(other);
-            //this.color = "#f00";
-            //var intersection = this.outside(other);
-            //var temp = rectangleFromRectangleIntersection(this, other); 
-            //temp && drawRect(temp, ctx, "#f00");
         }
         this.draw = function(ctx) {
             drawCircle(this, ctx, this.color);

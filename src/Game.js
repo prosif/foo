@@ -1,14 +1,15 @@
 define(function(require) {
 
     var Coquette = require("coquette");
+    var Utils    = require("engine/Utils");
     var Timer    = require("engine/Timer");
     var Pauser   = require("engine/Pauser");
     var config   = require("world/config");
     var Wall     = require("world/Wall");
     var Player   = require("player/Player");
     var pConfig  = require("player/config");
-    var Enemy    = require("enemy/Enemy");
-    var eConfig  = require("enemy/config");
+    var Enemy    = require("enemy/Shield/Shield");
+    var eConfig  = require("enemy/Shield/config");
 
     var Game = function() {
         var self = this;
@@ -23,13 +24,16 @@ define(function(require) {
         setInterval(function() {
             rx = Math.random() * config.Game.Width;
             ry = Math.random() * config.Game.Height;
-            c.entities.create(Enemy, {
+            self.c.entities.create(Enemy, Utils.extend({
                 center : { x: rx, y: ry },
                 size : { x: 20, y: 20 }
-            });
+            }, eConfig.Enemy));
         }, 3000)
         c.entities.create(Player, pConfig.Player);
-        c.entities.create(Enemy, eConfig.Enemy);
+        c.entities.create(Enemy, Utils.extend({
+                center : { x: 100, y: 100 },
+                size : { x: 20, y: 20 }
+            }, eConfig.Enemy));
 
         // Project specific modules
         this.timer     = new Timer();
