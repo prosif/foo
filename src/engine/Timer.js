@@ -23,7 +23,7 @@ define(function(require) {
         reset: function() { 
             this.time = 0; 
         },
-        every: function(callback, interval) {
+        every: function(interval, callback) {
             this.callbacks.push({
                 interval : interval,
                 callback : callback
