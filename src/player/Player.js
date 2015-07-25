@@ -49,7 +49,8 @@ define(function(require){
             //temp && drawRect(temp, ctx, "#f00");
         }
         this.draw = function(ctx) {
-            drawRect(this, ctx, this.color);
+            drawCircle(this, ctx, this.color);
+            // drawRect(this, ctx, this.color);
         }
 
         var drawRect = function(rect, ctx, color) {
@@ -59,7 +60,19 @@ define(function(require){
                        , rect.size.x
                        , rect.size.y);
 
-            }
         }
+        var drawCircle = function(entity, ctx, color) {
+            ctx.fillStyle = "#fff"; //color || "#f00";
+            ctx.strokeStyle = "#fff"; //color || "#f00";
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(entity.center.x
+                  , entity.center.y
+                  , entity.size.x / 2
+                  , 0
+                  , 2 * Math.PI);
+            ctx.stroke();
+        }
+    }
     return Player;
 });
