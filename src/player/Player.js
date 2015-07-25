@@ -1,5 +1,6 @@
 define(function(require){
 
+    var Utils = require("engine/Utils");
     var Wall = require("world/Wall");
     var Enemy = require("enemy/Enemy");
     var Bullet = require("bullet/Bullet");
@@ -13,49 +14,57 @@ define(function(require){
          
         this.lastBullet = 0;
         this.boundingBox = game.c.collider.CIRCLE,
+        this.vel = { x: 0, y: 0 };
 
         this.update = function(delta) {
 
             // The direction of motion
-            // (x/y/hypotenuse)
             var xdir, ydir;
             xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
             ydir = (c.inputter.isDown(c.inputter.S) ? 1 : (c.inputter.isDown(c.inputter.W) ? -1 : 0));
 
             // The direction of bullet attack
-            var bxdir, bydir;
+            var bxdir, bydir, btheta;
+            var left, right, down, up;
             var left = c.inputter.isDown(c.inputter.LEFT_ARROW) || c.inputter.isDown(c.inputter.H); 
             var right = c.inputter.isDown(c.inputter.RIGHT_ARROW) || c.inputter.isDown(c.inputter.L); 
             var up = c.inputter.isDown(c.inputter.UP_ARROW) || c.inputter.isDown(c.inputter.K); 
             var down = c.inputter.isDown(c.inputter.DOWN_ARROW) || c.inputter.isDown(c.inputter.J); 
             bxdir = (right ? 1 : left ? -1 : 0);
             bydir = (down ? 1 : up ? -1 : 0);
+            btheta = Math.atan2(bydir, bxdir);
 
             // console.log(game.timer.getTime(), this.lastBullet, this.bulletDelay);
 
             // The diffs of initial/final player position
-            // (x/y/hypotenuse)
             // theta is the angle of motion relative to the ground 
             var x, y, h, theta;
-            h = this.speed * delta / 17;
+            h = this.speed / 17;
             theta = Math.atan2(ydir, xdir);
-            x = h * Math.cos(theta) * (xdir == 0? 0 : 1);
-            y = h * Math.sin(theta);
+            this.vel.x = h * Math.cos(theta) * (xdir == 0 ? 0 : 1);
+            this.vel.y = h * Math.sin(theta);
 
             // console.log("xdir:", xdir, "ydir:", ydir, "theta:", theta);
-            this.center.x += x;
-            this.center.y += y;
+            this.center.x += this.vel.x * delta;
+            this.center.y += this.vel.y * delta;
 
-            // Shoot bullets after position is update
+            // Shoot bullets after position is updated
             if (bxdir || bydir) {
+
                 if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
                     this.lastBullet = game.timer.getTime();
-                    bConfig.Bullet.theta = Math.atan2(bydir, bxdir);
-                    bConfig.Bullet.center = {
-                        x: this.center.x,
-                        y: this.center.y,
-                    }
-                    game.c.entities.create(Bullet, bConfig.Bullet); 
+                    var bulletSettings = {
+                        center: {
+                            x: this.center.x,
+                            y: this.center.y,
+                        },
+                        vel: {
+                            x: this.vel.x + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
+                            y: this.vel.y + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                        }
+                    };              
+                    game.c.entities.create(Bullet, 
+                            Utils.extend(bulletSettings, bConfig.Bullet)); 
                 }
             }
 

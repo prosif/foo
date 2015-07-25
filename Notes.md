@@ -12,5 +12,10 @@ continue with said velocity. It cannot be reversed ??.
 lose sight of the target and continue heading along current trajectory. This
 could allow for some awesome juking behavior.
 
-07/24/15 The exterior needs be tested to make sure bullets aren't surviving
+07/24/15 (DONE) The exterior needs be tested to make sure bullets aren't surviving
 past, if they go to fast.
+
+07/25/15 Many patterns can be pulled out of the entities. For example, an
+entities config object could have a requires array, used to test that all the
+required settings were defined on the entity. A current pattern is just to
+throw an error if a setting is undefined. 

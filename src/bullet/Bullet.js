@@ -3,22 +3,16 @@ define(function(require){
     var Wall = require("world/Wall");
     var Bullet = function(game, settings) {
 
-        if (settings.theta == undefined)
-            throw("Bullet requires a direction from settings object");
+        if (settings.vel == undefined)
+            throw("Bullet requires a velocity from settings");
 
         for (var prop in settings) {
            this[prop] = settings[prop];
         }
 
         this.update = function(delta) {
-            var x, y, h;
-            h = this.speed * delta / 17;
-            x = h * Math.cos(this.theta)
-            y = h * Math.sin(this.theta);
-
-            this.center.x += x;
-            this.center.y += y;
-         
+            this.center.x += this.vel.x * delta;
+            this.center.y += this.vel.y * delta;
         };
 
         this.collision = function(other) {
