@@ -28,23 +28,23 @@ define(function(require) {
         this.size = { x: 0, y: 0 };
 
         if (this.type == Wall.LEFT) {
-            this.center.x = target.center.x - target.size.x / 2 - defaults.width / 2;
+            this.center.x = target.center.x - target.size.x / 2 - defaults.width / 2 + 2;
             this.center.y = target.center.y;
             this.size.x = defaults.width;
             this.size.y = target.size.y;
         } else if (this.type == Wall.RIGHT) {
-            this.center.x = target.center.x + target.size.x / 2 + defaults.width / 2;
+            this.center.x = target.center.x + target.size.x / 2 + defaults.width / 2 - 2;
             this.center.y = target.center.y;
             this.size.x = defaults.width;
             this.size.y = target.size.y;
         } else if (this.type == Wall.TOP) {
             this.center.x = target.center.x;
-            this.center.y = target.center.y - target.size.y / 2 - defaults.width / 2;
+            this.center.y = target.center.y - target.size.y / 2 - defaults.width / 2 + 2;
             this.size.x = target.size.x;
             this.size.y = defaults.width 
         } else if (this.type == Wall.BOTTOM) {
             this.center.x = target.center.x;
-            this.center.y = target.center.y + target.size.y / 2 + defaults.width / 2;
+            this.center.y = target.center.y + target.size.y / 2 + defaults.width / 2 - 2;
             this.size.x = target.size.x;
             this.size.y = defaults.width 
         }
