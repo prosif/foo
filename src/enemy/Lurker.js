@@ -2,6 +2,7 @@ define(function(require){
 
     var Bullet = require("bullet/Bullet");
     var Timer = require("engine/Timer");
+    var bConfig = require("bullet/Config");
 //    var Timer = require("../Timer.js");
     var Lurker = function(game, settings) {
 
@@ -41,7 +42,47 @@ define(function(require){
         };
 
         this.shoot = function(){
-            console.log("homie gonna shoot");
+            // TODO: move this to config
+         
+            // The direction of bullet attack
+            var bxdir, bydir, btheta;
+            bxdir = 1//(right ? 1 : left ? -1 : 0);
+            bydir = 0//(down ? 1 : up ? -1 : 0);
+            btheta = Math.atan2(bydir, bxdir);
+
+            // console.log(game.timer.getTime(), this.lastBullet, this.bulletDelay);
+
+            // The diffs of initial/final player position
+            // theta is the angle of motion relative to the ground 
+            var x, y, h, theta;
+            h = this.speed / 17;
+            theta = Math.atan2(ydir, xdir);
+            this.vel.x = h * Math.cos(theta) * (xdir == 0 ? 0 : 1);
+            this.vel.y = h * Math.sin(theta);
+
+            this.center.x += this.vel.x * delta;
+            this.center.y += this.vel.y * delta;
+
+            // Shoot bullets after position is updated
+            if (bxdir || bydir) {
+
+                if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
+                    this.lastBullet = game.timer.getTime();
+                    var bulletSettings = {
+                        center: {
+                            x: this.center.x,
+                            y: this.center.y,
+                        },
+                        vel: {
+                            x: this.vel.x + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
+                            y: this.vel.y + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                        }
+                    };              
+                    game.c.entities.create(Bullet, 
+                            Utils.extend(bulletSettings, bConfig.Bullet)); 
+                }
+            }
+
         }
 
         this.followTarget = function(delta, target) {
