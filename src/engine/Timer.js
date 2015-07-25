@@ -12,8 +12,8 @@ define(function(require) {
                     if (this.time - cbObj.lastTime >  
                             cbObj.interval) {
                         cbObj.callback();
+                        cbObj.lastTime = this.time;
                     }
-                    cbObj.lastTime = this.time;
                 });
             }
         },
