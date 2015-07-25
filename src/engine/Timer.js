@@ -6,13 +6,16 @@ define(function(require) {
 
     Timer.prototype = {
         update: function(delta) { 
+            var self = this;
+
             this.time += delta; 
+
             if (this.callbacks) {
                 this.callbacks.forEach(function(cbObj) {
-                    if (this.time - cbObj.lastTime >  
+                    if (self.time - cbObj.lastTime >= 
                             cbObj.interval) {
                         cbObj.callback();
-                        cbObj.lastTime = this.time;
+                        cbObj.lastTime = self.time;
                     }
                 });
             }
@@ -26,7 +29,8 @@ define(function(require) {
         every: function(interval, callback) {
             this.callbacks.push({
                 interval : interval,
-                callback : callback
+                callback : callback,
+                lastTime : 0
             });
         }
     };
