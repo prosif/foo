@@ -1,6 +1,10 @@
-define(function(require){
+define(["require", 
+        "player/Player", 
+        "world/Wall"],
 
-    var Wall = require("world/Wall");
+    // Note: Player is a circular dependency, use require('player/Player');
+    function(require, Player, Wall) {
+
     var Bullet = function(game, settings) {
 
         if (settings.vel == undefined)
@@ -16,8 +20,8 @@ define(function(require){
         };
 
         this.collision = function(other) {
-            // if (!(other instanceof Player))
-            if (other instanceof Wall)
+            if (!(other instanceof require('player/Player')) &&
+                   !(other instanceof Bullet) )
                 game.c.entities.destroy(this);
         }
 
