@@ -1,15 +1,18 @@
 define(function(require) {
 
-    var Coquette = require("coquette");
-    var Utils    = require("engine/Utils");
-    var Timer    = require("engine/Timer");
-    var Pauser   = require("engine/Pauser");
-    var config   = require("world/config");
-    var Wall     = require("world/Wall");
-    var Player   = require("player/Player");
-    var pConfig  = require("player/config");
-    var Enemy    = require("enemy/Shield/Shield");
-    var eConfig  = require("enemy/Shield/config");
+    var Coquette     = require("coquette");
+    var Utils        = require("engine/Utils");
+    var Timer        = require("engine/Timer");
+    var Pauser       = require("engine/Pauser");
+    var config       = require("world/config");
+    var Wall         = require("world/Wall");
+    var Player       = require("player/Player");
+    var pConfig      = require("player/config");
+    var Enemy        = require("enemy/Enemy");
+    var eConfig      = require("enemy/config");
+    var Lurker       = require("enemy/Lurker");
+    var ShieldConfig = require("enemy/Shield/config");
+    var Shield       = require("enemy/Shield/Shield")
 
     var Game = function() {
         var self = this;
@@ -20,20 +23,35 @@ define(function(require) {
         // Hacky bind to pause/resume coquette on (P keypress)
         Pauser(this);
 
-        var rx,ry;
         setInterval(function() {
-            rx = Math.random() * config.Game.Width;
-            ry = Math.random() * config.Game.Height;
             self.c.entities.create(Enemy, Utils.extend({
-                center : { x: rx, y: ry },
+                center : { 
+                    x: Math.random() * config.Game.Width,
+                    y: Math.random() * config.Game.Height 
+                },
                 size : { x: 20, y: 20 }
             }, eConfig.Enemy));
-        }, 1000)
+
+            self.c.entities.create(Shield, Utils.extend({
+                center : { 
+                    x: Math.random() * config.Game.Width, 
+                    y: Math.random() * config.Game.Height 
+                },
+                size : { x: 20, y: 20 }
+            }, ShieldConfig.Enemy));
+        }, 3000);
+
+        setInterval(function() {
+            c.entities.create(Lurker, {
+                center : { 
+                    x: Math.random() * config.Game.Width, 
+                    y: Math.random() * config.Game.Height
+                },
+                size : { x: 15, y: 15 }
+            });
+        }, 7500);
+
         c.entities.create(Player, pConfig.Player);
-        c.entities.create(Enemy, Utils.extend({
-                center : { x: 100, y: 100 },
-                size : { x: 20, y: 20 }
-            }, eConfig.Enemy));
 
         // Project specific modules
         this.timer     = new Timer();

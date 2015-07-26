@@ -1,7 +1,7 @@
 define(function(require){
 
     var Bullet = require("bullet/Bullet");
-    var Enemy = function(game, settings) {
+    var Avoider = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
         var Player = require("player/Player");
@@ -34,8 +34,13 @@ define(function(require){
             }
          
             this.followTarget(delta, this.target);
+            this.avoidBullets(delta);
             //console.log(this.center);
         };
+
+        this.avoidBullets = function(delta){
+            console.log(delta);
+        }
 
         this.followTarget = function(delta, target) {
             // The initial enemy/target position diffs 
@@ -80,5 +85,5 @@ define(function(require){
 
             }
         }
-    return Enemy;
+    return Avoider;
 });

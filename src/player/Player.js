@@ -1,6 +1,9 @@
 define(["require", 
         "engine/Utils", 
         "enemy/Shield/Shield",
+        "enemy/Enemy",
+        "bullet/EnemyBullet",
+        "enemy/Lurker",
         "world/Wall",
         "bullet/Config",
         "bullet/Bullet"],
@@ -8,6 +11,9 @@ define(["require",
     function(require, 
              Utils,
              ShieldEnemy,
+             Enemy,
+             EnemyBullet,
+             Lurker,
              Wall,
              bConfig,
              Bullet) {
@@ -81,8 +87,10 @@ define(["require",
             if (other instanceof Wall)
                 other.alignPlayer(this);
 
-            if (other instanceof ShieldEnemy)
-                game.c.entities.destroy(this);
+            if (other instanceof Enemy || 
+                other instanceof EnemyBullet ||
+                other instanceof ShieldEnemy)
+                game.c.entities.destroy(this); 
         }
         this.draw = function(ctx) {
             drawCircle(this, ctx, this.color);
