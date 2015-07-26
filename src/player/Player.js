@@ -71,8 +71,8 @@ define(["require",
                             y: this.center.y,
                         },
                         vel: {
-                            x: this.vel.x + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
-                            y: this.vel.y + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                            x: this.vel.x + (bConfig.Bullet.speed / 17 * Math.cos(btheta + (Math.random() * this.bulletDeviation * (Math.random() > 0.5 ? -1: 1)))),
+                            y: this.vel.y + (bConfig.Bullet.speed / 17 * Math.sin(btheta + (Math.random() * this.bulletDeviation * (Math.random() > 0.5 ? -1: 1)))),
                         }
                     };              
                     game.c.entities.create(Bullet, 
@@ -89,8 +89,8 @@ define(["require",
 
             if (other instanceof Enemy || 
                 other instanceof EnemyBullet ||
-                other instanceof ShieldEnemy)
-                game.c.entities.destroy(this); 
+                other instanceof ShieldEnemy) {}
+                // game.c.entities.destroy(this); 
         }
         this.draw = function(ctx) {
             drawCircle(this, ctx, this.color);

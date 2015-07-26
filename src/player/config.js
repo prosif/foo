@@ -6,7 +6,8 @@ define(function(require) {
             color : "#000",
             speed: 40 / 17, // pixels per 17ms 
             center: {x:400, y: 200},
-            bulletDelay: 50
+            bulletDelay: 100,
+            bulletDeviation: 0.01
         }
     }
 

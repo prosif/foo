@@ -19,3 +19,6 @@ past, if they go to fast.
 entities config object could have a requires array, used to test that all the
 required settings were defined on the entity. A current pattern is just to
 throw an error if a setting is undefined. 
+
+07/25/15 It might be more fun if the enemies were slower to turn. It would
+allow for the player to make more daring escapes. 
