@@ -95,8 +95,14 @@ define(function(require){
         }
 
         this.move = function(delta){
-            this.center.x += Math.random();
-            this.center.y += Math.random();
+            if(Math.random <= .5){
+                this.center.x += Math.random()/10 ;
+                this.center.y += Math.random()/10;
+            }
+            else{
+                this.center.x -= Math.random()/10;
+                this.center.y -= Math.random()/10;
+            }
         }
 
         this.followTarget = function(delta, target) {
