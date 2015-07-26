@@ -4,10 +4,10 @@ define(function(require) {
         Player: {     
             size: {x: 20, y: 20},
             color : "#000",
-            speed: 40 / 17, // pixels per 17ms 
+            speed: 80 / 17, // pixels per 17ms 
             center: {x:400, y: 200},
-            bulletDelay: 100,
-            bulletDeviation: 0.01
+            bulletDelay: 30,
+            bulletDeviation: 0.35 
         }
     }
 

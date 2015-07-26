@@ -20,22 +20,36 @@ define(function(require) {
         this.c = new Coquette(this, "canvas", config.Game.Width, config.Game.Height, "pink");
 
 
-        var ctx = c.renderer.getCtx();
-        ctx.imageSmoothingEnabled = false;
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.mozImageSmoothingEnabled = false;
+        // var ctx = c.renderer.getCtx(); ctx.imageSmoothingEnabled = false;
+        // ctx.mozImageSmoothingEnabled = false;
 
 
         // Hacky bind to pause/resume coquette on (P keypress)
         Pauser(this);
 
+        self.c.entities.create(Enemy, {
+            center : { 
+                x: config.Game.Width,
+                y: config.Game.Height / 2,
+            },
+        }); 
+
+        var randBool = function() {
+            return Math.random() > 0.5 
+        }
         setInterval(function() {
+            if (self.c.entities.all(Enemy).length > 30)
+                return
+            var center = { x: 0, y: 0 };
+            if (randBool()) {
+                center.x = randBool() ? config.Game.Width : 0; 
+                center.y = Math.random() * config.Game.Height;
+            } else {
+                center.y = randBool() ? config.Game.Height : 0;
+                center.x = Math.random() * config.Game.Width;
+            }
             self.c.entities.create(Enemy, {
-                center : { 
-                    x: config.Game.Width,
-                    y: config.Game.Height / 2,
-                },
-                size : { x: 20, y: 20 }
+                center : center
             }); 
             // self.c.entities.create(Shield, Utils.extend({
             //     center : { 
@@ -44,7 +58,7 @@ define(function(require) {
             //     },
             //     size : { x: 20, y: 20 }
             // }, ShieldConfig.Enemy));
-        }, 500);
+        }, 100);
 
         // setInterval(function() {
         //     c.entities.create(Lurker, {
