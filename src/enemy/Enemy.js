@@ -29,14 +29,16 @@ define(function(require){
                     return
             }
          
-            this.follow(delta, this.target, {
+            this.follow(this.target, {
                 within : 100,  
-                jitter : 0.03
+                // jitter : 0.03
             });
-            //console.log(this.center);
+
+            this.center.x += this.vel.x * delta;
+            this.center.y += this.vel.y * delta;
         };
 
-        this.follow = function(delta, target, settings) {
+        this.follow = function(target, settings) {
             // If this is in the "within" distance from the target, it will
             // repel. "jitter" introduces randomness into the motion.
             var within = settings.within || 0;
@@ -62,50 +64,20 @@ define(function(require){
             
             this.vel.x = xdiff / hdiff * speed / 17;
             this.vel.y = ydiff / hdiff * speed / 17;
-
-            this.center.x += this.vel.x * delta;
-            this.center.y += this.vel.y * delta;
         }    
 
-        this.followTarget = function(delta, target, penalty) {
 
-            // Current direction of motion (radians)
-            var dir = Math.atan2(this.vel.y, this.vel.x);
+        this.moveAway = function(target, _dist) {
 
-            // The initial enemy/target position diffs 
-            // (x/y/hypotenuse)
+            var dist = _dist | 3;
+
             var xdiff, ydiff, hdiff;
             xdiff = target.center.x - this.center.x;
             ydiff = target.center.y - this.center.y;
             hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
 
-            // New direction of motion (radians)
-            var newDir = Math.atan2(ydiff, xdiff);
-
-            // Turn heuristic
-            // How much am I turning? 
-            // (1 for 180 degress, 0 for 0 degrees)
-            var turn = Math.abs(newDir - dir) / Math.PI;
-            
-            // Closeness heuristic
-            // How close is the target relative to my size? 
-            // (1 for within 1 length away, .5 for 5 lengths away, .1 for 10 lengths away, etc)
-            var closeness = this.size.x / hdiff * 5;
-
-            // penalty represents the degree in which closeness/turn affect 
-            // this's speed
-            var speed = this.speed - (penalty * closeness * this.speed);
-            // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
-            // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
-
-            
-            // h represents pixels/ms
-            var h = speed / 17;
-            this.vel.x = xdiff / hdiff * h;
-            this.vel.y = ydiff / hdiff * h;
-
-            this.center.x += this.vel.x * delta;
-            this.center.y += this.vel.y * delta;
+            this.center.x -= xdiff / hdiff * dist;
+            this.center.y -= ydiff / hdiff * dist;
         }
 
         this.collision = function(other) {
@@ -114,6 +86,9 @@ define(function(require){
 
             else if (other instanceof Bullet)
                 game.c.entities.destroy(this);
+
+            else if (other instanceof Enemy)
+                this.moveAway(other);
 
         }
         this.draw = function(ctx) {
@@ -132,3 +107,45 @@ define(function(require){
         }
     return Enemy;
 });
+
+
+// this.followTarget = function(delta, target, penalty) {
+
+//     // Current direction of motion (radians)
+//     var dir = Math.atan2(this.vel.y, this.vel.x);
+
+//     // The initial enemy/target position diffs 
+//     // (x/y/hypotenuse)
+//     var xdiff, ydiff, hdiff;
+//     xdiff = target.center.x - this.center.x;
+//     ydiff = target.center.y - this.center.y;
+//     hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+
+//     // New direction of motion (radians)
+//     var newDir = Math.atan2(ydiff, xdiff);
+
+//     // Turn heuristic
+//     // How much am I turning? 
+//     // (1 for 180 degress, 0 for 0 degrees)
+//     var turn = Math.abs(newDir - dir) / Math.PI;
+
+//     // Closeness heuristic
+//     // How close is the target relative to my size? 
+//     // (1 for within 1 length away, .5 for 5 lengths away, .1 for 10 lengths away, etc)
+//     var closeness = this.size.x / hdiff * 5;
+
+//     // penalty represents the degree in which closeness/turn affect 
+//     // this's speed
+//     var speed = this.speed - (penalty * closeness * this.speed);
+//     // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
+//     // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
+
+
+//     // h represents pixels/ms
+//     var h = speed / 17;
+//     this.vel.x = xdiff / hdiff * h;
+//     this.vel.y = ydiff / hdiff * h;
+
+//     this.center.x += this.vel.x * delta;
+//     this.center.y += this.vel.y * delta;
+// }
