@@ -12,7 +12,7 @@ define(function(require){
             size: { x:20, y:20 },
             vel: { x: 0, y: 0 },
             color : "#fff",
-            speed : 30 / 17 // pixels per 17ms
+            speed : 200 / 17 // pixels per 17ms
         }
 
         Utils.extend(Utils.extend(this, defaults), settings);
@@ -29,9 +29,43 @@ define(function(require){
                     return
             }
          
-            this.followTarget(delta, this.target, 0.3);
+            this.follow(delta, this.target, {
+                within : 100,  
+                jitter : 0.03
+            });
             //console.log(this.center);
         };
+
+        this.follow = function(delta, target, settings) {
+            // If this is in the "within" distance from the target, it will
+            // repel. "jitter" introduces randomness into the motion.
+            var within = settings.within || 0;
+            var jitter = Math.min(settings.jitter || 0, 1);
+
+            // The initial enemy/target position diffs, where hdiff is the
+            // across distance
+            var xdiff, ydiff, hdiff;
+            xdiff = target.center.x - this.center.x;
+            ydiff = target.center.y - this.center.y;
+
+            xdiff += (Utils.randBool() ? -1 : 1) * jitter * xdiff;
+            ydiff += (Utils.randBool() ? -1 : 1) * jitter * ydiff;
+            hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+            
+            // If the direct distance is less than the follow within distance,
+            // closeness 
+            var closeness = within / hdiff;
+
+            var speed = this.speed - (closeness * this.speed);
+            // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
+            // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
+            
+            this.vel.x = xdiff / hdiff * speed / 17;
+            this.vel.y = ydiff / hdiff * speed / 17;
+
+            this.center.x += this.vel.x * delta;
+            this.center.y += this.vel.y * delta;
+        }    
 
         this.followTarget = function(delta, target, penalty) {
 
@@ -56,7 +90,7 @@ define(function(require){
             // Closeness heuristic
             // How close is the target relative to my size? 
             // (1 for within 1 length away, .5 for 5 lengths away, .1 for 10 lengths away, etc)
-            var closeness = Math.min(this.size.x * 2 / hdiff, 1);
+            var closeness = this.size.x / hdiff * 5;
 
             // penalty represents the degree in which closeness/turn affect 
             // this's speed

@@ -34,18 +34,15 @@ define(function(require) {
             },
         }); 
 
-        var randBool = function() {
-            return Math.random() > 0.5 
-        }
         setInterval(function() {
-            if (self.c.entities.all(Enemy).length > 30)
+            if (self.c.entities.all(Enemy).length > 100)
                 return
             var center = { x: 0, y: 0 };
-            if (randBool()) {
-                center.x = randBool() ? config.Game.Width : 0; 
+            if (Utils.randBool()) {
+                center.x = Utils.randBool() ? config.Game.Width : 0; 
                 center.y = Math.random() * config.Game.Height;
             } else {
-                center.y = randBool() ? config.Game.Height : 0;
+                center.y = Utils.randBool() ? config.Game.Height : 0;
                 center.x = Math.random() * config.Game.Width;
             }
             self.c.entities.create(Enemy, {

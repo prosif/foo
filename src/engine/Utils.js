@@ -10,6 +10,9 @@ define(function(require){
                 a[p] = b[p];
             });
             return a;
+        },
+        randBool: function() {
+            return Math.random() > 0.5 
         }
     };
     return Utils;
