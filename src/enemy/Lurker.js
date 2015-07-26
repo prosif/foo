@@ -135,7 +135,7 @@ define(function(require){
         }
 
         var drawRect = function(rect, ctx, color) {
-            ctx.fillStyle = "black";
+            ctx.fillStyle = "green";
             ctx.fillRect(rect.center.x - rect.size.x/2
                        , rect.center.y - rect.size.y/2
                        , rect.size.x
