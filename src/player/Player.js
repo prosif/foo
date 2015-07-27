@@ -33,7 +33,7 @@ define(["require",
             this.points += 1;
         }
 
-        this.getPoints() = function{
+        this.getPoints = function(){
             return this.points;
         }
 
