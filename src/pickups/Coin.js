@@ -38,9 +38,9 @@ define(function(require){
        
         var drawCircle = function(circ, ctx, color){
            ctx.beginPath();
-           ctx.fillStyle = "gold";
+           ctx.fillStyle = circ.color;
            ctx.fill();
-           ctx.arc(circ.center.x, circ.center.y, 5, 0, 2*Math.PI);
+           ctx.arc(circ.center.x, circ.center.y, circ.size.x, 0, 2*Math.PI);
            ctx.stroke();
         }
     }

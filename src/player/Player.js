@@ -29,7 +29,7 @@ define(["require",
         this.boundingBox = game.c.collider.CIRCLE,
         this.vel = { x: 0, y: 0 };
 
-        this.grantCoin= function(){
+        var grantCoin= function(){
             this.points += 1;
             console.log("got a point!");
         }
