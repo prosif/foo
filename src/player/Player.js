@@ -39,7 +39,7 @@ define(["require",
         }
 
         this.update = function(delta) {
-
+            console.log(gp);
             // The direction of motion
             var xdir, ydir;
             xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
