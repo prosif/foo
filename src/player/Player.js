@@ -19,8 +19,6 @@ define(["require",
              Bullet) {
 
     var Player = function(game, settings) {
-        var gp = navigator.getGamepads()[0];
-
         for (var prop in settings) {
            this[prop] = settings[prop];
         }
@@ -39,15 +37,14 @@ define(["require",
         }
 
         this.update = function(delta) {
-            console.log(gp);
             // The direction of motion
             var xdir, ydir;
             xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
             ydir = (c.inputter.isDown(c.inputter.S) ? 1 : (c.inputter.isDown(c.inputter.W) ? -1 : 0));
 
-            if(gp && !xdir && !ydir){
-                console.log(gp.buttons);
-            }
+            //if(!xdir && !ydir){
+            //    console.log(gp.buttons);
+            //}
             // The direction of bullet attack
             var bxdir, bydir, btheta;
             var left, right, down, up;

@@ -1,6 +1,7 @@
 define(function(require) {
 
     var Coquette     = require("coquette");
+	var Controller   = require("controller");
     var Utils        = require("engine/Utils");
     var Timer        = require("engine/Timer");
     var Pauser       = require("engine/Pauser");

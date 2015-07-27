@@ -22,7 +22,7 @@ define(function(require){
         }
 
         this.update = function(delta) {
-            console.log("coin");
+            //console.log("coin");
         };
 
         this.collision = function(other) {
