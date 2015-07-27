@@ -12,7 +12,8 @@ define(function(require) {
     var eConfig      = require("enemy/config");
     var Lurker       = require("enemy/Lurker");
     var ShieldConfig = require("enemy/Shield/config");
-    var Shield       = require("enemy/Shield/Shield")
+    var Shield       = require("enemy/Shield/Shield");
+    var Coin         = require("pickups/Coin");
 
     var Game = function() {
         var self = this;
@@ -50,6 +51,16 @@ define(function(require) {
                 size : { x: 15, y: 15 }
             });
         }, 7500);
+
+        setInterval(function(){
+            c.entities.create(Coin, {
+                center: {
+                    x: Math.random() * config.Game.Width,
+                    y: Math.random() * config.Game.Height
+                },
+                size: {x: 5, y: 5}
+            });
+        }, 10000);
 
         c.entities.create(Player, pConfig.Player);
 
