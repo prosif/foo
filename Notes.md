@@ -25,3 +25,6 @@ allow for the player to make more daring escapes.
 
 07/26/15 It would be cool to bind a key to a debug utility. Pressing (Z) would
 console.log the value to debug! Combined with pause it could be really powerful
+
+07/26/15 Bullet upgrades could allow for larger bullets which pass through
+more enemies
