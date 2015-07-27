@@ -4,7 +4,6 @@ define(function(require) {
         Bullet: {     
             size: {x: 5, y: 5},
             color : "#000",
-            speed : 200 / 17 // pixels per 17ms
         }
     }
 

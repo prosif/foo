@@ -22,3 +22,6 @@ throw an error if a setting is undefined.
 
 07/25/15 It might be more fun if the enemies were slower to turn. It would
 allow for the player to make more daring escapes. 
+
+07/26/15 It would be cool to bind a key to a debug utility. Pressing (Z) would
+console.log the value to debug! Combined with pause it could be really powerful

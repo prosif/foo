@@ -1,29 +1,21 @@
-define(["require", 
-        "engine/Utils", 
-        // "world/enemy/Shield/Shield",
-        "world/enemy/Enemy",
-        // "world/bullet/EnemyBullet",
-        // "world/enemy/Lurk/Lurker",
-        "world/Wall/Wall",
-        "world/bullet/Config",
-        "world/bullet/Bullet"],
+define(function(require) {
 
-    function(require, 
-             Utils,
-             // ShieldEnemy,
-             Enemy,
-             // EnemyBullet,
-             // Lurker,
-             Wall,
-             bConfig,
-             Bullet) {
+    Utils = require("engine/Utils");
+    Enemy = require("world/enemy/Enemy");
+    Wall = require("world/Wall/Wall");
+    Bullet = require("world/bullet/Bullet");
+
+    // "world/enemy/Shield/Shield",
+    // "world/bullet/EnemyBullet",
+    // "world/enemy/Lurk/Lurker",
 
     var Player = function(game, settings) {
 
-        for (var prop in settings) {
-           this[prop] = settings[prop];
-        }
+        // Config
+        var config = require("world/player/config");
+        Utils.extend(Utils.extend(this, config.Player), settings);
          
+        // State
         this.lastBullet = 0;
         this.boundingBox = game.c.collider.CIRCLE,
         this.vel = { x: 0, y: 0 };
@@ -69,18 +61,16 @@ define(["require",
             if (bxdir || bydir) {
                 if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
                     this.lastBullet = game.timer.getTime();
-                    var bulletSettings = {
+                    game.c.entities.create(Bullet, {
                         center: {
                             x: this.center.x,
                             y: this.center.y,
                         },
                         vel: {
-                            x: (bConfig.Bullet.speed / 17 * Math.cos(btheta + (Math.random() * this.bulletDeviation * (Math.random() > 0.5 ? -1: 1)))),
-                            y: (bConfig.Bullet.speed / 17 * Math.sin(btheta + (Math.random() * this.bulletDeviation * (Math.random() > 0.5 ? -1: 1)))),
+                            x: (config.Bullet.speed / 17 * Math.cos(btheta + (Math.random() * config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
+                            y: (config.Bullet.speed / 17 * Math.sin(btheta + (Math.random() * config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
                         }
-                    };              
-                    game.c.entities.create(Bullet, 
-                            Utils.extend(bulletSettings, bConfig.Bullet)); 
+                    });              
                 }
             }
 

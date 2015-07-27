@@ -1,18 +1,18 @@
 define(["require", 
+        "world/Bullet/config", 
         "world/player/Player", 
         "world/Wall/Wall"],
 
     // Note: Player is a circular dependency, use require('world/player/Player');
-    function(require, Player, Wall) {
+    function(require, config, Player, Wall) {
 
     var Bullet = function(game, settings) {
 
-        if (settings.vel == undefined)
-            throw("Bullet requires a velocity from settings");
+        config = require("world/Bullet/config");
+        Utils.extend(Utils.extend(this, config.Bullet), settings);
 
-        for (var prop in settings) {
-           this[prop] = settings[prop];
-        }
+        if (this.vel == undefined)
+            throw("Bullet requires a velocity from settings");
 
         this.update = function(delta) {
             this.center.x += this.vel.x * delta;

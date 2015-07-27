@@ -8,6 +8,11 @@ define(function(require) {
             center: {x:400, y: 200},
             bulletDelay: 30,
             bulletDeviation: 0.35 
+        },
+        Bullet: {
+            delay: 30,
+            disorder: 0.35,
+            speed : 200 / 17
         }
     }
 
