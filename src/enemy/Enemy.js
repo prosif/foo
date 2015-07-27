@@ -9,7 +9,7 @@ define(function(require){
         var Player = require("player/Player");
 
         var defaults = {
-            size: { x:20, y:20 },
+            size: { x:5, y:5 },
             vel: { x: 0, y: 0 },
             color : "#fff",
             speed : 200 / 17 // pixels per 17ms
@@ -30,8 +30,8 @@ define(function(require){
             }
          
             this.follow(this.target, {
-                within : 100,  
-                // jitter : 0.03
+                within : 30,  
+                jitter : 0.03
             });
 
             this.center.x += this.vel.x * delta;

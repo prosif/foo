@@ -35,7 +35,7 @@ define(function(require) {
         }); 
 
         setInterval(function() {
-            if (self.c.entities.all(Enemy).length > 100)
+            if (self.c.entities.all(Enemy).length > 20)
                 return
             var center = { x: 0, y: 0 };
             if (Utils.randBool()) {

@@ -92,8 +92,8 @@ define(["require",
 
             if (other instanceof Enemy || 
                 other instanceof EnemyBullet ||
-                other instanceof ShieldEnemy) {}
-                // game.c.entities.destroy(this); 
+                other instanceof ShieldEnemy)
+                game.c.entities.destroy(this); 
         }
         this.draw = function(ctx) {
             ctx.strokeStyle = this.color || "#f00";
