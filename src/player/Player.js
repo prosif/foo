@@ -37,23 +37,44 @@ define(["require",
         }
 
         this.update = function(delta) {
-            // The direction of motion
-            var xdir, ydir;
-            xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
-            ydir = (c.inputter.isDown(c.inputter.S) ? 1 : (c.inputter.isDown(c.inputter.W) ? -1 : 0));
+			var i = 0;
+			var j;
+			
+			// The direction of motion
+            var xdir, ydir, bxdir, bydir, btheta;
+			
+			if(window.controllers[0]){
+				controller = window.controllers[0];
+				
+				for (i = 0; i < controller.axes.length; i++) {
+					if(i == 0){
+						xdir = controller.axes[i];
+					}
+					else if(i == 1){
+						ydir = controller.axes[i];
+					}
+					
+					else if(i == 2){
+						bxdir = controller.axes[i];
+					}
+					
+					else if(i == 3){
+						bydir = controller.axes[i];
+					}
+				}
+			}
+			else{
+				xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
+				ydir = (c.inputter.isDown(c.inputter.S) ? 1 : (c.inputter.isDown(c.inputter.W) ? -1 : 0));
 
-            //if(!xdir && !ydir){
-            //    console.log(gp.buttons);
-            //}
-            // The direction of bullet attack
-            var bxdir, bydir, btheta;
-            var left, right, down, up;
-            var left = c.inputter.isDown(c.inputter.LEFT_ARROW) || c.inputter.isDown(c.inputter.H); 
-            var right = c.inputter.isDown(c.inputter.RIGHT_ARROW) || c.inputter.isDown(c.inputter.L); 
-            var up = c.inputter.isDown(c.inputter.UP_ARROW) || c.inputter.isDown(c.inputter.K); 
-            var down = c.inputter.isDown(c.inputter.DOWN_ARROW) || c.inputter.isDown(c.inputter.J); 
-            bxdir = (right ? 1 : left ? -1 : 0);
-            bydir = (down ? 1 : up ? -1 : 0);
+				var left = c.inputter.isDown(c.inputter.LEFT_ARROW) || c.inputter.isDown(c.inputter.H); 
+				var right = c.inputter.isDown(c.inputter.RIGHT_ARROW) || c.inputter.isDown(c.inputter.L); 
+				var up = c.inputter.isDown(c.inputter.UP_ARROW) || c.inputter.isDown(c.inputter.K); 
+				var down = c.inputter.isDown(c.inputter.DOWN_ARROW) || c.inputter.isDown(c.inputter.J); 
+            
+				bxdir = (right ? 1 : left ? -1 : 0);
+				bydir = (down ? 1 : up ? -1 : 0);
+			}
             btheta = Math.atan2(bydir, bxdir);
 
             // console.log(game.timer.getTime(), this.lastBullet, this.bulletDelay);
