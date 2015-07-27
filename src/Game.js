@@ -15,6 +15,11 @@ define(function(require) {
     var Shield       = require("enemy/Shield/Shield");
     var Coin         = require("pickups/Coin");
 
+    this.addEventListener("gamepadconnected", function(e){
+        var gp = navigator.getGamepads()[0];
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes", gp.index, gp.id, gp.buttons.length, gp.axes.length);
+    });
+
     var Game = function() {
         var self = this;
 
