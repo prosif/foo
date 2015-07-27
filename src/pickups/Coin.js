@@ -28,7 +28,7 @@ define(function(require){
 
         this.collision = function(other) {
             if (other instanceof Player){
-                Player.grantCoin();
+                other.grantCoin();
                 game.c.entities.destroy(this);
             }
         }
