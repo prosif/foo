@@ -23,10 +23,16 @@ define(["require",
         for (var prop in settings) {
            this[prop] = settings[prop];
         }
-         
+        
+        this.points = 0;
         this.lastBullet = 0;
         this.boundingBox = game.c.collider.CIRCLE,
         this.vel = { x: 0, y: 0 };
+
+        this.grantCoin= function(){
+            this.points += 1;
+            console.log("got a point!");
+        }
 
         this.update = function(delta) {
 
