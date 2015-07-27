@@ -3,13 +3,13 @@ define(["require",
         "world/player/Player", 
         "world/Wall/Wall"],
 
-    // Note: Player is a circular dependency, use require('world/player/Player');
-    function(require, config, Player, Wall) {
+    function(require, Config, Player, Wall) {
 
     var Bullet = function(game, settings) {
 
-        config = require("world/Bullet/config");
-        Utils.extend(Utils.extend(this, config.Bullet), settings);
+        // Note: Player is a circular dependency
+        var Player = require('world/player/Player');
+        Utils.extend(Utils.extend(this, Config.Bullet), settings);
 
         if (this.vel == undefined)
             throw("Bullet requires a velocity from settings");
@@ -20,7 +20,7 @@ define(["require",
         };
 
         this.collision = function(other) {
-            if (!(other instanceof require('world/player/Player')) &&
+            if (!(other instanceof Player) &&
                    !(other instanceof Bullet) )
                 game.c.entities.destroy(this);
         }

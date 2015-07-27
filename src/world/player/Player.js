@@ -4,6 +4,7 @@ define(function(require) {
     Enemy = require("world/enemy/Enemy");
     Wall = require("world/Wall/Wall");
     Bullet = require("world/bullet/Bullet");
+    Config = require("world/player/config");
 
     // "world/enemy/Shield/Shield",
     // "world/bullet/EnemyBullet",
@@ -12,8 +13,7 @@ define(function(require) {
     var Player = function(game, settings) {
 
         // Config
-        var config = require("world/player/config");
-        Utils.extend(Utils.extend(this, config.Player), settings);
+        Utils.extend(Utils.extend(this, Config.Player), settings);
          
         // State
         this.lastBullet = 0;
@@ -67,8 +67,8 @@ define(function(require) {
                             y: this.center.y,
                         },
                         vel: {
-                            x: (config.Bullet.speed / 17 * Math.cos(btheta + (Math.random() * config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
-                            y: (config.Bullet.speed / 17 * Math.sin(btheta + (Math.random() * config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
+                            x: (Config.Bullet.speed / 17 * Math.cos(btheta + (Math.random() * Config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
+                            y: (Config.Bullet.speed / 17 * Math.sin(btheta + (Math.random() * Config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
                         }
                     });              
                 }
