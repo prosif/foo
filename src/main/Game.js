@@ -4,14 +4,14 @@ define(function(require) {
     var Utils        = require("engine/Utils");
     var Timer        = require("engine/Timer");
     var Pauser       = require("engine/Pauser");
-    var config       = require("world/config");
-    var Wall         = require("world/Wall");
-    var Player       = require("player/Player");
-    var pConfig      = require("player/config");
-    var Enemy        = require("enemy/Enemy");
-    var Lurker       = require("enemy/Lurker");
-    var ShieldConfig = require("enemy/Shield/config");
-    var Shield       = require("enemy/Shield/Shield")
+    var config       = require("main/config");
+    var Wall         = require("world/Wall/Wall");
+    var Player       = require("world/player/Player");
+    var pConfig      = require("world/player/config");
+    var Enemy        = require("world/enemy/Enemy");
+    // var Lurker       = require("enemy/Lurker");
+    // var ShieldConfig = require("enemy/Shield/config");
+    // var Shield       = require("enemy/Shield/Shield")
 
     var Game = function() {
         var self = this;

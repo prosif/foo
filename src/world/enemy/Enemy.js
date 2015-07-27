@@ -1,12 +1,13 @@
 define(function(require){
 
-    var Bullet = require("bullet/Bullet");
+    var Bullet = require("world/bullet/Bullet");
     var Utils = require("engine/Utils");
-    var Wall = require("world/Wall");
+    var Wall = require("world/Wall/Wall");
+
     var Enemy = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
-        var Player = require("player/Player");
+        var Player = require("world/player/Player");
 
         var defaults = {
             size: { x:5, y:5 },

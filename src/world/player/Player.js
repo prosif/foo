@@ -1,19 +1,19 @@
 define(["require", 
         "engine/Utils", 
-        "enemy/Shield/Shield",
-        "enemy/Enemy",
-        "bullet/EnemyBullet",
-        "enemy/Lurker",
-        "world/Wall",
-        "bullet/Config",
-        "bullet/Bullet"],
+        // "world/enemy/Shield/Shield",
+        "world/enemy/Enemy",
+        // "world/bullet/EnemyBullet",
+        // "world/enemy/Lurk/Lurker",
+        "world/Wall/Wall",
+        "world/bullet/Config",
+        "world/bullet/Bullet"],
 
     function(require, 
              Utils,
-             ShieldEnemy,
+             // ShieldEnemy,
              Enemy,
-             EnemyBullet,
-             Lurker,
+             // EnemyBullet,
+             // Lurker,
              Wall,
              bConfig,
              Bullet) {
@@ -90,9 +90,7 @@ define(["require",
             if (other instanceof Wall)
                 other.alignPlayer(this);
 
-            if (other instanceof Enemy || 
-                other instanceof EnemyBullet ||
-                other instanceof ShieldEnemy)
+            if (other instanceof Enemy)
                 game.c.entities.destroy(this); 
         }
         this.draw = function(ctx) {
