@@ -62,6 +62,11 @@ define(function(require) {
                 if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
                     this.lastBullet = game.timer.getTime();
                     game.c.entities.create(Bullet, {
+                        size: {
+                            x: (Math.random() > 0.5 ? -1: 1) * Math.random() * Config.Bullet.size + Config.Bullet.size,
+                            y: Config.Bullet.size,
+
+                        },
                         center: {
                             x: this.center.x,
                             y: this.center.y,

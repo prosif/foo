@@ -11,6 +11,7 @@ define(["require",
         var Player = require('world/player/Player');
         Utils.extend(Utils.extend(this, Config.Bullet), settings);
 
+        this.boundingBox = game.c.collider.CIRCLE;
         if (this.vel == undefined)
             throw("Bullet requires a velocity from settings");
 
@@ -26,17 +27,19 @@ define(["require",
         }
 
         this.draw = function(ctx) {
-            drawRect(this, ctx, this.color);
+            ctx.fillStyle = this.color || "#f00";
+            // ctx.lineWidth = 4;
+            drawCircle(ctx, this.center, this.size.x / 2);
         }
 
-        var drawRect = function(rect, ctx, color) {
-            //console.log("AYY");
-            ctx.fillStyle = color || "#f00";
-            ctx.fillRect(rect.center.x - rect.size.x/2
-                       , rect.center.y - rect.size.y/2
-                       , rect.size.x
-                       , rect.size.y);
-
+        var drawCircle = function(ctx, center, radius) {
+            ctx.beginPath();
+            ctx.arc(center.x, 
+                    center.y, 
+                    radius,
+                    0, 
+                    2 * Math.PI);
+            ctx.fill();
         }
     }
     return Bullet;

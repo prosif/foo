@@ -12,7 +12,8 @@ define(function(require) {
         Bullet: {
             delay: 30,
             disorder: 0.35,
-            speed : 200 / 17
+            speed : 200 / 17,
+            size: 5,
         }
     }
 
