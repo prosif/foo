@@ -62,8 +62,17 @@ define(function(require){
             // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
             // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
             
-            this.vel.x = xdiff / hdiff * speed / 17;
-            this.vel.y = ydiff / hdiff * speed / 17;
+            var velx, vely;
+            velx = xdiff / hdiff * speed / 17;
+            vely = ydiff / hdiff * speed / 17;
+
+            // if (isNaN(velx) || isNaN(vely)) {
+            //     console.log(this.center.x, target.center.x, xdiff, ydiff, hdiff, speed, this.vel.x, this.vel.y);
+            //     game.c.entities.destroy(this);
+            //     return;
+            // }
+            this.vel.x = velx;
+            this.vel.y = vely;
         }    
 
 
@@ -75,6 +84,13 @@ define(function(require){
             xdiff = target.center.x - this.center.x;
             ydiff = target.center.y - this.center.y;
             hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+
+            // Only occurs when entity is pressed against a wall
+            if (hdiff == 0) {
+                // hdiff = 0.1 * Math.random();
+                game.c.entities.destroy(this);
+                return;
+            }
 
             this.center.x -= xdiff / hdiff * dist;
             this.center.y -= ydiff / hdiff * dist;
