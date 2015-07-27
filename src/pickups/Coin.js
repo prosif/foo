@@ -6,7 +6,6 @@ define(function(require){
         // Avoid circular dependencies (don't place before Enemy)
         var Player = require("player/Player");
 
-        console.log(Player);
         var defaults = {
             center: { x:100, y:100 },
             size: { x:5, y:5 },
@@ -38,9 +37,9 @@ define(function(require){
        
         var drawCircle = function(circ, ctx, color){
            ctx.beginPath();
+           ctx.arc(circ.center.x, circ.center.y, circ.size.x, 0, 2*Math.PI);
            ctx.fillStyle = circ.color;
            ctx.fill();
-           ctx.arc(circ.center.x, circ.center.y, circ.size.x, 0, 2*Math.PI);
            ctx.stroke();
         }
     }

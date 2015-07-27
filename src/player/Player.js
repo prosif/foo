@@ -31,7 +31,10 @@ define(["require",
 
         this.grantCoin = function(){
             this.points += 1;
-            console.log("got a point!");
+        }
+
+        this.getPoints() = function{
+            return this.points;
         }
 
         this.update = function(delta) {
