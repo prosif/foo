@@ -4,10 +4,12 @@ define(function(require){
             if (props == undefined)
                 props = Object.getOwnPropertyNames(b);
             props.forEach(function(p) {
-                if (b[p] == undefined) {
+                if (b[p] == undefined)
                     throw "Property " + p + " is undefined";
-                }
-                a[p] = b[p];
+                else if (b[p].contstructor == Function)
+                    a[p] = b[p].bind(a);
+                else
+                    a[p] = b[p];
             });
             return a;
         },

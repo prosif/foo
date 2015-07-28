@@ -8,7 +8,7 @@ define(function(require) {
     var Wall         = require("world/Wall/Wall");
     var Player       = require("world/player/Player");
     var pConfig      = require("world/player/config");
-    var Enemy        = require("world/enemy/Enemy");
+    var Micro        = require("world/enemy/Micro/Micro");
     // var Lurker       = require("enemy/Lurker");
     // var ShieldConfig = require("enemy/Shield/config");
     // var Shield       = require("enemy/Shield/Shield")
@@ -27,7 +27,7 @@ define(function(require) {
         // Hacky bind to pause/resume coquette on (P keypress)
         Pauser(this);
 
-        self.c.entities.create(Enemy, {
+        self.c.entities.create(Micro, {
             center : { 
                 x: config.Game.width,
                 y: config.Game.height / 2,
@@ -35,7 +35,7 @@ define(function(require) {
         }); 
 
         setInterval(function() {
-            if (self.c.entities.all(Enemy).length > 20)
+            if (self.c.entities.all(Micro).length > 20)
                 return
             var center = { x: 0, y: 0 };
             if (Utils.randBool()) {
@@ -45,7 +45,7 @@ define(function(require) {
                 center.y = Utils.randBool() ? config.Game.height : 0;
                 center.x = Math.random() * config.Game.width;
             }
-            self.c.entities.create(Enemy, {
+            self.c.entities.create(Micro, {
                 center : center
             }); 
             // self.c.entities.create(Shield, Utils.extend({

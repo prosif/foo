@@ -1,7 +1,7 @@
 define(function(require) {
 
     Utils = require("engine/Utils");
-    Enemy = require("world/enemy/Enemy");
+    Micro = require("world/enemy/Micro/Micro");
     Wall = require("world/Wall/Wall");
     Bullet = require("world/bullet/Bullet");
     Config = require("world/player/config");
@@ -105,7 +105,7 @@ define(function(require) {
             // if (other instanceof Wall)
             //     other.alignPlayer(this);
 
-            if (other instanceof Enemy)
+            if (other instanceof Micro)
                 game.c.entities.destroy(this); 
         }
         this.draw = function(ctx) {
