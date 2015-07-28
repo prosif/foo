@@ -5,6 +5,7 @@ define(function(require) {
     Wall = require("world/Wall/Wall");
     Bullet = require("world/bullet/Bullet");
     Config = require("world/player/config");
+    Global = require("main/config");
 
     // "world/enemy/Shield/Shield",
     // "world/bullet/EnemyBullet",
@@ -42,6 +43,25 @@ define(function(require) {
 
             this.center.x += this.vel.x * delta;
             this.center.y += this.vel.y * delta;
+
+            // Force player coordinates within world
+            this.restrict();
+        }
+
+        this.restrict = function() {
+
+            // min/max values for player location in world
+            var minx, maxx, miny, maxy;
+
+            // pad accounts for the stroke width affecting player dimensions
+            var pad = 3;
+
+            maxx = Global.Game.width - this.size.x / 2 - pad;
+            minx = this.size.x / 2 + pad;
+            maxy = Global.Game.height - this.size.x / 2 - pad;
+            miny = this.size.x / 2 + pad;
+            this.center.x = Math.max(Math.min(this.center.x, maxx), minx); 
+            this.center.y = Math.max(Math.min(this.center.y, maxy), miny); 
         }
 
         this.shoot = function(delta) {
@@ -63,7 +83,7 @@ define(function(require) {
                     this.lastBullet = game.timer.getTime();
                     game.c.entities.create(Bullet, {
                         size: {
-                            x: (Math.random() > 0.5 ? -1: 1) * Math.random() * Config.Bullet.size + Config.Bullet.size,
+                            x: Config.Bullet.size, // (Math.random() > 0.5 ? -1: 1) * Math.random() * Config.Bullet.size + Config.Bullet.size,
                             y: Config.Bullet.size,
 
                         },
@@ -82,8 +102,8 @@ define(function(require) {
         };
 
         this.collision = function(other) {
-            if (other instanceof Wall)
-                other.alignPlayer(this);
+            // if (other instanceof Wall)
+            //     other.alignPlayer(this);
 
             if (other instanceof Enemy)
                 game.c.entities.destroy(this); 

@@ -17,7 +17,7 @@ define(function(require) {
         var self = this;
 
         // Main coquette modules
-        this.c = new Coquette(this, "canvas", config.Game.Width, config.Game.Height, "pink");
+        this.c = new Coquette(this, "canvas", config.Game.width, config.Game.height, "pink");
 
 
         // var ctx = c.renderer.getCtx(); ctx.imageSmoothingEnabled = false;
@@ -29,8 +29,8 @@ define(function(require) {
 
         self.c.entities.create(Enemy, {
             center : { 
-                x: config.Game.Width,
-                y: config.Game.Height / 2,
+                x: config.Game.width,
+                y: config.Game.height / 2,
             },
         }); 
 
@@ -39,11 +39,11 @@ define(function(require) {
                 return
             var center = { x: 0, y: 0 };
             if (Utils.randBool()) {
-                center.x = Utils.randBool() ? config.Game.Width : 0; 
-                center.y = Math.random() * config.Game.Height;
+                center.x = Utils.randBool() ? config.Game.width : 0; 
+                center.y = Math.random() * config.Game.height;
             } else {
-                center.y = Utils.randBool() ? config.Game.Height : 0;
-                center.x = Math.random() * config.Game.Width;
+                center.y = Utils.randBool() ? config.Game.height : 0;
+                center.x = Math.random() * config.Game.width;
             }
             self.c.entities.create(Enemy, {
                 center : center

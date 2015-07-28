@@ -60,20 +60,11 @@ define(function(require) {
         }
 
 
-        this.draw = function(ctx) {
-            if (game.DEBUG)
-                drawRect(this, ctx, this.color);
-        }
+        // this.draw = function(ctx) {
+        //     if (game.DEBUG)
+        //         drawRect(this, ctx, this.color);
+        // }
 
-        var drawRect = function(rect, ctx, color) {
-            //console.log("AYY");
-            ctx.fillStyle = color || "#f00";
-            ctx.fillRect(rect.center.x - rect.size.x/2
-                       , rect.center.y - rect.size.y/2
-                       , rect.size.x
-                       , rect.size.y);
-
-        }
     }
 
     Wall.prototype = {};
