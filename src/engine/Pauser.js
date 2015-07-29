@@ -14,7 +14,7 @@ define(function(require) {
         }, false);
 
         // Pause on tab switch, leaving window;
-        visible.on("blur", function() { self.pause(); });
+        visible.on("blur", function() { console.log("BLURRED");self.pause(); });
 
         this.toggle = function() {
             if (this.paused)
@@ -26,6 +26,9 @@ define(function(require) {
         this.pause = function() {
             var self = this;
 
+            if (this.paused)
+                return;
+
             this.backups = [];
             modules.forEach(function(m) {
                 self.backups.push(m.update);
@@ -35,6 +38,9 @@ define(function(require) {
         }
         this.unpause = function() {
             var self = this;
+
+            if (!this.paused)
+                return;
 
             this.backups.forEach(function(update, i) {
                 modules[i].update = update;
