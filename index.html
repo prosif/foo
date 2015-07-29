@@ -15,17 +15,26 @@
     <script>
         requirejs.config({
             baseUrl: 'src',
+            // Include files outside 'src' 
             paths: {
-                coquette: "../lib/coquette"
+                coquette: "../lib/coquette",
+                ifvisible: "../lib/ifvisible"
             },
+            // Link non require libraries
             shim: {
                 'coquette': {
                     exports: 'Coquette'
+                },
+                'ifvisible': {
+                    exports: 'Ifvisible'
                 },
             }
         });
 
         // Start the main app logic.
-        requirejs(['Game'], function (Game) { Game(); });
+        requirejs(['main/Game'], function (Game) { 
+            //new Game(); 
+            Game(); 
+        });
     </script>
 </html>

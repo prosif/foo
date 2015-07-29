@@ -60,20 +60,11 @@ define(function(require) {
         }
 
 
-        this.draw = function(ctx) {
-            if (game.DEBUG)
-                drawRect(this, ctx, this.color);
-        }
+        // this.draw = function(ctx) {
+        //     if (game.DEBUG)
+        //         drawRect(this, ctx, this.color);
+        // }
 
-        var drawRect = function(rect, ctx, color) {
-            //console.log("AYY");
-            ctx.fillStyle = color || "#f00";
-            ctx.fillRect(rect.center.x - rect.size.x/2
-                       , rect.center.y - rect.size.y/2
-                       , rect.size.x
-                       , rect.size.y);
-
-        }
     }
 
     Wall.prototype = {};
@@ -88,6 +79,31 @@ define(function(require) {
         else if (this.type == Wall.BOTTOM)
             player.center.y = this.center.y - this.size.y / 2 - player.size.y / 2;
     }
+
+    // Convenience method to make four walls around world(view)
+    Wall.makeBoundaries = function(game) {
+        var c = game.c;
+        var target = { 
+            center : c.renderer.getViewCenter(),
+            size : c.renderer.getViewSize()
+        }
+        c.entities.create(Wall, {
+            type: Wall.LEFT,
+            target: target
+        });
+        c.entities.create(Wall, {
+            type: Wall.RIGHT,
+            target: target
+        });
+        c.entities.create(Wall, {
+            type: Wall.TOP,
+            target: target
+        });
+        c.entities.create(Wall, {
+            type: Wall.BOTTOM,
+            target: target
+        });
+    };
         
     Wall.LEFT   = 0;
     Wall.RIGHT  = 1;
