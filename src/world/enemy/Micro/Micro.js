@@ -1,7 +1,7 @@
 define(function(require){
 
     var Bullet = require("world/bullet/Bullet");
-    var Utils = require("engine/Utils");
+    var Utils = require("mixins/Utils");
     var Wall = require("world/Wall/Wall");
     var Sprite = require("mixins/Sprite");
     // var Enemy = require("mixins/Enemy");
@@ -76,7 +76,7 @@ define(function(require){
 //     var xdiff, ydiff, hdiff;
 //     xdiff = target.center.x - this.center.x;
 //     ydiff = target.center.y - this.center.y;
-//     hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+//     hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 
 //     // New direction of motion (radians)
 //     var newDir = Math.atan2(ydiff, xdiff);

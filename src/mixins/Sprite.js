@@ -1,18 +1,41 @@
 define(function(require){
 
+    var R = require("mixins/Random");
+    var Utils = require("mixins/Utils");
+
     var Sprite = {};
     Sprite.drawRect = function(ctx) {
         var color = this.color || "#fff";
         ctx.fillStyle = color;
 
         var x, y, w, h;
-        x = this.center.x - this.size.x/2; 
+        x = this.center.x - this.size.x/3; 
         y = this.center.y - this.size.y/2; 
         w = this.size.x; 
         h = this.size.y;
 
         ctx.fillRect(x, y, w, h);
     };
+
+    Sprite.drawCircle = function(ctx, radius) {
+        ctx.beginPath();
+        ctx.arc(this.center.x, 
+                this.center.y, 
+                radius,
+                0, 
+                2 * Math.PI);
+        ctx.stroke();
+    }
+
+    Sprite.drawFilledCircle = function(ctx, radius) {
+        ctx.beginPath();
+        ctx.arc(this.center.x, 
+                this.center.y, 
+                radius,
+                0, 
+                2 * Math.PI);
+        ctx.fill();
+    }
 
     Sprite.follow = function(target, settings) {
 
@@ -29,9 +52,9 @@ define(function(require){
         xdiff = target.center.x - this.center.x;
         ydiff = target.center.y - this.center.y;
 
-        xdiff += (Utils.randBool() ? -1 : 1) * jitter * xdiff;
-        ydiff += (Utils.randBool() ? -1 : 1) * jitter * ydiff;
-        hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+        xdiff += (R.bool() ? -1 : 1) * jitter * xdiff;
+        ydiff += (R.bool() ? -1 : 1) * jitter * ydiff;
+        hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 
         // If the direct distance is less than the follow within distance,
         // closeness 
@@ -61,7 +84,7 @@ define(function(require){
         var xdiff, ydiff, hdiff;
         xdiff = target.center.x - this.center.x;
         ydiff = target.center.y - this.center.y;
-        hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+        hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 
         // Only occurs when entity is pressed against a wall
         if (hdiff == 0) {

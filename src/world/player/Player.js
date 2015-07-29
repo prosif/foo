@@ -1,11 +1,13 @@
 define(function(require) {
 
-    Utils = require("engine/Utils");
-    Micro = require("world/enemy/Micro/Micro");
-    Wall = require("world/Wall/Wall");
-    Bullet = require("world/bullet/Bullet");
-    Config = require("world/player/config");
-    Global = require("main/config");
+    var Bullet = require("world/bullet/Bullet");
+    var Config = require("world/player/config");
+    var Global = require("main/config");
+    var Micro = require("world/enemy/Micro/Micro");
+    var R = require("mixins/Random");
+    var Sprite = require("mixins/Sprite");
+    var Utils = require("mixins/Utils");
+    var Wall = require("world/Wall/Wall");
 
     // "world/enemy/Shield/Shield",
     // "world/bullet/EnemyBullet",
@@ -15,6 +17,7 @@ define(function(require) {
 
         // Config
         Utils.extend(Utils.extend(this, Config.Player), settings);
+        Utils.extend(this, Sprite, ["drawCircle"]);
          
         // State
         this.lastBullet = 0;
@@ -28,10 +31,12 @@ define(function(require) {
 
         this.move = function(delta) {
 
+            var Input = game.c.inputter;
+
             // The direction of motion
             var xdir, ydir;
-            xdir = (c.inputter.isDown(c.inputter.D) ? 1 : (c.inputter.isDown(c.inputter.A) ? -1 : 0));
-            ydir = (c.inputter.isDown(c.inputter.S) ? 1 : (c.inputter.isDown(c.inputter.W) ? -1 : 0));
+            xdir = (Input.isDown(Input.D) ? 1 : (Input.isDown(Input.A) ? -1 : 0));
+            ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
 
             // The diffs of initial/final player position
             // theta is the angle of motion relative to the ground 
@@ -66,13 +71,16 @@ define(function(require) {
 
         this.shoot = function(delta) {
 
+            var Input = game.c.inputter;
+
             // The direction of bullet attack
-            var bxdir, bydir, btheta;
             var left, right, down, up;
-            var left = c.inputter.isDown(c.inputter.LEFT_ARROW) || c.inputter.isDown(c.inputter.H); 
-            var right = c.inputter.isDown(c.inputter.RIGHT_ARROW) || c.inputter.isDown(c.inputter.L); 
-            var up = c.inputter.isDown(c.inputter.UP_ARROW) || c.inputter.isDown(c.inputter.K); 
-            var down = c.inputter.isDown(c.inputter.DOWN_ARROW) || c.inputter.isDown(c.inputter.J); 
+            left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H); 
+            right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L); 
+            up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K); 
+            down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J); 
+
+            var bxdir, bydir, btheta;
             bxdir = (right ? 1 : left ? -1 : 0);
             bydir = (down ? 1 : up ? -1 : 0);
             btheta = Math.atan2(bydir, bxdir);
@@ -83,7 +91,7 @@ define(function(require) {
                     this.lastBullet = game.timer.getTime();
                     game.c.entities.create(Bullet, {
                         size: {
-                            x: Config.Bullet.size, // (Math.random() > 0.5 ? -1: 1) * Math.random() * Config.Bullet.size + Config.Bullet.size,
+                            x: Config.Bullet.size,
                             y: Config.Bullet.size,
 
                         },
@@ -92,8 +100,8 @@ define(function(require) {
                             y: this.center.y,
                         },
                         vel: {
-                            x: (Config.Bullet.speed / 17 * Math.cos(btheta + (Math.random() * Config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
-                            y: (Config.Bullet.speed / 17 * Math.sin(btheta + (Math.random() * Config.Bullet.disorder * (Math.random() > 0.5 ? -1: 1)))),
+                            x: Config.Bullet.speed / 17 * Math.cos(btheta + (R.scale(Config.Bullet.disorder) * R.any(-1, 1))),
+                            y: Config.Bullet.speed / 17 * Math.sin(btheta + (R.scale(Config.Bullet.disorder) * R.any(-1, 1))),
                         }
                     });              
                 }
@@ -102,27 +110,16 @@ define(function(require) {
         };
 
         this.collision = function(other) {
-            // if (other instanceof Wall)
-            //     other.alignPlayer(this);
-
             if (other instanceof Micro)
                 game.c.entities.destroy(this); 
         }
+
         this.draw = function(ctx) {
             ctx.strokeStyle = this.color || "#f00";
             ctx.lineWidth = 4;
-            drawCircle(ctx, this.center, this.size.x / 2);
+            this.drawCircle(ctx, this.size.x / 2 - 1);
         }
 
-        var drawCircle = function(ctx, center, radius) {
-            ctx.beginPath();
-            ctx.arc(center.x, 
-                    center.y, 
-                    radius,
-                    0, 
-                    2 * Math.PI);
-            ctx.stroke();
-        }
     }
     return Player;
 });

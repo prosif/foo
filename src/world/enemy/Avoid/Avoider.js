@@ -48,7 +48,7 @@ define(function(require){
             var xdiff, ydiff, hdiff;
             xdiff = target.center.x - this.center.x;
             ydiff = target.center.y - this.center.y;
-            hdiff = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+            hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 
             // The diffs of initial/final enemy position
             // (x/y/hypotenuse)

@@ -1,13 +1,12 @@
 define(function(require) {
 
     var Coquette     = require("coquette");
-    var Utils        = require("engine/Utils");
     var Timer        = require("engine/Timer");
     var Pauser       = require("engine/Pauser");
-    var config       = require("main/config");
+    var R            = require("mixins/Random");
+    var Global       = require("main/config");
     var Wall         = require("world/Wall/Wall");
     var Player       = require("world/player/Player");
-    var pConfig      = require("world/player/config");
     var Micro        = require("world/enemy/Micro/Micro");
     // var Lurker       = require("enemy/Lurker");
     // var ShieldConfig = require("enemy/Shield/config");
@@ -17,91 +16,47 @@ define(function(require) {
         var self = this;
 
         // Main coquette modules
-        this.c = new Coquette(this, "canvas", config.Game.width, config.Game.height, "pink");
-
-
-        // var ctx = c.renderer.getCtx(); ctx.imageSmoothingEnabled = false;
-        // ctx.mozImageSmoothingEnabled = false;
-
-
-        // Hacky bind to pause/resume coquette on (P keypress)
-        Pauser(this);
+        this.c = new Coquette(this, "canvas", Global.Game.width, Global.Game.height, "pink");
 
         self.c.entities.create(Micro, {
             center : { 
-                x: config.Game.width,
-                y: config.Game.height / 2,
+                x: Global.Game.width,
+                y: Global.Game.height / 2,
             },
         }); 
 
         setInterval(function() {
             if (self.c.entities.all(Micro).length > 20)
                 return
+
             var center = { x: 0, y: 0 };
-            if (Utils.randBool()) {
-                center.x = Utils.randBool() ? config.Game.width : 0; 
-                center.y = Math.random() * config.Game.height;
+
+            if (R.bool()) {
+                center.x = R.bool() ? Global.Game.width : 0; 
+                center.y = R.scale(Global.Game.height);
             } else {
-                center.y = Utils.randBool() ? config.Game.height : 0;
-                center.x = Math.random() * config.Game.width;
+                center.y = R.bool() ? Global.Game.height : 0;
+                center.x = R.scale(Global.Game.width);
             }
+
             self.c.entities.create(Micro, {
                 center : center
             }); 
-            // self.c.entities.create(Shield, Utils.extend({
-            //     center : { 
-            //         x: Math.random() * config.Game.Width, 
-            //         y: Math.random() * config.Game.Height 
-            //     },
-            //     size : { x: 20, y: 20 }
-            // }, ShieldConfig.Enemy));
+
         }, 100);
 
-        // setInterval(function() {
-        //     c.entities.create(Lurker, {
-        //         center : { 
-        //             x: Math.random() * config.Game.Width, 
-        //             y: Math.random() * config.Game.Height
-        //         },
-        //         size : { x: 15, y: 15 }
-        //     });
-        // }, 7500);
+        this.c.entities.create(Player);
 
-        c.entities.create(Player, pConfig.Player);
-
-        // Project specific modules
-        this.timer     = new Timer();
-        //this.resourcer = new Resourcer(config.Game.Resources);
-        //this.scener    = new Scener(this, config.Game.Scenes);
-        //this.sequencer = new ButtonSequencer(this);
+        this.timer = new Timer();
+        this.pauser = new Pauser(this, 
+                [this.c.entities, this.c.collider, this.c.renderer]);
 
         this.update = function(delta) { 
             this.timer.update(delta);
         }
 
-        //this.scener.start("Load");
-
         // Create world boundaries
-        var target = { 
-            center : this.c.renderer.getViewCenter(),
-            size : this.c.renderer.getViewSize()
-        }
-        this.c.entities.create(Wall, {
-            type: Wall.LEFT,
-            target: target
-        });
-        this.c.entities.create(Wall, {
-            type: Wall.RIGHT,
-            target: target
-        });
-        this.c.entities.create(Wall, {
-            type: Wall.TOP,
-            target: target
-        });
-        this.c.entities.create(Wall, {
-            type: Wall.BOTTOM,
-            target: target
-        });
+        Wall.makeBoundaries(this);
     };
     return Game;
 });
