@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../coquette.js"></script>
+        <script type="text/javascript" src="../Timer/Timer.js"></script>
+        <script type="text/javascript" src="../DialogBox/DialogBox.js"></script>
+        <script type="text/javascript" src="Scener.js"></script>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+    </body>
+    <script>
+        var self = this;
+
+        // Create coquette
+        this.c = new Coquette(this, "canvas", 800, 400, "#000");
+
+        // Create generic scene
+        var Scene = function (settings) {
+            var center = self.c.renderer.getViewCenter();
+            this.name = settings.name;
+            this.next = settings.next;
+            this.timer = new Timer();
+            this.game = self;
+            this.textBox = c.entities.create(DialogBox, {
+                fontfamily: "arial",
+                size: { x: 50, y: 50 },
+                fontcolor : "#FFF",
+                fontsize  : 20,
+                border    : { x: 5, y: 5 },
+            });
+        }
+
+        Scene.prototype = {
+            init: function() {
+                // define what happens at beginning
+            },
+            active:function() {
+                // return true if scene is active
+            },
+            update:function(delta) {
+                // update the scene
+            },
+            exit: function() {
+                // define cleanup/scene transition
+                //if (this.next !== undefined) {
+                //    this.game.c.entities.destroy(this.textBox);
+                //    this.game.scener.start(this.next);
+                //}
+            }
+        }
+
+        var scenes = [ new Scene({ name: "Scene 1", next: "Scene 2" })
+                     , new Scene({ name: "Scene 2", next: "Scene 3" })
+                     , new Scene({ name: "Scene 3" }) ]
+
+        this.scener = new Scener(this, scenes);
+        this.update = function(delta) {
+            this.scener.update(delta);
+        }
+        this.scener.start("Scene 1");
+
+        </script>
+</html>

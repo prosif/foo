@@ -28,6 +28,11 @@ define(function(require){
     }
 
     Sprite.drawFilledCircle = function(ctx, radius) {
+
+        var color = this.color || "#fff";
+        ctx.fillStyle = color;
+
+        radius = radius || this.size.x / 2;
         ctx.beginPath();
         ctx.arc(this.center.x, 
                 this.center.y, 
@@ -43,8 +48,8 @@ define(function(require){
 
         // If this is in the "within" distance from the target, it will
         // repel. "jitter" introduces randomness into the motion.
-        var within = settings.within || 0;
-        var jitter = Math.min(settings.jitter || 0, 1);
+        var within = settings.within || this.within || 0;
+        var jitter = Math.min(settings.jitter || this.jitter || 0, 1);
 
         // The initial enemy/target position diffs, where hdiff is the
         // across distance
@@ -61,6 +66,7 @@ define(function(require){
         var closeness = within / hdiff;
 
         var speed = this.speed - (closeness * this.speed);
+        // console.log("this:", this, "spd:",this.speed * 17);
         // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
         // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
 

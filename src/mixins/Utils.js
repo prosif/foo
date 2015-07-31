@@ -13,6 +13,13 @@ define(function(require){
             });
             return a;
         },
+
+        // TODO: Extend to take a function as an expr
+        assert: function(str, expr) {
+            if (!expr)
+                throw str; 
+            return true;
+        }, 
     };
     return Utils;
 });

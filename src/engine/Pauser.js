@@ -14,7 +14,9 @@ define(function(require) {
         }, false);
 
         // Pause on tab switch, leaving window;
-        visible.on("blur", function() { console.log("BLURRED");self.pause(); });
+        visible.on("blur", function() { 
+            self.pause(); 
+        });
 
         this.toggle = function() {
             if (this.paused)

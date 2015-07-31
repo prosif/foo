@@ -28,3 +28,7 @@ console.log the value to debug! Combined with pause it could be really powerful
 
 07/26/15 Bullet upgrades could allow for larger bullets which pass through
 more enemies
+
+07/31/15 We need a fonter module, to pull letters from an image, and draw
+those as images. Otherwise calculating fonts using the standard api is too
+slow for an HUD

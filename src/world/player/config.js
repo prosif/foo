@@ -1,5 +1,7 @@
 define(function(require) {
 
+    var Global = require("main/config");
+    var Utils = require("mixins/Utils");
     var Config = {
         Player: {     
             size: {x: 20, y: 20},
@@ -16,6 +18,6 @@ define(function(require) {
             size: 5,
         }
     }
-
+    Utils.extend(Config.Bullet, Global.Player.Bullet);
     return Config;
 });

@@ -27,14 +27,17 @@ define(["require",
     Bullet.prototype = {};
 
     Bullet.prototype.update = function(delta) {
+        // console.log(this.center, this.vel);
         this.center.x += this.vel.x * delta;
         this.center.y += this.vel.y * delta;
     };
 
     Bullet.prototype.collision = function(other) {
         if (!(other instanceof Bullet) &&
-            !(other instanceof Player))
+            !(other instanceof Player)) {
+            // console.log("DIE BULLET");
             this.c.entities.destroy(this);
+        }
     }
 
     Bullet.prototype.draw = function(ctx) {

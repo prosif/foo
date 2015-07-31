@@ -61,7 +61,7 @@ define(function(require) {
 
 
         // this.draw = function(ctx) {
-        //     if (game.DEBUG)
+        //     if (Global.DEBUG)
         //         drawRect(this, ctx, this.color);
         // }
 

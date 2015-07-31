@@ -9,11 +9,9 @@ define(function(require) {
     var Utils = require("mixins/Utils");
     var Wall = require("world/Wall/Wall");
 
-    // "world/enemy/Shield/Shield",
-    // "world/bullet/EnemyBullet",
-    // "world/enemy/Lurk/Lurker",
-
     var Player = function(game, settings) {
+
+        this.c = game.c;
 
         // Config
         Utils.extend(Utils.extend(this, Config.Player), settings);
@@ -87,9 +85,14 @@ define(function(require) {
 
             // If gun has direction, shoot
             if (bxdir || bydir) {
-                if ((game.timer.getTime() - this.lastBullet) > this.bulletDelay) {
+                if ((game.timer.getTime() - this.lastBullet) > Config.Bullet.delay) {
                     this.lastBullet = game.timer.getTime();
-                    game.c.entities.create(Bullet, {
+
+                    var any =  R.any(-1, 1);
+                    var xtheta = btheta + (R.scale(Config.Bullet.disorder) * any );
+                    var xcomp = Math.cos(xtheta);
+                    var ycomp = Math.sin(btheta + (R.scale(Config.Bullet.disorder) * R.any(-1, 1)));
+                    var settings = {
                         size: {
                             x: Config.Bullet.size,
                             y: Config.Bullet.size,
@@ -100,18 +103,29 @@ define(function(require) {
                             y: this.center.y,
                         },
                         vel: {
-                            x: Config.Bullet.speed / 17 * Math.cos(btheta + (R.scale(Config.Bullet.disorder) * R.any(-1, 1))),
-                            y: Config.Bullet.speed / 17 * Math.sin(btheta + (R.scale(Config.Bullet.disorder) * R.any(-1, 1))),
+                            x: Config.Bullet.speed / 17 * xcomp,
+                            y: Config.Bullet.speed / 17 * ycomp,
                         }
-                    });              
+                    }
+                    // if (xcomp == undefined || isNaN(xcomp))
+                    //     console.log("AhAH", xtheta, any, Config.Bullet.disorder);
+                    game.c.entities.create(Bullet, settings);              
                 }
             }
 
         };
 
         this.collision = function(other) {
-            if (other instanceof Micro)
+            if (other instanceof Micro) {
                 game.c.entities.destroy(this); 
+                if (Global.DEBUG) {
+                    other.color = "#f00";
+                    other.draw(this.c.renderer.getCtx());
+                    // this.color = "#0f0";
+                    // this.draw(this.c.renderer.getCtx());
+                }
+                game.pauser.pause();
+            }
         }
 
         this.draw = function(ctx) {

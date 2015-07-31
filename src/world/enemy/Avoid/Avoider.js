@@ -1,89 +1,93 @@
 define(function(require){
 
-    var Bullet = require("bullet/Bullet");
+    var Bullet = require("world/bullet/Bullet");
+    var Utils = require("mixins/Utils");
+    var Wall = require("world/Wall/Wall");
+    var Sprite = require("mixins/Sprite");
+    var Maths = require("coquette").Collider.Maths;
+
     var Avoider = function(game, settings) {
-
-        // Avoid circular dependencies (don't place before Enemy)
-        var Player = require("player/Player");
-
         var defaults = {
-            center: { x:100, y:100 },
-            size: { x:10, y:10 },
-            color : "#fff",
-            speed : 24 / 17 // pixels per 17ms
+            size: { x:100, y:100 },
+            vel: { x: 0, y: 0 },
+            color : "#fa0",
+            speed : 200 / 17 // pixels per 17ms
         }
 
-        for (var prop in defaults) {
-           if (settings[prop] !== undefined) {
-               this[prop] = settings[prop];
-           } else {
-               this[prop] = defaults[prop];
-           }
+        this.c = game.c;
+        this.boundingBox = game.c.collider.CIRCLE,
+        Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
+        Utils.extend(this, defaults);
+        Utils.extend(this, settings);
+    }
+
+    Avoider.prototype.draw = function(ctx) {
+        this.drawFilledCircle.call({ 
+            center: this.center,
+            size: {
+                x: 40
+            },
+            color: "#f0af0f"
+        }, ctx)
+    }
+    Avoider.prototype.update = function(delta) {
+        var temp;
+
+        // Try to set enemy to target Player
+        if (!this.target) {
+            temp = this.c.entities.all(require("world/player/Player"));
+            if (temp.length)  
+                this.target = temp[0]
+            else
+                return
         }
 
-        this.update = function(delta) {
-            var temp;
+        this.follow.call({ 
+            center: this.center,
+            size: {
+                x: 40,
+                y: 40
+            },
+            speed: this.speed,
+            vel: this.vel,
+            within: this.within,
+            away: 0,
+            jitter: 0,
+        }, this.target);
 
-            // Try to set enemy to target Player
-            if (!this.target) {
-                temp = game.c.entities.all(Player);
-                if (temp.length)  
-                    this.target = temp[0]
-                else
-                    return
+        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y); 
+        this.center.x += this.vel.x * delta;
+        this.center.y += this.vel.y * delta;
+    };
+
+    Avoider.prototype.collision = function(other) {
+        if (other instanceof Bullet) {
+            if (Maths.pointInsideCircle(other, { 
+                center: this.center,
+                size: {
+                    x: 40,
+                    y: 40
+                }
+            })) {            
+                this.c.entities.destroy(this);
             }
-         
-            this.followTarget(delta, this.target);
-            this.avoidBullets(delta);
-            //console.log(this.center);
-        };
-
-        this.avoidBullets = function(delta){
-            console.log(delta);
+                // this.moveAway(other, 3);
+                // set vel perpendic to bullet traject
         }
 
-        this.followTarget = function(delta, target) {
-            // The initial enemy/target position diffs 
-            // (x/y/hypotenuse)
-            var xdiff, ydiff, hdiff;
-            xdiff = target.center.x - this.center.x;
-            ydiff = target.center.y - this.center.y;
-            hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+        // // if intersecting target, don't do change position!
+        // else if (this.target && Math.pointInsideCircle(this, this.target))
+        //     return
+                
+        else if (other instanceof Wall)
+            other.alignPlayer(this);
+            // this.c.entities.destroy(this);
 
-            // The diffs of initial/final enemy position
-            // (x/y/hypotenuse)
-            var x, y, h;
-            h = this.speed * delta / 17;
-            x = xdiff / hdiff * h
-            y = ydiff / hdiff * h
+        // else if (other instanceof Avoider)
+        //     this.moveAway(other, this.away);
 
-            this.center.x += x;
-            this.center.y += y;
-        }
 
-        this.collision = function(other) {
-            if (other instanceof Bullet)
-                game.c.entities.destroy(this);
-            //outside(this, other);
-            //this.color = "#f00";
-            //var intersection = this.outside(other);
-            //var temp = rectangleFromRectangleIntersection(this, other); 
-            //temp && drawRect(temp, ctx, "#f00");
-            //intersection && drawPoint(intersection, ctx, "#fff");
-        }
-        this.draw = function(ctx) {
-            drawRect(this, ctx, this.color);
-        }
+    }
 
-        var drawRect = function(rect, ctx, color) {
-            //console.log("AYY");
-            ctx.fillStyle = color || "#f00";
-            ctx.fillRect(rect.center.x - rect.size.x/2
-                       , rect.center.y - rect.size.y/2
-                       , rect.size.x
-                       , rect.size.y);
-
-            }
-        }
     return Avoider;
 });
