@@ -7,7 +7,7 @@ define(function(require) {
             MAX_ENEMIES: 250,
             MAX_MICROS: 0,
             MAX_AVOIDERS: 1,
-            color:"#efefef"
+            color:"#ccc"
         },
         Player: {
             Bullet: {
