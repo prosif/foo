@@ -11,6 +11,7 @@ define(["require",
 
         // Note: Player is a circular dependency
         Player = require('world/player/Player');
+        Avoid = require('world/enemy/Avoid/Avoider');
 
         Utils.extend(this, Sprite, ["drawFilledCircle"]);
         Utils.extend(this, {
@@ -20,9 +21,8 @@ define(["require",
         });
         Utils.extend(this, settings);
 
-        if (this.vel == undefined)
-            throw("Bullet requires a velocity from settings");
-    }
+        Utils.assert("Bullet requires a velocity from settings", this.vel);
+    };
 
     Bullet.prototype = {};
 
@@ -34,16 +34,16 @@ define(["require",
 
     Bullet.prototype.collision = function(other) {
         if (!(other instanceof Bullet) &&
+            !(other instanceof Avoid)  &&
             !(other instanceof Player)) {
-            // console.log("DIE BULLET");
             this.c.entities.destroy(this);
         }
-    }
+    };
 
     Bullet.prototype.draw = function(ctx) {
         ctx.fillStyle = this.color || "#f00";
         this.drawFilledCircle(ctx, this.size.x / 2);
-    }
+    };
 
     return Bullet;
 });

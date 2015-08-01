@@ -7,6 +7,7 @@ define(function(require) {
     var Global       = require("main/config");
     var Settings     = require("./config");
     var R            = require("mixins/Random");
+    var Utils        = require("mixins/Utils");
 
     var Scene = Settings.Scene;
 
@@ -78,23 +79,9 @@ define(function(require) {
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
 
-                var center = R.point(Global.Game.width, Global.Game.height);
+        var center = R.point(Global.Game.width, Global.Game.height);
 
-        return self.c.entities.create(Avoid, {
-            center : center,
-            // speed : 10 / 17,
-            speed : 10 / 17,
-
-            // How far micro's move away from each other
-            away: 1,
-
-            // Micro's stay within distance from target
-            within: 250,
-            // within: 100,
-
-            // Micro divergence from following player
-            jitter: 0.02
-        });
+        return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
     }.bind(null, Scene.MAX_AVOIDERS));
     return Demo;
 });

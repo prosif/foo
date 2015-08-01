@@ -12,14 +12,14 @@ define(function(require){
             vel: { x: 0, y: 0 },
             color : "#fa0",
             speed : 200 / 17 // pixels per 17ms
-        }
+        };
 
         this.c = game.c;
-        this.boundingBox = game.c.collider.CIRCLE,
+        this.boundingBox = game.c.collider.CIRCLE;
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
         Utils.extend(this, defaults);
         Utils.extend(this, settings);
-    }
+    };
 
     Avoider.prototype.draw = function(ctx) {
         this.drawFilledCircle.call({
@@ -28,8 +28,8 @@ define(function(require){
                 x: 40
             },
             color: "#f0af0f"
-        }, ctx)
-    }
+        }, ctx);
+    };
     Avoider.prototype.update = function(delta) {
         var temp;
 
@@ -37,9 +37,9 @@ define(function(require){
         if (!this.target) {
             temp = this.c.entities.all(require("world/player/Player"));
             if (temp.length)
-                this.target = temp[0]
+                this.target = temp[0];
             else
-                return
+                return;
         }
 
         this.follow.call({
@@ -62,16 +62,17 @@ define(function(require){
 
     Avoider.prototype.collision = function(other) {
         if (other instanceof Bullet) {
-            if (Maths.pointInsideCircle(other, {
+            if (Maths.pointInsideCircle(other.center, {
                 center: this.center,
                 size: {
                     x: 40,
                     y: 40
                 }
             })) {
+                console.log("WOO");
                 this.c.entities.destroy(this);
             }
-                // this.moveAway(other, 3);
+                this.moveAway(other, 10);
                 // set vel perpendic to bullet traject
         }
 
@@ -87,7 +88,7 @@ define(function(require){
         //     this.moveAway(other, this.away);
 
 
-    }
+    };
 
     return Avoider;
 });
