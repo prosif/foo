@@ -30,5 +30,12 @@ console.log the value to debug! Combined with pause it could be really powerful
 more enemies
 
 07/31/15 We need a fonter module, to pull letters from an image, and draw
-those as images. Otherwise calculating fonts using the standard api is too
+those as images. Otherwise calculating fonts using the standard canvas api is too
 slow for an HUD
+
+07/31/15 If the player pushes into the world boundary they slow down. In order
+for the player to maintain constant speed, velocity is distributed in the
+direction the player heads. `restrict` changes the players coordinates to be
+within the boundaries effectively negating the velocity in the direction
+facing the wall. As a result the velocity perpendicular to the wall with
+magnitude less than the indended speed.

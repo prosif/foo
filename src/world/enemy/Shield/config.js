@@ -1,5 +1,7 @@
 define(function(require) {
 
+    var deepFreeze = require("mixins/Utils").deepFreeze;
+
     var Config = {
         Enemy: {     
             size: {x: 20, y: 20},
@@ -9,5 +11,5 @@ define(function(require) {
         }
     }
 
-    return Config;
+    return deepFreeze(Config);
 });

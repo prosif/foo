@@ -10,17 +10,17 @@ define(function(require) {
 
     var Scene = Settings.Scene;
 
-    var Start = function (game) {
-        this.name = "Start";
+    var Demo = function (game) {
+        this.name = "Demo";
         this.c = game.c;
         foo = this;
     };
 
-    Start.prototype = {
+    Demo.prototype = {
         init: function() {
             // define what happens at beginning
 
-            this.c.entities.create(Player);
+            this.c.entities.create(Player, Settings.Player);
             makeAvoider(); 
             makeMicro(); 
             setInterval(function() {
@@ -97,6 +97,6 @@ define(function(require) {
             jitter: 0.02
         }); 
     }.bind(null, Scene.MAX_AVOIDERS));
-    return Start;
+    return Demo;
 }); 
 

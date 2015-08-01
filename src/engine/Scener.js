@@ -31,6 +31,7 @@ define(function(require) {
         });
 
         this.start = function(name) {
+            assert("Scene: " + name + " does not exist", store[name]);
             cur = store[name];
             cur.init();
         };

@@ -14,13 +14,18 @@ define(function(require) {
         this.c = game.c;
 
         // Config
-        Utils.extend(Utils.extend(this, Config.Player), settings);
+        Utils.extend(Utils.extend(this, Config.Player), settings.Player);
         Utils.extend(this, Sprite, ["drawCircle"]);
+
+        // Bullet config
+        var bsettings = 
+            Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
          
         // State
         this.lastBullet = 0;
         this.boundingBox = game.c.collider.CIRCLE,
         this.vel = { x: 0, y: 0 };
+        this.center = { x: 400, y: 200 };
 
         this.update = function(delta) {
             this.move(delta);
@@ -85,31 +90,25 @@ define(function(require) {
 
             // If gun has direction, shoot
             if (bxdir || bydir) {
-                if ((game.timer.getTime() - this.lastBullet) > Config.Bullet.delay) {
+                if ((game.timer.getTime() - this.lastBullet) > bsettings.delay) {
                     this.lastBullet = game.timer.getTime();
 
                     var any =  R.any(-1, 1);
-                    var xtheta = btheta + (R.scale(Config.Bullet.disorder) * any );
+                    var xtheta = btheta + (R.scale(bsettings.disorder) * any );
                     var xcomp = Math.cos(xtheta);
-                    var ycomp = Math.sin(btheta + (R.scale(Config.Bullet.disorder) * R.any(-1, 1)));
-                    var settings = {
-                        size: {
-                            x: Config.Bullet.size,
-                            y: Config.Bullet.size,
-
-                        },
+                    var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
+                    
+                    Utils.extend(bsettings, {
                         center: {
                             x: this.center.x,
                             y: this.center.y,
                         },
                         vel: {
-                            x: Config.Bullet.speed / 17 * xcomp,
-                            y: Config.Bullet.speed / 17 * ycomp,
+                            x: bsettings.speed / 17 * xcomp,
+                            y: bsettings.speed / 17 * ycomp,
                         }
-                    }
-                    // if (xcomp == undefined || isNaN(xcomp))
-                    //     console.log("AhAH", xtheta, any, Config.Bullet.disorder);
-                    game.c.entities.create(Bullet, settings);              
+                    });
+                    game.c.entities.create(Bullet, bsettings);              
                 }
             }
 
