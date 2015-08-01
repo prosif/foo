@@ -19,8 +19,9 @@ define(function(require) {
 
     What.prototype = {
         init: function() {
+           
             // define what happens at beginning
-            this.c.entities.create(Splash, {});
+            this.c.entities.create(Splash, this);
         //    this.c.entities.create(Player, Settings.Player);
         //    this.c.entities.create(Player, Settings.Player);
         //    makeAvoider();
@@ -34,11 +35,16 @@ define(function(require) {
         },
         active:function() {
             // return true if scene is active
+            return true;
         },
         update:function(delta) {
             // update the scene
+            var Input = this.c.inputter;
+            var S = Input.isDown(Input.S);
+            if (S){this.exit();}
         },
         exit: function() {
+            console.log("yoo");
             // define cleanup/scene transition
             // ex. this.game.scener.start(this.next);
         }

@@ -14,7 +14,7 @@ define(function(require) {
     var Splash = function(game, settings) {
 
         this.c = game.c;
-
+        //console.log(settings);
         // Config
         //Utils.extend(Utils.extend(this, Config.Player), settings.Player);
         //Utils.extend(this, Sprite, ["drawCircle"]);
@@ -30,9 +30,9 @@ define(function(require) {
         //this.center = { x: 400, y: 200 };
 
         this.update = function(delta) {
-            var Input = game.c.inputter;
-            var S = Input.isDown(Input.S);
-            if (S){this.playGame();}
+            //var Input = game.c.inputter;
+            //var S = Input.isDown(Input.S);
+            //if (S){this.playGame();}
 
             //    this.move(delta);
             //    this.shoot(delta);
