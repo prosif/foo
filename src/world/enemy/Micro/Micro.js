@@ -30,18 +30,18 @@ define(function(require){
         // Try to set enemy to target Player
         if (!this.target) {
             temp = this.c.entities.all(require("world/player/Player"));
-            if (temp.length)  
+            if (temp.length)
                 this.target = temp[0]
             else
                 return
         }
 
         this.follow(this.target, {
-            within : this.within,  
+            within : this.within,
             jitter : this.jitter
         });
 
-        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y); 
+        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
         this.center.x += this.vel.x * delta;
         this.center.y += this.vel.y * delta;
     };
@@ -53,7 +53,7 @@ define(function(require){
         // // if intersecting target, don't do change position!
         // else if (this.target && Maths.pointInsideCircle(this, this.target))
         //     return
-                
+
         else if (other instanceof Wall)
             other.alignPlayer(this);
             // this.c.entities.destroy(this);

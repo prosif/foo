@@ -9,9 +9,9 @@ define(function(require){
         ctx.fillStyle = color;
 
         var x, y, w, h;
-        x = this.center.x - this.size.x/3; 
-        y = this.center.y - this.size.y/2; 
-        w = this.size.x; 
+        x = this.center.x - this.size.x/3;
+        y = this.center.y - this.size.y/2;
+        w = this.size.x;
         h = this.size.y;
 
         ctx.fillRect(x, y, w, h);
@@ -19,10 +19,10 @@ define(function(require){
 
     Sprite.drawCircle = function(ctx, radius) {
         ctx.beginPath();
-        ctx.arc(this.center.x, 
-                this.center.y, 
+        ctx.arc(this.center.x,
+                this.center.y,
                 radius,
-                0, 
+                0,
                 2 * Math.PI);
         ctx.stroke();
     }
@@ -34,10 +34,10 @@ define(function(require){
 
         radius = radius || this.size.x / 2;
         ctx.beginPath();
-        ctx.arc(this.center.x, 
-                this.center.y, 
+        ctx.arc(this.center.x,
+                this.center.y,
                 radius,
-                0, 
+                0,
                 2 * Math.PI);
         ctx.fill();
     }
@@ -62,7 +62,7 @@ define(function(require){
         hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
 
         // If the direct distance is less than the follow within distance,
-        // closeness 
+        // closeness
         var closeness = within / hdiff;
 
         var speed = this.speed - (closeness * this.speed);

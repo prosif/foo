@@ -22,7 +22,7 @@ define(function(require){
     }
 
     Avoider.prototype.draw = function(ctx) {
-        this.drawFilledCircle.call({ 
+        this.drawFilledCircle.call({
             center: this.center,
             size: {
                 x: 40
@@ -36,13 +36,13 @@ define(function(require){
         // Try to set enemy to target Player
         if (!this.target) {
             temp = this.c.entities.all(require("world/player/Player"));
-            if (temp.length)  
+            if (temp.length)
                 this.target = temp[0]
             else
                 return
         }
 
-        this.follow.call({ 
+        this.follow.call({
             center: this.center,
             size: {
                 x: 40,
@@ -55,20 +55,20 @@ define(function(require){
             jitter: 0,
         }, this.target);
 
-        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y); 
+        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
         this.center.x += this.vel.x * delta;
         this.center.y += this.vel.y * delta;
     };
 
     Avoider.prototype.collision = function(other) {
         if (other instanceof Bullet) {
-            if (Maths.pointInsideCircle(other, { 
+            if (Maths.pointInsideCircle(other, {
                 center: this.center,
                 size: {
                     x: 40,
                     y: 40
                 }
-            })) {            
+            })) {
                 this.c.entities.destroy(this);
             }
                 // this.moveAway(other, 3);
@@ -78,7 +78,7 @@ define(function(require){
         // // if intersecting target, don't do change position!
         // else if (this.target && Math.pointInsideCircle(this, this.target))
         //     return
-                
+
         else if (other instanceof Wall)
             other.alignPlayer(this);
             // this.c.entities.destroy(this);

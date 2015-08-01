@@ -3,7 +3,7 @@ define(function(require) {
     var deepFreeze = require("mixins/Utils").deepFreeze;
 
     var Config = {
-        Enemy: {     
+        Enemy: {
             size: {x: 20, y: 20},
             color : "#ff0",
             shieldDelay : 1000,

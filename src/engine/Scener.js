@@ -12,10 +12,10 @@ define(function(require) {
         var cur;
 
         scenes.forEach(function(S){
-            var s = new S(game); 
+            var s = new S(game);
 
             assert("Scene requires a name property", s.name);
-            store[s.name] = s;  
+            store[s.name] = s;
 
             // Provide defaults for necessary functions
             ["init", "active", "update", "exit"].forEach(function(func) {
@@ -43,7 +43,7 @@ define(function(require) {
                 } else {
                     cur.exit();
                 }
-            } 
+            }
         };
 
         this.pause = function() {

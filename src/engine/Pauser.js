@@ -10,12 +10,13 @@ define(function(require) {
 
         // Toggle pause on P down
         window.addEventListener("keydown", function(e) {
-            e.keyCode == 80 && self.toggle();
+            if (e.keyCode == 80)
+                self.toggle();
         }, false);
 
         // Pause on tab switch, leaving window;
-        visible.on("blur", function() { 
-            self.pause(); 
+        visible.on("blur", function() {
+            self.pause();
         });
 
         this.toggle = function() {
@@ -23,7 +24,7 @@ define(function(require) {
                 this.unpause();
             else
                 this.pause();
-        }
+        };
 
         this.pause = function() {
             var self = this;
@@ -37,7 +38,7 @@ define(function(require) {
                 m.update = function(){};
             });
             this.paused = true;
-        }
+        };
         this.unpause = function() {
             var self = this;
 
@@ -48,7 +49,7 @@ define(function(require) {
                 modules[i].update = update;
             });
             this.paused = false;
-        }
+        };
 
     };
     return Pauser;

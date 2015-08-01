@@ -1,15 +1,15 @@
 define(function(require) {
 
     // A wall is a simple boundary for the bounds of the world
-    // 
+    //
     // If a player collides with a wall and calls alignPlayer passing itself
     // then that player will be be moved. If wall.type == Wall.RIGHT, then the
     // character will be moved to the left side of the wall, etc.
 
     var Wall = function(game, settings) {
 
-        if (settings.type == undefined || 
-                settings.target == undefined) {
+        if (settings.type === undefined ||
+                settings.target === undefined) {
             throw("Error: Wall settings must include target, and type");
         }
 
@@ -26,7 +26,7 @@ define(function(require) {
         var defaults = {
             width : 50,
             shift : 2
-        }
+        };
 
         this.boundingBox = game.c.collider.RECTANGLE;
         this.center = { x: 0, y: 0 };
@@ -34,29 +34,29 @@ define(function(require) {
         this.color = "#f00";
 
         if (this.type == Wall.LEFT) {
-            this.center.x = 
+            this.center.x =
                 target.center.x - target.size.x / 2 - defaults.width / 2 + defaults.shift;
             this.center.y = target.center.y;
             this.size.x = defaults.width;
             this.size.y = target.size.y;
         } else if (this.type == Wall.RIGHT) {
-            this.center.x = 
+            this.center.x =
                 target.center.x + target.size.x / 2 + defaults.width / 2 - defaults.shift;
             this.center.y = target.center.y;
             this.size.x = defaults.width;
             this.size.y = target.size.y;
         } else if (this.type == Wall.TOP) {
             this.center.x = target.center.x;
-            this.center.y = 
+            this.center.y =
                 target.center.y - target.size.y / 2 - defaults.width / 2 + defaults.shift;
             this.size.x = target.size.x;
-            this.size.y = defaults.width 
+            this.size.y = defaults.width;
         } else if (this.type == Wall.BOTTOM) {
             this.center.x = target.center.x;
-            this.center.y = 
+            this.center.y =
                 target.center.y + target.size.y / 2 + defaults.width / 2 - defaults.shift;
             this.size.x = target.size.x;
-            this.size.y = defaults.width 
+            this.size.y = defaults.width;
         }
 
 
@@ -65,7 +65,7 @@ define(function(require) {
         //         drawRect(this, ctx, this.color);
         // }
 
-    }
+    };
 
     Wall.prototype = {};
     Wall.prototype.alignPlayer = function(player) {
@@ -78,15 +78,15 @@ define(function(require) {
             player.center.y = this.center.y + this.size.y / 2 + player.size.y / 2;
         else if (this.type == Wall.BOTTOM)
             player.center.y = this.center.y - this.size.y / 2 - player.size.y / 2;
-    }
+    };
 
     // Convenience method to make four walls around world(view)
     Wall.makeBoundaries = function(game) {
         var c = game.c;
-        var target = { 
+        var target = {
             center : c.renderer.getViewCenter(),
             size : c.renderer.getViewSize()
-        }
+        };
         c.entities.create(Wall, {
             type: Wall.LEFT,
             target: target
@@ -104,11 +104,11 @@ define(function(require) {
             target: target
         });
     };
-        
+
     Wall.LEFT   = 0;
     Wall.RIGHT  = 1;
     Wall.TOP    = 2;
     Wall.BOTTOM = 3;
 
     return Wall;
-})
+});

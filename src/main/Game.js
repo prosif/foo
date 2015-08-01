@@ -10,19 +10,19 @@ define(function(require) {
     var Game = function() {
         var self = this;
 
-        this.c = new Coquette(this, 
-                "canvas", 
-                Global.Game.width, 
-                Global.Game.height, 
+        this.c = new Coquette(this,
+                "canvas",
+                Global.Game.width,
+                Global.Game.height,
                 Global.Game.color);
 
         // Main coquette modules
         this.timer = new Timer();
         this.scener = new Scener(this, Scenes);
-        this.pauser = new Pauser(this, 
+        this.pauser = new Pauser(this,
                 [this.c.entities, this.c.collider, this.c.renderer]);
 
-        this.update = function(delta) { 
+        this.update = function(delta) {
             this.timer.update(delta);
             this.scener.update(delta);
         }

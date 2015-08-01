@@ -3,12 +3,12 @@ define(function(require) {
     var deepFreeze = require("mixins/Utils").deepFreeze;
 
     var Config = {
-        Player: {     
+        Player: {
             size: {x: 20, y: 20},
             color : "#000",
-            speed: 80 / 17, // pixels per 17ms 
+            speed: 80 / 17, // pixels per 17ms
             bulletDelay: 30,
-            bulletDeviation: 0.35 
+            bulletDeviation: 0.35
         },
         Bullet: {
             delay: 30,

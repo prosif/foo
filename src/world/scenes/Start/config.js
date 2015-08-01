@@ -15,7 +15,7 @@ define(function(require) {
                 disorder: 0.1,
             }
         }
-    }
+    };
 
     return deepFreeze(Config);
 });

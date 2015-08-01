@@ -15,7 +15,7 @@ define(function(require){
         xMax = xMax || 1;
         yMax = yMax || 1;
 
-        return { 
+        return {
             x: Random.between(0, xMax),
             y: Random.between(0, yMax)
         }

@@ -10,7 +10,7 @@ define(function(require) {
             color:"#efefef"
         },
 
-        // Completely namespace player and player's bullet 
+        // Completely namespace player and player's bullet
         Player: {
             Player: {},
             Bullet: {
@@ -18,7 +18,7 @@ define(function(require) {
                 disorder: 0.1,
             }
         }
-    }
+    };
 
     return deepFreeze(Config);
 });

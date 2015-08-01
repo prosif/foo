@@ -17,9 +17,9 @@ define(function(require){
         // TODO: Extend to take a function as an expr
         assert: function(str, expr) {
             if (!expr)
-                throw str; 
+                throw str;
             return true;
-        }, 
+        },
 
         // Freeze all props on object recursively
         deepFreeze: function deepFreeze(obj) {

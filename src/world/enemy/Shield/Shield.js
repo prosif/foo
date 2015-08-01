@@ -1,10 +1,10 @@
-define(["require", 
-        "player/Player", 
+define(["require",
+        "player/Player",
         "bullet/Bullet",
         "engine/Timer",
         "mixins/Utils"],
 
-    function(require, 
+    function(require,
              Player,
              Bullet,
              Timer,
@@ -22,7 +22,7 @@ define(["require",
             self.shielded = !self.shielded;
         }
 
-        this.timer.every(this.shieldDelay, this.toggleShield); 
+        this.timer.every(this.shieldDelay, this.toggleShield);
 
         this.update = function(delta) {
             var temp;
@@ -32,17 +32,17 @@ define(["require",
             // Try to set enemy to target Player
             if (!this.target) {
                 temp = game.c.entities.all(Player);
-                if (temp.length)  
+                if (temp.length)
                     this.target = temp[0]
                 else
                     return
             }
-         
+
             this.followTarget(delta, this.target);
         };
 
         this.followTarget = function(delta, target) {
-            // The initial enemy/target position diffs 
+            // The initial enemy/target position diffs
             // (x/y/hypotenuse)
             var xdiff, ydiff, hdiff;
             xdiff = target.center.x - this.center.x;

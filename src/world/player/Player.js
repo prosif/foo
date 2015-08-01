@@ -18,19 +18,19 @@ define(function(require) {
         Utils.extend(this, Sprite, ["drawCircle"]);
 
         // Bullet config
-        var bsettings = 
+        var bsettings =
             Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
-         
+
         // State
         this.lastBullet = 0;
-        this.boundingBox = game.c.collider.CIRCLE,
+        this.boundingBox = game.c.collider.CIRCLE;
         this.vel = { x: 0, y: 0 };
         this.center = { x: 400, y: 200 };
 
         this.update = function(delta) {
             this.move(delta);
             this.shoot(delta);
-        }
+        };
 
         this.move = function(delta) {
 
@@ -42,11 +42,11 @@ define(function(require) {
             ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
 
             // The diffs of initial/final player position
-            // theta is the angle of motion relative to the ground 
+            // theta is the angle of motion relative to the ground
             var x, y, h, theta;
             h = this.speed / 17;
             theta = Math.atan2(ydir, xdir);
-            this.vel.x = h * Math.cos(theta) * (xdir == 0 ? 0 : 1);
+            this.vel.x = h * Math.cos(theta) * (xdir === 0 ? 0 : 1);
             this.vel.y = h * Math.sin(theta);
 
             this.center.x += this.vel.x * delta;
@@ -54,7 +54,7 @@ define(function(require) {
 
             // Force player coordinates within world
             this.restrict();
-        }
+        };
 
         this.restrict = function() {
 
@@ -68,9 +68,9 @@ define(function(require) {
             minx = this.size.x / 2 + pad;
             maxy = Global.Game.height - this.size.x / 2 - pad;
             miny = this.size.x / 2 + pad;
-            this.center.x = Math.max(Math.min(this.center.x, maxx), minx); 
-            this.center.y = Math.max(Math.min(this.center.y, maxy), miny); 
-        }
+            this.center.x = Math.max(Math.min(this.center.x, maxx), minx);
+            this.center.y = Math.max(Math.min(this.center.y, maxy), miny);
+        };
 
         this.shoot = function(delta) {
 
@@ -78,10 +78,10 @@ define(function(require) {
 
             // The direction of bullet attack
             var left, right, down, up;
-            left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H); 
-            right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L); 
-            up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K); 
-            down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J); 
+            left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H);
+            right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L);
+            up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K);
+            down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J);
 
             var bxdir, bydir, btheta;
             bxdir = (right ? 1 : left ? -1 : 0);
@@ -97,7 +97,7 @@ define(function(require) {
                     var xtheta = btheta + (R.scale(bsettings.disorder) * any );
                     var xcomp = Math.cos(xtheta);
                     var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
-                    
+
                     Utils.extend(bsettings, {
                         center: {
                             x: this.center.x,
@@ -108,7 +108,7 @@ define(function(require) {
                             y: bsettings.speed / 17 * ycomp,
                         }
                     });
-                    game.c.entities.create(Bullet, bsettings);              
+                    game.c.entities.create(Bullet, bsettings);
                 }
             }
 
@@ -116,7 +116,7 @@ define(function(require) {
 
         this.collision = function(other) {
             if (other instanceof Micro) {
-                game.c.entities.destroy(this); 
+                game.c.entities.destroy(this);
                 if (Global.DEBUG) {
                     other.color = "#f00";
                     other.draw(this.c.renderer.getCtx());
@@ -125,14 +125,14 @@ define(function(require) {
                 }
                 game.pauser.pause();
             }
-        }
+        };
 
         this.draw = function(ctx) {
             ctx.strokeStyle = this.color || "#f00";
             ctx.lineWidth = 4;
             this.drawCircle(ctx, this.size.x / 2 - 1);
-        }
+        };
 
-    }
+    };
     return Player;
 });

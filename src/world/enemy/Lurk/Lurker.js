@@ -5,7 +5,7 @@ define(function(require){
     var Timer = require("engine/Timer");
     var bConfig = require("bullet/Config");
     var Utils = require("engine/Utils");
-    
+
     var Lurker = function(game, settings) {
 
         // Avoid circular dependencies (don't place before Enemy)
@@ -34,7 +34,7 @@ define(function(require){
             // Try to set enemy to target Player
             if (!this.target) {
                 temp = game.c.entities.all(Player);
-                if (temp.length)  
+                if (temp.length)
                     this.target = temp[0]
                 else
                     return
@@ -53,7 +53,7 @@ define(function(require){
                     x: -1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
                     y: 0// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
                 }
-            };          
+            };
 
             var bullet2Settings = {
                 center: {
@@ -64,8 +64,8 @@ define(function(require){
                     x: 1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
                     y: 0// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
                 }
-            };         
-            
+            };
+
             var bullet3Settings = {
                 center: {
                     x: this.center.x,
@@ -75,7 +75,7 @@ define(function(require){
                     x: 0,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
                     y: 1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
                 }
-            };         
+            };
 
             var bullet4Settings = {
                 center: {
@@ -86,12 +86,12 @@ define(function(require){
                     x: 0,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
                     y: -1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
                 }
-            };         
+            };
 
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet1Settings, bConfig.Bullet)); 
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet2Settings, bConfig.Bullet)); 
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet3Settings, bConfig.Bullet)); 
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet4Settings, bConfig.Bullet)); 
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet1Settings, bConfig.Bullet));
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet2Settings, bConfig.Bullet));
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet3Settings, bConfig.Bullet));
+            game.c.entities.create(EnemyBullet, Utils.extend(bullet4Settings, bConfig.Bullet));
         }
 
         this.move = function(delta){
@@ -106,7 +106,7 @@ define(function(require){
         }
 
         this.followTarget = function(delta, target) {
-            // The initial enemy/target position diffs 
+            // The initial enemy/target position diffs
             // (x/y/hypotenuse)
             var xdiff, ydiff, hdiff;
             xdiff = target.center.x - this.center.x;
@@ -141,7 +141,7 @@ define(function(require){
                        , rect.size.x
                        , rect.size.y);
         }
-        
+
         this.timer.every(5000, function(){
             this.shoot();
         }.bind(this));

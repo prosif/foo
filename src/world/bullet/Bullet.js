@@ -1,6 +1,6 @@
-define(["require", 
-        "world/player/Player", 
-        "mixins/Sprite", 
+define(["require",
+        "world/player/Player",
+        "mixins/Sprite",
         "mixins/Utils"],
 
     function(require, Player, Sprite, Utils) {
@@ -13,7 +13,7 @@ define(["require",
         Player = require('world/player/Player');
 
         Utils.extend(this, Sprite, ["drawFilledCircle"]);
-        Utils.extend(this, {     
+        Utils.extend(this, {
             size: {x: 5, y: 5},
             color : "#000",
             boundingBox : game.c.collider.CIRCLE,

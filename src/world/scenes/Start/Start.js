@@ -21,10 +21,10 @@ define(function(require) {
             // define what happens at beginning
 
             this.c.entities.create(Player);
-            makeAvoider(); 
-            makeMicro(); 
+            makeAvoider();
+            makeMicro();
             setInterval(function() {
-                makeMicro(); 
+                makeMicro();
                 makeAvoider();
             }, 100);
             Wall.makeBoundaries(this);
@@ -40,18 +40,18 @@ define(function(require) {
             // define cleanup/scene transition
             // ex. this.game.scener.start(this.next);
         }
-    }
+    };
 
     // make n micro enemies
     var makeMicro = (function (n) {
-        if (self.c.entities.all(Micro).length >= n || 
-                self.c.entities._entities.length >= Scene.MAX_ENEMIES) 
-            return
+        if (self.c.entities.all(Micro).length >= n ||
+                self.c.entities._entities.length >= Scene.MAX_ENEMIES)
+            return;
 
                 var center = { x: 0, y: 0 };
 
         if (R.bool()) {
-            center.x = R.bool() ? Global.Game.width : 0; 
+            center.x = R.bool() ? Global.Game.width : 0;
             center.y = R.scale(Global.Game.height);
         } else {
             center.y = R.bool() ? Global.Game.height : 0;
@@ -63,21 +63,21 @@ define(function(require) {
             // speed : 500 / 17,
             speed : 100 / 17,
 
-            // How far micro's move away from each other  
+            // How far micro's move away from each other
             away: 0,
 
-            // Micro's stay within distance from target  
+            // Micro's stay within distance from target
             within: 50,
 
             // Micro divergence from following player
             jitter: 0.02
-        }); 
+        });
     }.bind(null, Scene.MAX_MICROS));
 
     var makeAvoider = (function (n) {
-        if (self.c.entities.all(Avoid).length >= n || 
+        if (self.c.entities.all(Avoid).length >= n ||
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
-            return
+            return;
 
                 var center = R.point(Global.Game.width, Global.Game.height);
 
@@ -86,17 +86,17 @@ define(function(require) {
             // speed : 10 / 17,
             speed : 10 / 17,
 
-            // How far micro's move away from each other  
+            // How far micro's move away from each other
             away: 1,
 
-            // Micro's stay within distance from target  
+            // Micro's stay within distance from target
             within: 250,
             // within: 100,
 
             // Micro divergence from following player
             jitter: 0.02
-        }); 
+        });
     }.bind(null, Scene.MAX_AVOIDERS));
     return Start;
-}); 
+});
 
