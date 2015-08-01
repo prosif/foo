@@ -6,7 +6,7 @@ define(function(require) {
         Scene: {
             MAX_ENEMIES: 250,
             MAX_MICROS: 0,
-            MAX_AVOIDERS: 1,
+            MAX_AVOIDERS: 5,
             color:"#efefef"
         },
 
@@ -14,8 +14,8 @@ define(function(require) {
         Player: {
             Player: {},
             Bullet: {
-                delay: 100,
-                disorder: 0.1,
+                delay: 10,
+                disorder: 0.3,
             }
         },
         

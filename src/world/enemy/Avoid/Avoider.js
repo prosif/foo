@@ -69,7 +69,6 @@ define(function(require){
                     y: 40
                 }
             })) {
-                console.log("WOO");
                 this.c.entities.destroy(this);
             }
                 this.moveAway(other, 10);
