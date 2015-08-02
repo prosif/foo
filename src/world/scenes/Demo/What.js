@@ -21,9 +21,8 @@ define(function(require) {
     What.prototype = {
         init: function() {
             this.isActive = true; 
-            var thing = this.c.entities.create(Splash, this); 
-            this.splashScreen = thing;
-            Wall.makeBoundaries(this);
+            makeFoo();
+            Wall.makeBoundaries(this);   
         },
         active:function() {
             // return true if scene is active
@@ -36,11 +35,79 @@ define(function(require) {
             if (S){this.isActive=false;}
         },
         exit: function() {
-            this.c.entities.destroy(this.splashScreen);
+            var length = this.c.entities.all(Micro).length;
+            //this.c.entities.destroy(this.c.entities.all(Micro));
+            //console.log(length);
+            for(var k = 0; k < length; k++){
+                var enemy = this.c.entities.all(Micro)[k];
+                this.c.entities.destroy(enemy);
+            }
             this.scener.start("Demo");
         }
     };
+    
+    var makeFoo = function(){
+        // f
+        for(var i = 0; i < 20; i++){
+            this.c.entities.create(Micro, {
+                center: {x: 0, y: 0},
+                speed: 100/17,
+                away: 0,
+                within: 0,
+                jitter: 0.02,
+                target: {center:{x: 300 + 3*i, y: 100}}
+            });
+        }
+        for(var i = 0; i < 30; i++){
+            this.c.entities.create(Micro, {
+                center: {x: 0, y: 0},
+                speed: 100/17,
+                away: 0,
+                within: 0,
+                jitter: 0.02,
+                target: {center:{x: 300, y: 100 + 4*i}}
+            });
+        }
+        for(var i = 0; i < 20; i++){
+            this.c.entities.create(Micro, {
+                center: {x: 0, y: 0},
+                speed: 100/17,
+                away: 0,
+                within: 0,
+                jitter: 0.02,
+                target: {center:{x: 300 + 3*i, y: 160}}
+            });
+        }
 
-   return What;
+        // o
+        for(var i = 0; i < 32; i++){
+            var x = 410 + 35 * Math.cos((360/32) * i),
+                y = 180 + 35 * Math.sin((360/32) * i);
+
+            this.c.entities.create(Micro, {
+                center: {x: 0, y: 0},
+                speed: 100/17,
+                away: 0,
+                within: 0,
+                jitter: 0.02,
+                target: {center:{x: x , y: y}}
+            });
+        }
+         for(var i = 0; i < 32; i++){
+            var x = 500 + 35 * Math.cos((360/32) * i),
+                y = 180 + 35 * Math.sin((360/32) * i);
+
+            this.c.entities.create(Micro, {
+                center: {x: 0, y: 0},
+                speed: 100/17,
+                away: 0,
+                within: 0,
+                jitter: 0.02,
+                target: {center:{x: x , y: y}}
+            });
+        }
+    };
+
+    return What;
 });
 

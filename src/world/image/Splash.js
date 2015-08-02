@@ -12,136 +12,14 @@ define(function(require) {
     var Splash = function(game, settings) {
 
         this.c = game.c;
-        //console.log(settings);
-        // Config
-        //Utils.extend(Utils.extend(this, Config.Player), settings.Player);
-        //Utils.extend(this, Sprite, ["drawCircle"]);
-
-        // Bullet config
-        //var bsettings =
-        //    Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
-
-        // State
-        //this.lastBullet = 0;
-        //this.boundingBox = game.c.collider.CIRCLE;
-        //this.vel = { x: 0, y: 0 };
-        //this.center = { x: 400, y: 200 };
-
         this.update = function(delta) {
-            //var Input = game.c.inputter;
-            //var S = Input.isDown(Input.S);
-            //if (S){this.playGame();}
-
-            //    this.move(delta);
-            //    this.shoot(delta);
-            //console.log(delta);
         };
         
-        this.playGame = function(){
-            console.log("so you want to start the game huh?");
-        };
-
-        //this.move = function(delta) {
-
-//            
-            // The direction of motion
-//            var xdir, ydir;
-//            xdir = (Input.isDown(Input.D) ? 1 : (Input.isDown(Input.A) ? -1 : 0));
-//            ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
-
-            // The diffs of initial/final player position
-            // theta is the angle of motion relative to the ground
-//            var x, y, h, theta;
-//            h = this.speed / 17;
-//            theta = Math.atan2(ydir, xdir);
-//            this.vel.x = h * Math.cos(theta) * (xdir === 0 ? 0 : 1);
-//            this.vel.y = h * Math.sin(theta);
-
-//            this.center.x += this.vel.x * delta;
-//            this.center.y += this.vel.y * delta;
-
-            // Force player coordinates within world
-//            this.restrict();
-//        };
-
-//        this.restrict = function() {
-
-            // min/max values for player location in world
-//            var minx, maxx, miny, maxy;
-
-            // pad accounts for the stroke width affecting player dimensions
-//            var pad = 3;
-
-//            maxx = Global.Game.width - this.size.x / 2 - pad;
-//            minx = this.size.x / 2 + pad;
-//            maxy = Global.Game.height - this.size.x / 2 - pad;
-//            miny = this.size.x / 2 + pad;
-//            this.center.x = Math.max(Math.min(this.center.x, maxx), minx);
-//            this.center.y = Math.max(Math.min(this.center.y, maxy), miny);
-//        };
-
-//        this.shoot = function(delta) {
-
-//            var Input = game.c.inputter;
-
-            // The direction of bullet attack
-//            var left, right, down, up;
-//            left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H);
-//           //            up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K);
-//            down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J);
-
-//            var bxdir, bydir, btheta;
-//            bxdir = (right ? 1 : left ? -1 : 0);
-//            bydir = (down ? 1 : up ? -1 : 0);
-//            btheta = Math.atan2(bydir, bxdir);
-
-            // If gun has direction, shoot
-//            if (bxdir || bydir) {
-//                if ((game.timer.getTime() - this.lastBullet) > bsettings.delay) {
-//                    this.lastBullet = game.timer.getTime();
-
-//                    var any =  R.any(-1, 1);
-//                    var xtheta = btheta + (R.scale(bsettings.disorder) * any );
-//                    var xcomp = Math.cos(xtheta);
-//                    var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
-
-//                    Utils.extend(bsettings, {
-//                        center: {
-//                            x: this.center.x,
-//                            y: this.center.y,
-//                        },
-//                        vel: {
-//                            x: bsettings.speed / 17 * xcomp,
-//                            y: bsettings.speed / 17 * ycomp,
-//                        }
-//                    });
-//                    game.c.entities.create(Bullet, bsettings);
-//                }
-//            }
-
-//        };
-
-//        this.collision = function(other) {
-//            if (other instanceof Micro) {
-//                game.c.entities.destroy(this);
-//                if (Global.DEBUG) {
-//                    other.color = "#f00";
-//                    other.draw(this.c.renderer.getCtx());
-                    // this.color = "#0f0";
-                    // this.draw(this.c.renderer.getCtx());
-//                }
-//                game.pauser.pause();
-//            }
-//        };
-
         this.draw = function(ctx) {
-            ctx.strokeStyle = this.color || "#f00";
-            ctx.lineWidth = 4;
-            ctx.rect(20, 20, 150, 100);
-            ctx.stroke();
-            //ctx.drawRect(10, 10, 10, 10);
-            //this.drawRect(ctx, 10, 10, 10, 10);//10)//this.size.x / 2 - 1);
-        };
+            ctx.font = "12px Verdana";
+            ctx.fillText("foo", 600, 300);
+            ctx.fill();
+       };
 
     };
     return Splash;
