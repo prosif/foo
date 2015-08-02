@@ -10,7 +10,7 @@ define(function(require) {
         var paused = false;
         var store = {};
         var cur;
-
+        game.scener = this;
         scenes.forEach(function(S){
             var s = new S(game);
 
@@ -24,8 +24,9 @@ define(function(require) {
 
                 if (func == "active")
                     s[func] = getTrue;
-                else
+                else{
                     s[func] = doNothing;
+                }
             });
 
         });
@@ -41,7 +42,7 @@ define(function(require) {
                 if (cur.active()){
                     cur.update(delta);
                 } else {
-                    cur.exit();
+                   cur.exit();
                 }
             }
         };

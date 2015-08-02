@@ -28,8 +28,9 @@ define(function(require) {
         }
 
         // Create world boundaries
-//        this.scener.start("Demo");
+//        this.scener.start("Demo");/
         this.scener.start("What");
+//        this.scener.start("Demo");
     };
     return Game;
 });

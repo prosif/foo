@@ -9,8 +9,6 @@ define(function(require) {
     var Utils = require("mixins/Utils");
     var Wall = require("world/Wall/Wall");
     
-    console.log("yo");
-
     var Splash = function(game, settings) {
 
         this.c = game.c;
