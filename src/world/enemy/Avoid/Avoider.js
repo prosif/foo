@@ -15,6 +15,10 @@ define(function(require){
         };
 
         this.c = game.c;
+
+        // list of bullets that collided with fake external shell
+        this.threats = [];
+
         this.boundingBox = game.c.collider.CIRCLE;
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
         Utils.extend(this, defaults);
@@ -51,13 +55,26 @@ define(function(require){
             speed: this.speed,
             vel: this.vel,
             within: this.within,
-            away: 0,
+            away: this.away,
             jitter: 0,
         }, this.target);
+
+        this.avoid();
 
         // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
         this.center.x += this.vel.x * delta;
         this.center.y += this.vel.y * delta;
+
+        //  Clear threats array, repopulated in this.collision
+        this.threats.length = 0;
+    };
+
+    Avoider.prototype.avoid = function() {
+        // Net velocity of threats
+        var vel = { x: 0, y: 0 };
+
+        // this.threats.forEach(function(threat) {
+        // });
     };
 
     Avoider.prototype.collision = function(other) {
@@ -71,8 +88,10 @@ define(function(require){
             })) {
                 this.c.entities.destroy(this);
             }
-                this.moveAway(other, 10);
-                // set vel perpendic to bullet traject
+
+            this.threats.push(other);
+            // this.moveAway(other, 3);
+            // set vel perpendic to bullet traject
         }
 
         // // if intersecting target, don't do change position!
