@@ -39,3 +39,6 @@ direction the player heads. `restrict` changes the players coordinates to be
 within the boundaries effectively negating the velocity in the direction
 facing the wall. As a result the velocity perpendicular to the wall with
 magnitude less than the indended speed.
+
+8/2/2015
+To add: only pause on tab if not on splash screen
