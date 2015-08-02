@@ -35,13 +35,11 @@ define(function(require) {
             if (S){this.isActive=false;}
         },
         exit: function() {
-            var length = this.c.entities.all(Micro).length;
-            //this.c.entities.destroy(this.c.entities.all(Micro));
-            //console.log(length);
-            for(var k = 0; k < length; k++){
-                var enemy = this.c.entities.all(Micro)[k];
-                this.c.entities.destroy(enemy);
-            }
+            var length = this.c.entities.all(Micro).length; 
+            var self = this;
+            this.c.entities.all(Micro).forEach(function(enemy){
+                self.c.entities.destroy(enemy);
+            });
             this.scener.start("Demo");
         }
     };
