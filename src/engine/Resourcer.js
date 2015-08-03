@@ -9,10 +9,10 @@
     var Resourcer = function(arr, onReady) {
         var self = this;
         queue = arr;
-    
+
         this.get = function(name) {
             var thing = resources[name];
-            if (!thing) {throw  (name + " was not found")};
+            if (!thing) {throw(name + " was not found")};
             return thing;
         };
         this.isReady = function() {
@@ -20,7 +20,7 @@
         };
         this.load = function(callback) {
             var i, total, onLoad, name, url, rsc, req;
-            total = queue.length; 
+            total = queue.length;
 
             for (i = 0; i < total; i++) {
 
@@ -30,23 +30,23 @@
                 if (isJson(url)) {
                     rsc = {};
                     req = new XMLHttpRequest();
-                    req.onload = function() { 
+                    req.onload = function() {
                         counter++;
-                        rsc.json = JSON.parse(this.responseText); 
+                        rsc.json = JSON.parse(this.responseText);
                         finished = counter === total;
                         window.durp = rsc;
                         if (callback) callback(name,counter,total);
                         if (finished && onReady) onReady();
                     };
                     req.open("get", url, true);
-                    req.overrideMimeType("application/json"); 
+                    req.overrideMimeType("application/json");
                     req.send();
 
                 } else {
 
                     // function called when rsc is ready
                     onLoad = (function(name,index) {
-                        return function(){ 
+                        return function(){
                             counter++;
                             finished = counter === total;
                             if (finished && onReady) onReady();

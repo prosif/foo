@@ -1,18 +1,18 @@
-/* 
+/*
 
    Camera allows for cinematic transforms of the view, like panning, zooming, etc.
 
-   NOTES ON SETTINGS: 
+   NOTES ON SETTINGS:
         x, y are transforms of the center of the viewport
         permanent=true, is default, if set to false, transforms will be undone after
         scale=0, the view will be scaled 2^0
-    
+
 
    var camera = new Camera(game);
-       camera.transform({   
+       camera.transform({
             type: Camera.RELATIVE, // transforms are relative to current view
             x: 100,
-            y: 100, 
+            y: 100,
             scale: 10,
             time: 500,
             permanent: true,
@@ -21,11 +21,11 @@
 */
 var Camera = function(game) {
     var renderer = game.c.renderer;
-      
+
     var old, dist, center, size, timer, callback, position, scale, transformation;
 
     old = {};                 // copy of the view's center
-    dist = {};                // vertical/horiz distance 
+    dist = {};                // vertical/horiz distance
     center = {};              // new center which is current transform
     size = renderer.getViewSize();
     timer = {};               // track time from update deltas
@@ -51,15 +51,15 @@ var Camera = function(game) {
           transformation.ctx.scale(s, s);
           size.x /= s;
           size.y /= s;
-          //center.x += (size.x - size.x/scale) / 2 * ratio; 
-          //center.y += (size.y - size.y/scale) / 2 * ratio; 
+          //center.x += (size.x - size.x/scale) / 2 * ratio;
+          //center.y += (size.y - size.y/scale) / 2 * ratio;
 
         })(Math.pow(scale, ratio));
 
         if (!active()) {
             exit.bind(this)();
         }
-    }
+    };
 
     var active = function() {
         return timer.getTime() < transformation.time;
@@ -73,7 +73,7 @@ var Camera = function(game) {
 
         callback = cb || doNothing;
         timer = new Timer();
-        
+
         // transformtion defaults
         var defaults = {
             type: Camera.RELATIVE,
@@ -83,18 +83,18 @@ var Camera = function(game) {
             scale: 0,
             permanent: true,
             ctx : renderer.getCtx()
-        }
-          
+        };
+
         // override defaults with options obj
-        for (prop in defaults) {
-            transformation[prop] = options[prop] !== undefined ? options[prop] : defaults[prop]; 
+        for (var prop in defaults) {
+            transformation[prop] = options[prop] !== undefined ? options[prop] : defaults[prop];
         }
 
         if (transformation.type === Camera.RELATIVE) {
             dist.x = transformation.x;
             dist.y = transformation.y;
         } else { // Camera.ABSOLUTE
-            dist.x = transformation.x - old.x;             
+            dist.x = transformation.x - old.x;
             dist.y = transformation.y - old.y;
         }
         scale = Math.pow(2, transformation.scale);
@@ -109,12 +109,12 @@ var Camera = function(game) {
             // undo transforms
             size.x *= scale;
             size.y *= scale;
-            var reverseScale = Math.pow(2, -transformation.scale)
-            transformation.ctx.scale( reverseScale, reverseScale)
-            renderer.setViewCenter(old); 
+            var reverseScale = Math.pow(2, -transformation.scale);
+            transformation.ctx.scale( reverseScale, reverseScale);
+            renderer.setViewCenter(old);
         } else {
-            center = {}; 
-            old = {}; 
+            center = {};
+            old = {};
         }
 
         callback();
@@ -122,11 +122,11 @@ var Camera = function(game) {
 
     var doNothing = function(delta) {};
 
-    return { 
+    return {
         transform : transform,
         update : doNothing
     };
-}
+};
 
 Camera.RELATIVE = 0;
 Camera.ABSOLUTE = 1;

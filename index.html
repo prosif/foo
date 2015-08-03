@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="lib/require.js"></script>
+        <script src="node_modules/requirejs/require.js"></script>
         <style type="text/css">
             body {
                 width  : 800px;
@@ -15,17 +15,26 @@
     <script>
         requirejs.config({
             baseUrl: 'src',
+            // Include files outside 'src' 
             paths: {
-                coquette: "../lib/coquette"
+                coquette: "../node_modules/coquette/coquette",
+                ifvisible: "../node_modules/ifvisible.js/src/ifvisible"
             },
+            // Link non require libraries
             shim: {
                 'coquette': {
                     exports: 'Coquette'
+                },
+                'ifvisible': {
+                    exports: 'Ifvisible'
                 },
             }
         });
 
         // Start the main app logic.
-        requirejs(['Game'], function (Game) { Game(); });
+        requirejs(['main/Game'], function (Game) { 
+            //new Game(); 
+            Game(); 
+        });
     </script>
 </html>
