@@ -9,10 +9,23 @@ define(function(require){
         ctx.fillStyle = color;
 
         var x, y, w, h;
-        x = this.center.x - this.size.x/3;
+        x = this.center.x - this.size.x/2;
         y = this.center.y - this.size.y/2;
         w = this.size.x;
         h = this.size.y;
+
+        ctx.fillRect(x, y, w, h);
+    };
+
+    Sprite.drawPoint = function(ctx, width) {
+        var color = this.color || "#fff";
+        width = width || 2;
+        ctx.fillStyle = color;
+
+        var x, y, w, h;
+        x = this.center.x - width/2;
+        y = this.center.y - width/2;
+        w = h = width;
 
         ctx.fillRect(x, y, w, h);
     };

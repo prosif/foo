@@ -2,18 +2,19 @@ define(function(require){
 
     var Utils = require("mixins/Utils");
 
-    var Maths = {
+    var Geometry = {
+        perpendicularRayThroughPoint: function(ray, point) {
+        },
 
-        // Returns the intersection of the ray and circle,
-        // which is closest to the ray's start (.center prop)
-        closestIntersectionOfRayAndCircle: function(ray, circle) {
+        // Returns an array of intersections the first is the closest to the
+        // ray's start (.center prop)
+        intersectionsOfRayAndCircle: function(ray, circle) {
             Utils.assert("Argument ray must have a valid velocity", 
                     ray.vel &&
                     typeof(ray.vel.x + ray.vel.y) == "number");
             Utils.assert("Arguments ray and circle must have centers", 
                     ray.center && circle.center &&
                     typeof(ray.center.x + ray.center.y + circle.center.x + circle.center.y) == "number");
-
 
             // ray center
             var rx, ry;
@@ -58,13 +59,15 @@ define(function(require){
                 var o;
                 o = (a * a) + ((z - b) * (z - b)) - (r * r);
 
+                determinant = n * n - 4 * k * o;
+
+                if (determinant < 0)
+                    return [];
+
                 // two possible values for x
                 x1 = (-n + Math.sqrt(n * n - 4 * k * o)) / 2 / k;
                 x2 = (-n - Math.sqrt(n * n - 4 * k * o)) / 2 / k;
 
-                determinant = n * n - 4 * k * o;
-
-                Utils.assert("A solution does not exist", determinant >= 0);
 
                 // two possible values for y
                 y1 = m * x1 + z;
@@ -76,7 +79,14 @@ define(function(require){
                 x1 = x2 = rx;
                 y1 = -Math.sqrt((r * r) - ((x1 - a) * (x1 - a))) + b;
                 y2 = Math.sqrt((r * r) - ((x2 - a) * (x2 - a))) + b;
+
+                determinant = (r * r) - ((x1 - a) * (x1 - a))
+
+                if (determinant < 0)
+                    return [];
             }
+
+            // Utils.assert("A solution does not exist", determinant >= 0);
 
             // console.log("x1", x1, "y1", y1, "x2", x2, "y2", y2);
             // find soln with shortest dist to ray's center
@@ -100,30 +110,41 @@ define(function(require){
             // set soln x and y
             var x, y;
 
+            var solutions = [];
+
+            var p1 = {
+                x: x1,
+                y: y1,
+            };
+
+            var p2 = {
+                x: x2,
+                y: y2,
+            };
+
+            // Only push solutions where s[1,2] is positive, meaning solutions in the direction of the ray
             if (s1 > 0 && s2 > 0) {
                 if (d1 < d2) {
-                    x = x1;
-                    y = y1;
+                    solutions.push(p1);
+                    solutions.push(p2);
                 } else {
-                    x = x2;
-                    y = y2;
+                    solutions.push(p2);
+                    solutions.push(p1);
                 }
             } else if (s1 > 0) {
-                x = x1;
-                y = y1;
+                solutions.push(p1);
             } else {
-                x = x2;
-                y = y2;
+                solutions.push(p2);
             }
-            // console.log("d1", d1, "d2", d2, "b", b);
-            // console.log("y1", y1, "y2", y2, "x1", x1, "x2", x2);
 
-            return {
-                x: x,
-                y: y
-            }
+            if (determinant == 0)
+                solutions.length = 1;
+            else if (determinant < 0)
+                solutions.length = 0;
+
+            return solutions;
         },
 
     }
-    return Maths;
+    return Geometry;
 });

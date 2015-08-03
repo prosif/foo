@@ -6,7 +6,7 @@ define(function(require) {
         Scene: {
             MAX_ENEMIES: 250,
             MAX_MICROS: 0,
-            MAX_AVOIDERS: 5,
+            MAX_AVOIDERS: 1,
             color:"#efefef"
         },
 
@@ -21,7 +21,7 @@ define(function(require) {
         
         Avoid: {
             // speed : 10 / 17,
-            speed : 100 / 17,
+            speed : 10 / 17,
 
             // How far enemyies move away from each other
             away: 0,

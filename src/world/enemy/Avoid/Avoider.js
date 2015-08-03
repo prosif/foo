@@ -5,6 +5,8 @@ define(function(require){
     var Wall = require("world/Wall/Wall");
     var Sprite = require("mixins/Sprite");
     var Maths = require("coquette").Collider.Maths;
+    var Geom = require("mixins/Geometry");
+    var DEBUG = require("main/config").DEBUG;
 
     var Avoider = function(game, settings) {
         var defaults = {
@@ -15,6 +17,7 @@ define(function(require){
         };
 
         this.c = game.c;
+        this.game = game;
 
         // list of bullets that collided with fake external shell
         this.threats = [];
@@ -23,16 +26,22 @@ define(function(require){
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
         Utils.extend(this, defaults);
         Utils.extend(this, settings);
+
+        this.core = {
+            center: this.center,
+            size: { x:40, y:40 },
+            color: "#f0af0f",
+            speed: this.speed,
+            vel: this.vel,
+            within: this.within,
+            away: this.away,
+            jitter: 0,
+        }
+
     };
 
     Avoider.prototype.draw = function(ctx) {
-        this.drawFilledCircle.call({
-            center: this.center,
-            size: {
-                x: 40
-            },
-            color: "#f0af0f"
-        }, ctx);
+        this.drawFilledCircle.call(this.core, ctx);
     };
     Avoider.prototype.update = function(delta) {
         var temp;
@@ -46,18 +55,8 @@ define(function(require){
                 return;
         }
 
-        this.follow.call({
-            center: this.center,
-            size: {
-                x: 40,
-                y: 40
-            },
-            speed: this.speed,
-            vel: this.vel,
-            within: this.within,
-            away: this.away,
-            jitter: 0,
-        }, this.target);
+        // VV buggy
+        // this.follow.call(this.core, this.target);
 
         this.avoid();
 
@@ -72,24 +71,38 @@ define(function(require){
     Avoider.prototype.avoid = function() {
         // Net velocity of threats
         var vel = { x: 0, y: 0 };
+        var self = this;
 
-        // this.threats.forEach(function(threat) {
-        // });
+        this.threats.forEach(function(threat) {
+            // Intersections of bullet and core ([front, back]);
+            var bulletAndCoreFutureIntersections = Geom.intersectionsOfRayAndCircle(threat, self.core); 
+            if (bulletAndCoreFutureIntersections.length === 0)
+                return;
+            var i = bulletAndCoreFutureIntersections[0];
+            var distanceToImpact = Maths.distance(i, self.core.center); 
+            if (DEBUG) {
+                threat.color = "#0f0";
+                threat.draw(self.c.renderer.getCtx());
+                var p = { center: i };
+                p.color = "#f00";
+                Sprite.drawPoint.call(p, self.c.renderer.getCtx());
+                self.game.pauser.pause();
+            }
+            // Save distance to impact
+            // r = perpendicularRayThroughPoint(ray, point)
+
+            // centray.center + ray.vel
+            // Intersection of threat and core
+        });
     };
 
     Avoider.prototype.collision = function(other) {
         if (other instanceof Bullet) {
-            if (Maths.pointInsideCircle(other.center, {
-                center: this.center,
-                size: {
-                    x: 40,
-                    y: 40
-                }
-            })) {
+            if (Maths.pointInsideCircle(other.center, this.core)) {
                 this.c.entities.destroy(this);
+            } else {
+                this.threats.push(other);
             }
-
-            this.threats.push(other);
             // this.moveAway(other, 3);
             // set vel perpendic to bullet traject
         }

@@ -1,6 +1,6 @@
 define(function(require){
 
-    var Maths = require("mixins/Maths");
+    var Geom = require("mixins/Geometry");
 
     var Tests = [
         {
@@ -15,7 +15,7 @@ define(function(require){
                     center: { x: 0, y: 0 },
                     vel: { x: 1, y: 0 },
                 };
-                return Maths.closestIntersectionOfRayAndCircle(ray, circle);
+                return Geom.intersectionsOfRayAndCircle(ray, circle)[0];
             },
             test: function(result, answer) {
                 return result.x - answer.x < 0.00001 && 
@@ -34,7 +34,7 @@ define(function(require){
                     center: { x: 0, y: 0 },
                     vel: { x: 0, y: 1 },
                 };
-                return Maths.closestIntersectionOfRayAndCircle(ray, circle);
+                return Geom.intersectionsOfRayAndCircle(ray, circle)[0];
             },
             test: function(result, answer) {
                 return result.x - answer.x < 0.00001 && 
@@ -53,7 +53,7 @@ define(function(require){
                     center: { x: 0, y: 0 },
                     vel: { x: 1, y: 1 },
                 };
-                return Maths.closestIntersectionOfRayAndCircle(ray, circle);
+                return Geom.intersectionsOfRayAndCircle(ray, circle)[0];
             },
             test: function(result, answer) {
                 return result.x - answer.x < 0.00001 && 
@@ -72,7 +72,7 @@ define(function(require){
                     center: { x: 0, y: 0 },
                     vel: { x: -1, y: 1 },
                 };
-                return Maths.closestIntersectionOfRayAndCircle(ray, circle);
+                return Geom.intersectionsOfRayAndCircle(ray, circle)[0];
             },
             test: function(result, answer) {
                 return result.x - answer.x < 0.00001 && 
@@ -91,7 +91,7 @@ define(function(require){
                     center: { x: 0, y: 1 },
                     vel: { x: 1, y: 0 },
                 };
-                return Maths.closestIntersectionOfRayAndCircle(ray, circle);
+                return Geom.intersectionsOfRayAndCircle(ray, circle)[0];
             },
             test: function(result, answer) {
                 return result.x - answer.x < 0.00001 && 
@@ -110,25 +110,86 @@ define(function(require){
                     center: { x: 0, y: 0 },
                     vel: { x: 1, y: 0 },
                 };
-                return Maths.closestIntersectionOfRayAndCircle(ray, circle);
+                return Geom.intersectionsOfRayAndCircle(ray, circle);
             },
             test: function(result, answer) {
-                return result.x - answer.x < 0.00001 && 
-                       result.y - answer.y < 0.00001;
+                return result.length == 1 && 
+                       result[0].x - answer.x < 0.00001 && 
+                       result[0].y - answer.y < 0.00001;
+            }
+        },
+        {
+            desc: "Horizontal ray, no intersection with circle",
+            answer: [],
+            compute: function() { 
+                var circle = {
+                    center: { x: 3, y: 3 },
+                    size: { x: 2, y: 2 },
+                };
+                var ray = {
+                    center: { x: 0, y: 0 },
+                    vel: { x: -1, y: 0 },
+                };
+                return Geom.intersectionsOfRayAndCircle(ray, circle);
+            },
+            test: function(result, answer) {
+                return result.length === 0 && answer.length === 0;
+            }
+        },
+        {
+            desc: "Vertical ray, no intersection with circle",
+            answer: [],
+            compute: function() { 
+                var circle = {
+                    center: { x: 3, y: 3 },
+                    size: { x: 2, y: 2 },
+                };
+                var ray = {
+                    center: { x: 0, y: 0 },
+                    vel: { x: 0, y: 1 },
+                };
+                return Geom.intersectionsOfRayAndCircle(ray, circle);
+            },
+            test: function(result, answer) {
+                return result.length === 0 && answer.length === 0;
+            }
+        },
+        {
+            desc: "Diagonal ray, offcenter circle",
+            answer: { x: 0.588652, y: 0.588652 },
+            compute: function() { 
+                var circle = {
+                    center: { x: 1, y: 1.5 },
+                    size: { x: 2, y: 2 },
+                };
+                var ray = {
+                    center: { x: 0, y: 0 },
+                    vel: { x: 1, y: 1 },
+                };
+                return Geom.intersectionsOfRayAndCircle(ray, circle)[0];
+            },
+            test: function(result, answer) {
+                return result.x - answer.x < 0.001 && result.y - answer.y < 0.001;
             }
         }
     ];
 
+    var totalPassed = 0;
     Tests.forEach(function(t, i) {
         // if (i == 2) {
             var result = t.compute();
             var passed = t.test(result, t.answer);
             if (!passed)
-                console.log(t.desc, "result:", result, "answer:", t.answer);
+                console.log("FAILED:", t.desc, "\nresult:", result, "answer:", t.answer);
             else
-                console.log(t.desc, "state: PASSED");
+                console.log("PASSED:", t.desc, "\nresult:", result, "answer:", t.answer);
+
+            if (passed) totalPassed++ 
         // }
     });
+    console.log("SUMMARY:", 
+            "PASSED:" + totalPassed / Tests.length * 100 + "%",
+            "FAILED:" + (Tests.length - totalPassed) / Tests.length * 100 + "%");
     
     return Tests;
 });
