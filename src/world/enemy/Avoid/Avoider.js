@@ -15,6 +15,7 @@ define(function(require){
         };
 
         this.c = game.c;
+        this.addPoints = game.addPoints;
         this.boundingBox = game.c.collider.CIRCLE;
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
         Utils.extend(this, defaults);
@@ -69,6 +70,7 @@ define(function(require){
                     y: 40
                 }
             })) {
+                this.addPoints(5);
                 this.c.entities.destroy(this);
             }
                 this.moveAway(other, 10);

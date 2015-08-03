@@ -12,13 +12,13 @@ define(function(require) {
 
     var Scene = Settings.Scene;
 
-    var What = function (game) {
-        this.name = "What";
+    var Splash = function (game) {
+        this.name = "Splash";
         this.c = game.c;
         this.scener = game.scener;
     };
 
-    What.prototype = {
+    Splash.prototype = {
         init: function() {
             this.isActive = true; 
             makeFoo();
@@ -106,6 +106,6 @@ define(function(require) {
         }
     };
 
-    return What;
+    return Splash;
 });
 

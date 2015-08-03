@@ -4,6 +4,7 @@ define(function(require) {
     var Player       = require("world/player/Player");
     var Micro        = require("world/enemy/Micro/Micro");
     var Avoid        = require("world/enemy/Avoid/Avoider");
+    var ScoreBox     = require("world/hud/ScoreBox");
     var Global       = require("main/config");
     var Settings     = require("./config");
     var R            = require("mixins/Random");
@@ -21,6 +22,7 @@ define(function(require) {
             // define what happens at beginning
 
             this.c.entities.create(Player, Settings.Player);
+            makeScoreBox();
             makeAvoider();
             makeMicro();
             setInterval(function() {
@@ -73,6 +75,10 @@ define(function(require) {
             jitter: 0.02
         });
     }.bind(null, Scene.MAX_MICROS));
+
+    var makeScoreBox = function(){
+        self.c.entities.create(ScoreBox);
+    };
 
     var makeAvoider = (function (n) {
         if (self.c.entities.all(Avoid).length >= n ||
