@@ -48,7 +48,7 @@ define(function(require) {
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
 
-                var center = { x: 0, y: 0 };
+        var center = { x: 0, y: 0 };
 
         if (R.bool()) {
             center.x = R.bool() ? Global.Game.width : 0;
@@ -79,7 +79,18 @@ define(function(require) {
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
 
-        var center = R.point(Global.Game.width, Global.Game.height);
+        // var center = R.point(Global.Game.width, Global.Game.height);
+
+        var center = { x: 0, y: 0 };
+
+        if (R.bool()) {
+            center.x = R.bool() ? Global.Game.width : 0;
+            center.y = R.scale(Global.Game.height);
+        } else {
+            center.y = R.bool() ? Global.Game.height : 0;
+            center.x = R.scale(Global.Game.width);
+        }
+        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
 
         return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
     }.bind(null, Scene.MAX_AVOIDERS));

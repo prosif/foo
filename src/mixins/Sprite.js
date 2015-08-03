@@ -96,7 +96,7 @@ define(function(require){
         this.vel.y = vely;
     }
 
-    Sprite.moveAway = function(target, _dist) {
+    Sprite.moveAway = function(target, _dist, wow) {
 
         var dist = _dist || 3;
 
@@ -110,6 +110,10 @@ define(function(require){
             hdiff = 0.1 * Math.random();
             // game.c.entities.destroy(this);
             // return;
+        } 
+
+        if (hdiff > dist && wow) {
+            return;
         }
 
         this.center.x -= xdiff / hdiff * dist;

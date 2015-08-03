@@ -3,7 +3,60 @@ define(function(require){
     var Utils = require("mixins/Utils");
 
     var Geometry = {
-        perpendicularRayThroughPoint: function(ray, point) {
+        rayBetween: function(a, b) {
+            return {
+                center: { 
+                    x: a.x, 
+                    y: a.y 
+                },
+                vel: { 
+                    x: b.x - a.x, 
+                    y: b.y - a.y 
+                } 
+            };
+        },
+        intersectionRayAndPerpendicularLineThroughPoint: function(ray, point) {
+
+            // line defined by ray
+            // ry = rm(rx) + rb
+            var rm, rb;
+
+            // line defined perpendicular to ray
+            // y = mx + b, where b = -mc + d
+            var y, x, m, b;
+
+            if (ray.vel.x === 0) { // vertical ray
+                y = point.y
+                x = ray.center.x
+            } else if (ray.vel.y === 0) { // horizontal ray
+                y = ray.center.y; 
+                x = point.x;
+            } else { 
+
+                rm = ray.vel.y / ray.vel.x; // undefined when bullet path up/down
+                rb = -rm * (ray.center.x) + ray.center.y
+
+                    m = - 1 / rm; // undefined when bullet path up/down
+                b = -m * point.x + point.y;
+
+                // rx = (ry - rb) / rm 
+                // rx = (y - rb) / rm, ry == x
+                // rx = (y - rb) / rm, ry == x
+                // 
+                // y = m(x) + b, subst. rx for x
+                // y = m((y - rb) / rm) + b
+                // y = m/rm(y) - m/rm(rb) + b
+                // y - m/rm(y) =  - m/rm(rb) + b
+                // (1 - m/rm)y =  - m/rm(rb) + b
+                // y = (- m/rm(rb) + b) / (1 - m/rm)
+                y = (b - m * rb / rm) / (1 - m / rm);
+                x = (y - rb) / rm;
+            };
+
+            return {
+                x: x,
+                y: y,
+            }
         },
 
         // Returns an array of intersections the first is the closest to the

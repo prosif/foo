@@ -171,12 +171,42 @@ define(function(require){
             test: function(result, answer) {
                 return result.x - answer.x < 0.001 && result.y - answer.y < 0.001;
             }
+        },
+        {
+            desc: "Diagonal ray, point below intersection",
+            answer: { x: 0, y: 0 },
+            compute: function() { 
+                var point = { x: 1, y: -1 };
+                var ray = {
+                    center: { x: 0, y: 0 },
+                    vel: { x: 1, y: 1 },
+                };
+                return Geom.intersectionRayAndPerpendicularLineThroughPoint(ray, point);
+            },
+            test: function(result, answer) {
+                return result.x === answer.x && result.y === answer.y;
+            }
+        },
+        {
+            desc: "horiontal ray, point below intersection",
+            answer: { x: 0, y: 1 },
+            compute: function() { 
+                var point = { x: 0, y: 0 };
+                var ray = {
+                    center: { x: 1, y: 1 },
+                    vel: { x: 1, y: 0 },
+                };
+                return Geom.intersectionRayAndPerpendicularLineThroughPoint(ray, point);
+            },
+            test: function(result, answer) {
+                return result.x === answer.x && result.y === answer.y;
+            }
         }
     ];
 
     var totalPassed = 0;
     Tests.forEach(function(t, i) {
-        // if (i == 2) {
+        if (i == Tests.length - 1) {
             var result = t.compute();
             var passed = t.test(result, t.answer);
             if (!passed)
@@ -185,7 +215,7 @@ define(function(require){
                 console.log("PASSED:", t.desc, "\nresult:", result, "answer:", t.answer);
 
             if (passed) totalPassed++ 
-        // }
+        }
     });
     console.log("SUMMARY:", 
             "PASSED:" + totalPassed / Tests.length * 100 + "%",
