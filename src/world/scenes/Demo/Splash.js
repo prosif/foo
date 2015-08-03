@@ -4,6 +4,7 @@ define(function(require) {
     var Player       = require("world/player/Player");
     var Micro        = require("world/enemy/Micro/Micro");
     var Avoid        = require("world/enemy/Avoid/Avoider");
+    var TextBox      = require("world/hud/TextBox");
     var Global       = require("main/config");
     var Settings     = require("./config");
     var R            = require("mixins/Random");
@@ -22,6 +23,7 @@ define(function(require) {
         init: function() {
             this.isActive = true; 
             makeFoo();
+            this.startText = this.c.entities.create(TextBox, {text: "Press S to start", xPos: 325, yPos: 300});
             Wall.makeBoundaries(this);   
         },
         active:function() {
@@ -40,6 +42,7 @@ define(function(require) {
             this.c.entities.all(Micro).forEach(function(enemy){
                 self.c.entities.destroy(enemy);
             });
+            self.c.entities.destroy(this.startText);
             this.scener.start("Demo");
         }
     };
