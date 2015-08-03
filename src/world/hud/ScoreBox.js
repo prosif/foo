@@ -15,8 +15,9 @@ define(function(require){
     }
     
     ScoreBox.prototype.draw = function(ctx){
+        ctx.font = '30pt Calibri';
         ctx.fillStyle = "black";
-        ctx.fillText(this.getScore(), 25, 25);
+        ctx.fillText(this.getScore(), 30, 30);
     };
 
     ScoreBox.prototype.update = function(delta) {
