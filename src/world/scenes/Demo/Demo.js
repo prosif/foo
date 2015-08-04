@@ -4,6 +4,7 @@ define(function(require) {
     var Player       = require("world/player/Player");
     var Micro        = require("world/enemy/Micro/Micro");
     var Avoid        = require("world/enemy/Avoid/Avoider");
+    var ScoreBox     = require("world/hud/ScoreBox");
     var Global       = require("main/config");
     var Settings     = require("./config");
     var R            = require("mixins/Random");
@@ -21,6 +22,7 @@ define(function(require) {
             // define what happens at beginning
 
             this.c.entities.create(Player, Settings.Player);
+            makeScoreBox();
             makeAvoider();
             makeMicro();
             setInterval(function() {
@@ -48,7 +50,7 @@ define(function(require) {
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
 
-                var center = { x: 0, y: 0 };
+        var center = { x: 0, y: 0 };
 
         if (R.bool()) {
             center.x = R.bool() ? Global.Game.width : 0;
@@ -74,12 +76,27 @@ define(function(require) {
         });
     }.bind(null, Scene.MAX_MICROS));
 
+    var makeScoreBox = function(){
+        self.c.entities.create(ScoreBox);
+    };
+
     var makeAvoider = (function (n) {
         if (self.c.entities.all(Avoid).length >= n ||
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
 
-        var center = R.point(Global.Game.width, Global.Game.height);
+        // var center = R.point(Global.Game.width, Global.Game.height);
+
+        var center = { x: 0, y: 0 };
+
+        if (R.bool()) {
+            center.x = R.bool() ? Global.Game.width : 0;
+            center.y = R.scale(Global.Game.height);
+        } else {
+            center.y = R.bool() ? Global.Game.height : 0;
+            center.x = R.scale(Global.Game.width);
+        }
+        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
 
         return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
     }.bind(null, Scene.MAX_AVOIDERS));

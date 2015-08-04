@@ -21,6 +21,15 @@ define(function(require) {
         this.scener = new Scener(this, Scenes);
         this.pauser = new Pauser(this,
                 [this.c.entities, this.c.collider, this.c.renderer]);
+        this.playerScore = 0;
+            
+        this.addPoints = function(n){
+            playerScore += n;
+        }
+
+        this.getScore = function(){
+            return this.playerScore;
+        }
 
         this.update = function(delta) {
             this.timer.update(delta);
@@ -29,7 +38,7 @@ define(function(require) {
 
         // Create world boundaries
 //        this.scener.start("Demo");/
-        this.scener.start("What");
+        this.scener.start("Splash");
 //        this.scener.start("Demo");
     };
     return Game;

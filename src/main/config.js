@@ -3,7 +3,7 @@ define(function(require) {
     var deepFreeze = require("mixins/Utils").deepFreeze;
 
     var Config = {
-        DEBUG: true,
+        DEBUG: false,
         Game: {
             width: 800,
             height: 400,

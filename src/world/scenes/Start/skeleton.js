@@ -1,6 +1,6 @@
 define(function(require) {
 
-    var Scene = function (settings) {
+    var Scene = function (game) {
     };
 
     Scene.prototype = {

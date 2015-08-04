@@ -17,10 +17,10 @@ define(function(require){
         }
 
         this.c = game.c;
+        this.addPoints = game.addPoints;
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
         Utils.extend(this, defaults);
         Utils.extend(this, settings);
-        // console.log("this:", this, "spd:",this.speed * 17);
         this.draw = this.drawRect;
     }
 
@@ -47,9 +47,10 @@ define(function(require){
     };
 
     Micro.prototype.collision = function(other) {
-        if (other instanceof Bullet)
+        if (other instanceof Bullet){   
             this.c.entities.destroy(this);
-
+            this.addPoints(1);
+        }
         // // if intersecting target, don't do change position!
         // else if (this.target && Maths.pointInsideCircle(this, this.target))
         //     return

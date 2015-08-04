@@ -9,10 +9,23 @@ define(function(require){
         ctx.fillStyle = color;
 
         var x, y, w, h;
-        x = this.center.x - this.size.x/3;
+        x = this.center.x - this.size.x/2;
         y = this.center.y - this.size.y/2;
         w = this.size.x;
         h = this.size.y;
+
+        ctx.fillRect(x, y, w, h);
+    };
+
+    Sprite.drawPoint = function(ctx, width) {
+        var color = this.color || "#fff";
+        width = width || 2;
+        ctx.fillStyle = color;
+
+        var x, y, w, h;
+        x = this.center.x - width/2;
+        y = this.center.y - width/2;
+        w = h = width;
 
         ctx.fillRect(x, y, w, h);
     };
@@ -83,7 +96,7 @@ define(function(require){
         this.vel.y = vely;
     }
 
-    Sprite.moveAway = function(target, _dist) {
+    Sprite.moveAway = function(target, _dist, wow) {
 
         var dist = _dist || 3;
 
@@ -97,6 +110,10 @@ define(function(require){
             hdiff = 0.1 * Math.random();
             // game.c.entities.destroy(this);
             // return;
+        } 
+
+        if (hdiff > dist && wow) {
+            return;
         }
 
         this.center.x -= xdiff / hdiff * dist;

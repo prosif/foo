@@ -4,7 +4,7 @@ define(function(require) {
     var Scenes = [
         // require('./Start/Start'),
         require('./Demo/Demo'),
-        require('./Demo/What'),
+        require('./Demo/Splash'),
     ];
     return Scenes;
 
