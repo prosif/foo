@@ -26,6 +26,10 @@ define(function(require) {
                 this.pause();
         };
 
+        this.isPaused = function() {
+            return this.paused;
+        }
+
         this.pause = function() {
             var self = this;
 

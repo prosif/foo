@@ -9,9 +9,6 @@ define(function(require) {
             height: 400,
             color:"#efefef"
         },
-        Scene: {
-            first: "Splash",
-        }
     }
 
     return deepFreeze(Config);

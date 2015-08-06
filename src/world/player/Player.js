@@ -123,7 +123,6 @@ define(function(require) {
                     // this.color = "#0f0";
                     // this.draw(this.c.renderer.getCtx());
                 }
-                game.pauser.pause();
             }
         };
 

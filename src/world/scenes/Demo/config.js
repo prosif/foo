@@ -6,7 +6,7 @@ define(function(require) {
         Scene: {
             MAX_ENEMIES: 250,
             MAX_MICROS: 0,
-            MAX_AVOIDERS: 30,
+            MAX_AVOIDERS: 20,
             color:"#efefef"
         },
 

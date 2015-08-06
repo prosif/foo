@@ -11,6 +11,10 @@ define(function(require) {
         this.get = function() {
             return score;
         };
+
+        this.reset = function() {
+            score = 0;
+        };
     };
 
     return Scorer;

@@ -5,6 +5,7 @@ define(function(require) {
     var Micro        = require("world/enemy/Micro/Micro");
     var Avoid        = require("world/enemy/Avoid/Avoider");
     var ScoreBox     = require("world/hud/ScoreBox");
+    var TextBox      = require("world/hud/TextBox");
     var Global       = require("main/config");
     var Settings     = require("./config");
     var R            = require("mixins/Random");
@@ -14,6 +15,7 @@ define(function(require) {
 
     var Demo = function (game) {
         this.c = game.c;
+        this.game = game;
     };
 
     Demo.prototype = {
@@ -30,6 +32,40 @@ define(function(require) {
             }, 100);
             Wall.makeBoundaries(this);
         },
+        active: function() {
+            var I = this.c.inputter;
+            return !I.isDown(I.R);
+        },
+        update: function() {
+            var playerAlive = this.c.entities.all(Player).length;
+
+            if (!playerAlive && !this.game.pauser.isPaused()) {
+
+                this.textBox = this.c.entities.create(TextBox, {
+                    text: "Press R to restart", 
+                    xPos: Global.Game.width / 2 - 50,
+                    yPos: 0.3 * Global.Game.height
+                }).draw(this.c.renderer.getCtx());
+
+                this.game.pauser.pause();
+            }            
+
+        },
+        exit: function() {
+            var self = this;
+            var game = this.game;
+            var destroy = this.c.entities.destroy.bind(this.c.entities);
+            var length = this.c.entities.all(Micro).length; 
+
+            // Destroy all created entities
+            ([Player, Avoid, ScoreBox, TextBox, Micro, Wall]).forEach(function(type){
+                self.c.entities.all(type).forEach(destroy);
+            });
+            game.scorer.reset();
+            if (game.pauser.isPaused())
+                game.pauser.unpause();
+            game.scener.start("Demo");
+        }
     };
 
     // make n micro enemies

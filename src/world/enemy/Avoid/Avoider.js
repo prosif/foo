@@ -39,12 +39,11 @@ define(function(require){
             jitter: 0,
         }
 
-        // console.log(this.away, this.core.away);
-
     };
 
     Avoider.prototype.draw = function(ctx) {
-        // this.drawFilledCircle(ctx);
+        if (DEBUG)
+            this.drawFilledCircle(ctx);
         this.drawFilledCircle.call(this.core, ctx);
     };
     Avoider.prototype.update = function(delta) {
