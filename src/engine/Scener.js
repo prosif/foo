@@ -2,20 +2,18 @@ define(function(require) {
 
     var assert = require("mixins/Utils").assert;
 
-    var doNothing = function() {};
-    var getTrue = function() { return true; };
-
     var Scener = function(game, scenes) {
         var scenes;
         var paused = false;
         var store = {};
         var cur;
-        game.scener = this;
-        scenes.forEach(function(S){
-            var s = new S(game);
 
-            assert("Scene requires a name property", s.name);
-            store[s.name] = s;
+        scenes.forEach(function(scene) {
+
+            var s = new scene.ctor(game);
+
+            assert("Scene requires a name property", scene.name);
+            store[scene.name] = s;
 
             // Provide defaults for necessary functions
             ["init", "active", "update", "exit"].forEach(function(func) {
@@ -24,9 +22,8 @@ define(function(require) {
 
                 if (func == "active")
                     s[func] = getTrue;
-                else{
+                else
                     s[func] = doNothing;
-                }
             });
 
         });
@@ -59,6 +56,9 @@ define(function(require) {
             return paused;
         }
     }
+
+    var doNothing = function() {};
+    var getTrue = function() { return true; };
 
     return Scener;
 

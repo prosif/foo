@@ -8,6 +8,9 @@ define(function(require) {
             width: 800,
             height: 400,
             color:"#efefef"
+        },
+        Scene: {
+            first: "Splash",
         }
     }
 

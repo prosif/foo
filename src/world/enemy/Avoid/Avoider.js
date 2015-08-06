@@ -18,7 +18,6 @@ define(function(require){
         };
 
         this.c = game.c;
-        this.addPoints = game.addPoints;
         this.game = game;
 
         // list of bullets that collided with fake external shell
@@ -147,13 +146,12 @@ define(function(require){
     Avoider.prototype.collision = function(other) {
         if (other instanceof Bullet) {
             if (Maths.pointInsideCircle(other.center, this.core)) {
-                this.addPoints(5);
+                this.game.scorer.add(5);
                 this.c.entities.destroy(this);
             } else {
                 this.moveAway.call(this, other, 5);
                 this.threats.push(other);
             }
-            // set vel perpendic to bullet traject
         }
 
         // // if intersecting target, don't do change position!

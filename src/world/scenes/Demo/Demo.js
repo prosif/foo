@@ -13,7 +13,6 @@ define(function(require) {
     var Scene = Settings.Scene;
 
     var Demo = function (game) {
-        this.name = "Demo";
         this.c = game.c;
     };
 
@@ -22,7 +21,7 @@ define(function(require) {
             // define what happens at beginning
 
             this.c.entities.create(Player, Settings.Player);
-            makeScoreBox();
+            this.c.entities.create(ScoreBox);
             makeAvoider();
             makeMicro();
             setInterval(function() {
@@ -30,18 +29,7 @@ define(function(require) {
                 makeAvoider();
             }, 100);
             Wall.makeBoundaries(this);
-
         },
-        active:function() {
-            // return true if scene is active
-        },
-        update:function(delta) {
-            // update the scene
-        },
-        exit: function() {
-            // define cleanup/scene transition
-            // ex. this.game.scener.start(this.next);
-        }
     };
 
     // make n micro enemies
@@ -77,7 +65,6 @@ define(function(require) {
     }.bind(null, Scene.MAX_MICROS));
 
     var makeScoreBox = function(){
-        self.c.entities.create(ScoreBox);
     };
 
     var makeAvoider = (function (n) {

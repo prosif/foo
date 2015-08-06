@@ -1,11 +1,19 @@
 define(function(require) {
 
     // A list of scene constructors
-    var Scenes = [
-        // require('./Start/Start'),
-        require('./Demo/Demo'),
-        require('./Demo/Splash'),
-    ];
+    var Scenes = {
+        scenes: [
+                { 
+                    name: "Splash", 
+                    ctor: require("world/scenes/Splash/Splash") 
+                },
+                { 
+                    name: "Demo", 
+                    ctor: require("world/scenes/Demo/Demo")
+                },
+            ],
+        first: "Splash",
+    };
     return Scenes;
 
 });

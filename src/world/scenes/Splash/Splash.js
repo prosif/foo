@@ -6,44 +6,37 @@ define(function(require) {
     var Avoid        = require("world/enemy/Avoid/Avoider");
     var TextBox      = require("world/hud/TextBox");
     var Global       = require("main/config");
-    var Settings     = require("./config");
     var R            = require("mixins/Random");
-    var Splash       = require("world/image/Splash");
     var Utils        = require("mixins/Utils");
 
-    var Scene = Settings.Scene;
-
     var Splash = function (game) {
-        this.name = "Splash";
+        this.game = game;
         this.c = game.c;
-        this.scener = game.scener;
     };
 
     Splash.prototype = {
         init: function() {
-            this.isActive = true; 
             makeFoo();
-            this.startText = this.c.entities.create(TextBox, {text: "Press S to start", xPos: 325, yPos: 300});
+            this.c.entities.create(TextBox, {
+                text: "Press S to start", 
+                xPos: 325, yPos: 300
+            });
             Wall.makeBoundaries(this);   
         },
         active:function() {
-            // return true if scene is active
-            return this.isActive;
-        },
-        update:function(delta) {
-            // update the scene
-            var Input = this.c.inputter;
-            var S = Input.isDown(Input.S);
-            if (S){this.isActive=false;}
+            var In = this.c.inputter;
+            return !In.isDown(In.S);;
         },
         exit: function() {
-            var length = this.c.entities.all(Micro).length; 
             var self = this;
-            this.c.entities.all(Micro).forEach(function(enemy){
-                self.c.entities.destroy(enemy);
+            var destroy = this.c.entities.destroy.bind(this.c.entities);
+            var length = this.c.entities.all(Micro).length; 
+
+            // Destroy all created entities
+            ([Micro, Wall, TextBox]).forEach(function(type){
+                self.c.entities.all(type).forEach(destroy);
             });
-            self.c.entities.destroy(this.startText);
-            this.scener.start("Demo");
+            this.game.scener.start("Demo");
         }
     };
     
