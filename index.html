@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="node_modules/requirejs/require.js"></script>
         <style type="text/css">
             body {
                 width  : 800px;
@@ -11,30 +10,6 @@
     </head>
     <body>
         <canvas id="canvas"></canvas>
+        <script src="dist/bundle.js"></script>
     </body>
-    <script>
-        requirejs.config({
-            baseUrl: 'src',
-            // Include files outside 'src' 
-            paths: {
-                coquette: "../node_modules/coquette/coquette",
-                ifvisible: "../node_modules/ifvisible.js/src/ifvisible"
-            },
-            // Link non require libraries
-            shim: {
-                'coquette': {
-                    exports: 'Coquette'
-                },
-                'ifvisible': {
-                    exports: 'Ifvisible'
-                },
-            }
-        });
-
-        // Start the main app logic.
-        requirejs(['main/Game'], function (Game) { 
-            //new Game(); 
-            Game(); 
-        });
-    </script>
 </html>

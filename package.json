@@ -6,7 +6,8 @@
   "dependencies": {
     "coquette": "git://github.com/cdosborn/coquette.git",
     "ifvisible.js": "git://github.com/serkanyersen/ifvisible.js.git",
-    "requirejs": "^2.1.20"
+    "requirejs": "^2.1.20",
+    "script-loader": "^0.6.1"
   },
   "devDependencies": {
     "blint": "^0.4.0",
