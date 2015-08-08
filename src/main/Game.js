@@ -1,6 +1,6 @@
 define(function(require) {
 
-    var Coquette     = require("coquette");
+    var Coquette     = require("coquette").Coquette;
     var Timer        = require("engine/Timer");
     var Pauser       = require("engine/Pauser");
     var Scener       = require("engine/Scener");
