@@ -8,7 +8,7 @@ define(function(require) {
     var Global       = require("main/config");
     var Scenes       = require("world/scenes/config");
 
-    var Game = function() {
+    (function() {
         var self = this;
 
         this.c = new Coquette(this,
@@ -31,6 +31,5 @@ define(function(require) {
 
         this.scener = new Scener(this, Scenes.scenes);
         this.scener.start(Scenes.first);
-    };
-    return Game;
+    })();
 });
