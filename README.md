@@ -1,5 +1,6 @@
 foo - a bit shooter
 
 '''
-npm install
+npm install webpack -g
+npm install && webpack
 '''
