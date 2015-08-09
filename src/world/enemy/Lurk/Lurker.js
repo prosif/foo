@@ -1,32 +1,30 @@
 define(function(require){
 
-    var Bullet = require("bullet/Bullet");
-    var EnemyBullet = require("bullet/EnemyBullet");
+    var Bullet = require("world/bullet/Bullet");
+    var EnemyBullet = require("world/bullet/EnemyBullet");
     var Timer = require("engine/Timer");
-    var bConfig = require("bullet/Config");
-    var Utils = require("engine/Utils");
+    //var bConfig = require("world/bullet/Config");
+    var Sprite = require("mixins/Sprite");
+    var Utils = require("mixins/Utils");
 
     var Lurker = function(game, settings) {
 
+        var me = this;
+
         // Avoid circular dependencies (don't place before Enemy)
-        var Player = require("player/Player");
+        var Player = require("world/player/Player");
 
         var defaults = {
             center: { x:100, y:100 },
             size: { x:10, y:10 },
-            color : "#fff",
+            color : "black",
             speed : 24 / 17 // pixels per 17ms
         }
 
         this.timer = new Timer();
-
-        for (var prop in defaults) {
-           if (settings[prop] !== undefined) {
-               this[prop] = settings[prop];
-           } else {
-               this[prop] = defaults[prop];
-           }
-        }
+        Utils.extend(this, defaults);
+        Utils.extend(this, settings);
+        Utils.extend(this, Sprite, ["drawRect"]);
 
         this.update = function(delta) {
             var temp;
@@ -43,56 +41,30 @@ define(function(require){
             //this.followTarget(delta, this.target);
         };
 
-        this.shoot = function(){
-            var bullet1Settings = {
+        this.shoot = function() {
+            var bulletSettings = {
+                color: "#000",
                 center: {
                     x: this.center.x,
-                    y: this.center.y,
+                    y: this.center.y
                 },
-                vel: {
-                    x: -1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
-                    y: 0// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
+                vel:{
+                    x: .01,//Math.cos(this.center.x),
+                    y: 0//Math.sin(this.center.y)
+                },
+                size:{
+                    x: 5,
+                    y: 5
                 }
             };
-
-            var bullet2Settings = {
-                center: {
-                    x: this.center.x,
-                    y: this.center.y,
-                },
-                vel: {
-                    x: 1,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
-                    y: 0// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
-                }
-            };
-
-            var bullet3Settings = {
-                center: {
-                    x: this.center.x,
-                    y: this.center.y,
-                },
-                vel: {
-                    x: 0,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
-                    y: 1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
-                }
-            };
-
-            var bullet4Settings = {
-                center: {
-                    x: this.center.x,
-                    y: this.center.y,
-                },
-                vel: {
-                    x: 0,// + (bConfig.Bullet.speed / 17 * Math.cos(btheta)),
-                    y: -1// + (bConfig.Bullet.speed / 17 * Math.sin(btheta)),
-                }
-            };
-
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet1Settings, bConfig.Bullet));
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet2Settings, bConfig.Bullet));
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet3Settings, bConfig.Bullet));
-            game.c.entities.create(EnemyBullet, Utils.extend(bullet4Settings, bConfig.Bullet));
-        }
+            for (var i = 0; i < 360; i+=60){
+                //vel.x = this.vel.x * (i+1);
+                //this.vel.y = this.vel.y * (i+1);
+                game.c.entities.create(EnemyBullet, bulletSettings);
+                //bulletSettings.vel.y += .05;
+            }
+     
+        };
 
         this.move = function(delta){
             if(Math.random <= .5){
@@ -131,7 +103,7 @@ define(function(require){
         }
 
         this.draw = function(ctx) {
-            drawRect(this, ctx, this.color);
+            this.drawRect(ctx);
         }
 
         var drawRect = function(rect, ctx, color) {
@@ -142,7 +114,7 @@ define(function(require){
                        , rect.size.y);
         }
 
-        this.timer.every(5000, function(){
+        this.timer.every(500, function(){
             this.shoot();
         }.bind(this));
     }

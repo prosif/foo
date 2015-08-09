@@ -1,6 +1,6 @@
 define(function(require) {
 
-    var Wall         = require("world/Wall/Wall");
+    var Wall         = require("world/wall/Wall");
     var Player       = require("world/player/Player");
     var Micro        = require("world/enemy/Micro/Micro");
     var Avoid        = require("world/enemy/Avoid/Avoider");

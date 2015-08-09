@@ -1,14 +1,16 @@
 define(function(require){
 
-    var Wall = require("world/Wall");
+    var Wall = require("world/wall/Wall");
+    var Sprite = require("mixins/Sprite");
+    var Utils = require("mixins/Utils");
+
     var EnemyBullet = function(game, settings) {
 
-        if (settings.vel == undefined)
-            throw("Bullet requires a velocity from settings");
+        Utils.assert("Bullet requires a velocity from settings", 
+                "vel" in settings);
 
-        for (var prop in settings) {
-           this[prop] = settings[prop];
-        }
+        Utils.extend(this, settings);
+        Utils.extend(this, Sprite, ["drawRect"]);
 
         this.update = function(delta) {
             this.center.x += this.vel.x * delta;
@@ -16,21 +18,14 @@ define(function(require){
         };
 
         this.collision = function(other) {
-            if (other instanceof Wall)
+            if (other instanceof Wall){
+                console.log(game.c.entities.all().length);
                 game.c.entities.destroy(this);
+            }
         }
 
         this.draw = function(ctx) {
-            drawRect(this, ctx, this.color);
-        }
-
-        var drawRect = function(rect, ctx, color) {
-            ctx.fillStyle = color || "green";
-            ctx.fillRect(rect.center.x - rect.size.x/2
-                       , rect.center.y - rect.size.y/2
-                       , rect.size.x
-                       , rect.size.y);
-
+            this.drawRect(ctx);
         }
     }
     return EnemyBullet;

@@ -3,7 +3,7 @@ define(function(require){
     var Bullet = require("world/bullet/Bullet");
     var Player = require("world/player/Player");
     var Utils = require("mixins/Utils");
-    var Wall = require("world/Wall/Wall");
+    var Wall = require("world/wall/Wall");
     var Sprite = require("mixins/Sprite");
     var Maths = require("coquette").Collider.Maths;
     var Geom = require("mixins/Geometry");

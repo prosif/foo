@@ -7,7 +7,7 @@ define(function(require) {
     var R = require("mixins/Random");
     var Sprite = require("mixins/Sprite");
     var Utils = require("mixins/Utils");
-    var Wall = require("world/Wall/Wall");
+    var Wall = require("world/wall/Wall");
 
     var Player = function(game, settings) {
 

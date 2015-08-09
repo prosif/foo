@@ -6,6 +6,7 @@ define(function(require) {
         Scene: {
             MAX_ENEMIES: 250,
             MAX_MICROS: 0,
+            MAX_LURKERS: 8,
             MAX_AVOIDERS: 20,
             color:"#efefef"
         },
@@ -36,6 +37,10 @@ define(function(require) {
             // Enemy divergence from following player
             jitter: 0
         },
+
+        Lurker: {
+            speed: 40/17
+        }
     };
 
     return deepFreeze(Config);

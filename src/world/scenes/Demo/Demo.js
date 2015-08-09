@@ -4,6 +4,8 @@ define(function(require) {
     var Player       = require("world/player/Player");
     var Micro        = require("world/enemy/Micro/Micro");
     var Bullet       = require("world/bullet/Bullet");
+    var EnemyBullet  = require("world/bullet/EnemyBullet");
+    var Lurker       = require("world/enemy/Lurk/Lurker");
     var Avoid        = require("world/enemy/Avoid/Avoider");
     var ScoreBox     = require("world/hud/ScoreBox");
     var TextBox      = require("world/hud/TextBox");
@@ -27,9 +29,11 @@ define(function(require) {
             this.c.entities.create(ScoreBox);
             makeAvoider();
             makeMicro();
+            makeLurker();
             setInterval(function() {
                 makeMicro();
                 makeAvoider();
+                makeLurker();
             }, 100);
             Wall.makeBoundaries(this);
         },
@@ -58,7 +62,7 @@ define(function(require) {
             var destroy = this.c.entities.destroy.bind(this.c.entities);
             var length = this.c.entities.all(Micro).length; 
             // Destroy all created entities
-            ([Player, Bullet, Avoid, ScoreBox, TextBox, Micro, Wall]).forEach(function(type){
+            ([Player, EnemyBullet, Bullet, Avoid, Lurker, ScoreBox, TextBox, Micro, Wall]).forEach(function(type){
                 self.c.entities.all(type).forEach(destroy);
             });
             game.scorer.reset();
@@ -103,6 +107,28 @@ define(function(require) {
     var makeScoreBox = function(){
     };
 
+    var makeLurker = (function (n) {
+        if (self.c.entities.all(Lurker).length >= n ||
+                self.c.entities._entities.length >= Scene.MAX_ENEMIES)
+            return;
+
+        // var center = R.point(Global.Game.width, Global.Game.height);
+
+        var center = { x: 0, y: 0 };
+
+        if (R.bool()) {
+            center.x = R.bool() ? Global.Game.width : 0;
+            center.y = R.scale(Global.Game.height);
+        } else {
+            center.y = R.bool() ? Global.Game.height : 0;
+            center.x = R.scale(Global.Game.width);
+        }
+        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
+
+        return self.c.entities.create(Lurker, Utils.extend({ center: center }, Settings.Lurker));
+    }.bind(null, Scene.MAX_LURKERS));
+
+    
     var makeAvoider = (function (n) {
         if (self.c.entities.all(Avoid).length >= n ||
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
