@@ -1,5 +1,5 @@
 node_modules
-
+dist
 *.swp
 *.tags
 *.session.vim
