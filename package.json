@@ -7,18 +7,11 @@
     "coquette": "git://github.com/cdosborn/coquette.git",
     "expose-loader": "^0.7.0",
     "ifvisible.js": "git://github.com/serkanyersen/ifvisible.js.git",
-    "requirejs": "^2.1.20",
     "script-loader": "^0.6.1",
     "webpack": "^1.11.0"
   },
   "devDependencies": {
-    "blint": "^0.4.0",
-    "bower": "^1.4.1",
-    "gulp": "^3.9.0",
-    "gulp-install": "^0.4.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "blint": "^0.4.0"
   },
   "repository": {
     "type": "git",
