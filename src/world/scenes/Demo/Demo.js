@@ -1,9 +1,11 @@
 define(function(require) {
 
-    var Wall         = require("world/Wall/Wall");
+    var Wall         = require("world/wall/Wall");
     var Player       = require("world/player/Player");
     var Micro        = require("world/enemy/Micro/Micro");
+    var Bullet       = require("world/bullet/Bullet");
     var Avoid        = require("world/enemy/Avoid/Avoider");
+    var Lurker       = require("world/enemy/Lurk/Lurker");
     var ScoreBox     = require("world/hud/ScoreBox");
     var TextBox      = require("world/hud/TextBox");
     var Global       = require("main/config");
@@ -56,9 +58,8 @@ define(function(require) {
             var game = this.game;
             var destroy = this.c.entities.destroy.bind(this.c.entities);
             var length = this.c.entities.all(Micro).length; 
-
             // Destroy all created entities
-            ([Player, Avoid, ScoreBox, TextBox, Micro, Wall]).forEach(function(type){
+            ([Player, Bullet, Avoid, ScoreBox, TextBox, Micro, Wall]).forEach(function(type){
                 self.c.entities.all(type).forEach(destroy);
             });
             game.scorer.reset();
