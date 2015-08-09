@@ -1,12 +1,22 @@
 define(function(require){
     var Utils = {
+
+        // Extend a, but do not override
+        fill: function(a, b, props) {
+            // Extend a with props it doesn't have
+            return Utils.extend(a, b, 
+                (props || Object.getOwnPropertyNames(b))
+                .filter(function(p) { return !(p in a) }));
+        },
+
+        // Extend/override a
         extend: function(a, b, props) {
             if (props == undefined)
                 props = Object.getOwnPropertyNames(b);
+
             props.forEach(function(p) {
-                if (b[p] == undefined)
-                    throw "Property " + p + " is undefined";
-                else if (b[p].contstructor == Function)
+                Utils.assert("Property " + p + " missing on target", p in b);
+                if (b[p].contstructor == Function)
                     a[p] = b[p].bind(a);
                 else
                     a[p] = b[p];
@@ -17,7 +27,7 @@ define(function(require){
         // TODO: Extend to take a function as an expr
         assert: function(str, expr) {
             if (!expr)
-                throw str;
+                throw new Error(str);
             return true;
         },
 

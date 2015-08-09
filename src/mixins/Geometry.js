@@ -3,6 +3,60 @@ define(function(require){
     var Utils = require("mixins/Utils");
 
     var Geometry = {
+        angleShortestApproach: function(a, b, delta) {
+
+            var diff = Math.abs(b - a);
+            var maxDelta = 
+                diff > Math.PI
+                ? 2 * Math.PI - diff
+                : diff
+
+            // Magnitude to change by
+            var shift = Math.min(maxDelta, delta);
+
+            // Factors which affect direction
+            var aGreaterB = a - b > 0;
+            var shorterPath = diff > Math.PI;
+
+            return Geometry.angleNormalize(a + 
+                    (aGreaterB ? -1 : 1) * 
+                    (shorterPath ? -1 : 1) * 
+                    shift);
+        },
+        angleNormalize: function(_a) {
+            // a is between (-2π 2π)
+            var a = _a % (Math.PI * 2)
+            if (a < 0) {
+                a = 2 * Math.PI + a;
+            }
+            // a in [0 2π)
+            // console.log("a", a * 180 / Math.PI, "_a", _a * 180 / Math.PI);
+            return a;
+        },
+        angleWithin: function(a, b, margin) {
+            var diff = Math.abs(a - b);
+            return diff > Math.PI
+                ? (2 * Math.PI - diff) <= margin
+                : diff <= margin
+        },
+        /* rotate : { x, y } -> radians -> { x, y } */
+        rotate: function(vector, theta) {
+            var x, y;
+            x = vector.x;
+            y = vector.y;
+
+            
+            var mag; /* Magnitude of vector */
+            mag = Math.sqrt(x * x + y * y);
+
+            var curTheta; /* Current angle of vector */
+            curTheta = Math.atan2(x, y); 
+
+            return {
+                x: mag * Math.cos(theta + curTheta),
+                y: mag * Math.sin(theta + curTheta)
+            };
+        },
         rayBetween: function(a, b) {
             return {
                 center: { 
