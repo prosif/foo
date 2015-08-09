@@ -5,7 +5,6 @@ define(function(require) {
     var Micro        = require("world/enemy/Micro/Micro");
     var Bullet       = require("world/bullet/Bullet");
     var Avoid        = require("world/enemy/Avoid/Avoider");
-    var Lurker       = require("world/enemy/Lurk/Lurker");
     var ScoreBox     = require("world/hud/ScoreBox");
     var TextBox      = require("world/hud/TextBox");
     var Global       = require("main/config");
