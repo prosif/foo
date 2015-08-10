@@ -6,7 +6,6 @@ define(function(require) {
     var Simple       = require("world/enemy/Simple/Simple");
     var Bullet       = require("world/bullet/Bullet");
     var Avoid        = require("world/enemy/Avoid/Avoider");
-    var ScoreBox     = require("world/hud/ScoreBox");
     var TextBox      = require("world/hud/TextBox");
     var Global       = require("main/config");
     var Settings     = require("./config");
@@ -25,7 +24,11 @@ define(function(require) {
             // define what happens at beginning
 
             this.c.entities.create(Player, Settings.Player);
-            this.c.entities.create(ScoreBox);
+            this.scoreBox = this.c.entities.create(TextBox, {
+                font: '30pt Verdana',
+                x: 15, y: 45, 
+                text: this.game.scorer.get(),
+            });
             makeAvoider();
             makeMicro();
             makeSimple();
@@ -41,14 +44,19 @@ define(function(require) {
             return !I.isDown(I.R);
         },
         update: function() {
+
+            // Update score 
+            this.scoreBox.text = this.game.scorer.get();
+
             var playerAlive = this.c.entities.all(Player).length;
 
             if (!playerAlive && !this.game.pauser.isPaused()) {
 
                 this.textBox = this.c.entities.create(TextBox, {
                     text: "Press R to restart", 
-                    xPos: Global.Game.width / 2 - 50,
-                    yPos: 0.3 * Global.Game.height
+                    x: Global.Game.width / 2,
+                    y: 0.4 * Global.Game.height,
+                    align: "center"
                 }).draw(this.c.renderer.getCtx());
 
                 this.game.pauser.pause();
@@ -60,7 +68,7 @@ define(function(require) {
             var game = this.game;
             var destroy = this.c.entities.destroy.bind(this.c.entities);
             // Destroy all created entities
-            ([Player, Bullet, Simple, Avoid, ScoreBox, TextBox, Micro, Wall]).forEach(function(type){
+            ([Player, Bullet, Simple, Avoid, TextBox, Micro, Wall]).forEach(function(type){
                 self.c.entities.all(type).forEach(destroy);
             });
             game.scorer.reset();
