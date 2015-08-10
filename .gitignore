@@ -1,5 +1,9 @@
 node_modules
-dist
+Notes.md
+package.json
+src
+test
+webpack.config.js
 *.swp
 *.tags
 *.session.vim
