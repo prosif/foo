@@ -94,11 +94,16 @@ define(function(require){
         // }
         this.vel.x = velx;
         this.vel.y = vely;
-    }
+    },
+    Sprite.moveAway = function(target, dist, strict) {
 
-    Sprite.moveAway = function(target, _dist, wow) {
+        if (typeof dist == "undefined")
+            dist = 3;
 
-        var dist = _dist || 3;
+        // Strict flag 
+        // strict will only perform the move if the centers are within dist
+        if (typeof strict == "undefined")
+            strict = false;
 
         var xdiff, ydiff, hdiff;
         xdiff = target.center.x - this.center.x;
@@ -108,11 +113,9 @@ define(function(require){
         // Only occurs when entity is pressed against a wall
         if (hdiff == 0) {
             hdiff = 0.1 * Math.random();
-            // game.c.entities.destroy(this);
-            // return;
         } 
 
-        if (hdiff > dist && wow) {
+        if (hdiff > dist && strict) {
             return;
         }
 
