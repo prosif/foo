@@ -2,7 +2,7 @@ define(function(require){
 
     var Bullet = require("world/bullet/Bullet");
     var Utils = require("mixins/Utils");
-    var Wall = require("world/Wall/Wall");
+    var Wall = require("world/wall/Wall");
     var Sprite = require("mixins/Sprite");
 
     var Maths = require("coquette").Collider.Maths;
@@ -17,7 +17,7 @@ define(function(require){
         }
 
         this.c = game.c;
-        this.addPoints = game.addPoints;
+        this.game = game;
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
         Utils.extend(this, defaults);
         Utils.extend(this, settings);
@@ -49,7 +49,7 @@ define(function(require){
     Micro.prototype.collision = function(other) {
         if (other instanceof Bullet){   
             this.c.entities.destroy(this);
-            this.addPoints(1);
+            this.game.scorer.add(1);
         }
         // // if intersecting target, don't do change position!
         // else if (this.target && Maths.pointInsideCircle(this, this.target))
