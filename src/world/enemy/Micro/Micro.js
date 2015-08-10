@@ -5,7 +5,6 @@ define(function(require){
     var Utils = require("mixins/Utils");
     var Wall = require("world/wall/Wall");
     var Sprite = require("mixins/Sprite");
-
     var Maths = require("coquette").Collider.Maths;
 
     var Micro = function(game, settings) {
