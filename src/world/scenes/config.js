@@ -11,8 +11,12 @@ define(function(require) {
                     name: "Demo", 
                     ctor: require("world/scenes/Demo/Demo")
                 },
+                { 
+                    name: "Wave 1", 
+                    ctor: require("world/scenes/waves/1/1") 
+                },
             ],
-        first: "Splash",
+        first: "Wave 1",
     };
     return Scenes;
 
