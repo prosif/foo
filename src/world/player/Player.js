@@ -3,7 +3,6 @@ define(function(require) {
     var Bullet = require("world/bullet/Bullet");
     var Config = require("world/player/config");
     var Global = require("main/config");
-    var Micro = require("world/enemy/Micro/Micro");
     var R = require("mixins/Random");
     var Sprite = require("mixins/Sprite");
     var Utils = require("mixins/Utils");
@@ -115,15 +114,16 @@ define(function(require) {
         };
 
         this.collision = function(other) {
-            if (other instanceof Micro) {
-                game.c.entities.destroy(this);
-                if (Global.DEBUG) {
-                    other.color = "#f00";
-                    other.draw(this.c.renderer.getCtx());
-                    // this.color = "#0f0";
-                    // this.draw(this.c.renderer.getCtx());
-                }
-            }
+            // if (!(other instanceof Wall ||
+            //       other instanceof Bullet)) {
+            //     game.c.entities.destroy(this);
+            //     if (Global.DEBUG) {
+            //         other.color = "#f00";
+            //         other.draw(this.c.renderer.getCtx());
+            //         // this.color = "#0f0";
+            //         // this.draw(this.c.renderer.getCtx());
+            //     }
+            // }
         };
 
         this.draw = function(ctx) {

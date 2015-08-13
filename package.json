@@ -5,9 +5,7 @@
   "main": "''",
   "dependencies": {
     "coquette": "git://github.com/cdosborn/coquette.git",
-    "expose-loader": "^0.7.0",
     "ifvisible.js": "git://github.com/serkanyersen/ifvisible.js.git",
-    "script-loader": "^0.6.1",
     "webpack": "^1.11.0"
   },
   "devDependencies": {

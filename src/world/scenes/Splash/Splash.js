@@ -19,7 +19,7 @@ define(function(require) {
             makeFoo();
             this.c.entities.create(TextBox, {
                 text: "Press S to start", 
-                xPos: 325, yPos: 300
+                x: 325, y: 300
             });
             Wall.makeBoundaries(this);   
         },

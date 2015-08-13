@@ -10,13 +10,6 @@ define(function(require){
     var DEBUG = require("main/config").DEBUG;
 
     var Avoider = function(game, settings) {
-        var defaults = {
-            size: { x:100, y:100 },
-            vel: { x: 0, y: 0 },
-            color : "#fa0",
-            pointValue: 5,
-            speed : 200 / 17 // pixels per 17ms
-        };
 
         this.c = game.c;
         this.game = game;
@@ -25,21 +18,20 @@ define(function(require){
         this.threats = [];
 
         this.boundingBox = game.c.collider.CIRCLE;
+
+        // Extend this
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
-        Utils.extend(this, defaults);
-        Utils.extend(this, settings);
+        Utils.fill(Utils.extend(this, {
+            size: { x:100, y:100 },
+            color: "rgba(127, 127, 127, 0.05)",
+            vel: { x: 0, y: 0 },
+            center: settings.center,
+        }, settings);
 
-        this.core = {
-            center: this.center,
-            size: { x:20, y:20 },
-            color: "#f0af0f",
-            speed: this.speed,
-            vel: this.vel,
-            within: this.within,
-            away: this.away,
-            jitter: 0,
-        }
-
+        // Extend core
+        this.core = Utils.extend({
+            vel: this.vel
+        }, settings);
     };
 
     Avoider.prototype.draw = function(ctx) {
@@ -48,6 +40,7 @@ define(function(require){
         this.drawFilledCircle.call(this.core, ctx);
     };
     Avoider.prototype.update = function(delta) {
+        console.log(this.pointValue);
         var temp;
 
         // Try to set enemy to target Player
@@ -148,18 +141,14 @@ define(function(require){
             if (Maths.pointInsideCircle(other.center, this.core)) {
                 this.game.scorer.add(this.pointValue);
                 this.c.entities.destroy(this);
-            } else {
-                this.moveAway.call(this, other, 5);
-                this.threats.push(other);
+
+            // If the core is near the player (target), don't move away from
+            // bullets, prevents bug where enemies hover around a shooting player
+            } else if (!Maths.circlesIntersecting(this, this.target)) {
+                this.moveAway.call(this, other, this.bulletAway);
+                // this.threats.push(other);
             }
         }
-
-        // // if intersecting target, don't do change position!
-        // else if (this.target && Maths.pointInsideCircle(this.core, this.target))
-        //     return
-
-        else if (other instanceof Avoider)
-            this.moveAway.call(this.core, other.core, this.away, true);
 
         else if (other instanceof Player) {
             if (Maths.circlesIntersecting(this.core, other))
@@ -167,10 +156,10 @@ define(function(require){
         } else if (other instanceof Wall) {
             if (Maths.circleAndRectangleIntersecting(this.core, other))
                 other.alignPlayer(this.core);
+                // this.c.entities.destroy(this);
+        } else if (other instanceof Avoider) {
+            this.moveAway.call(this.core, other.core, this.away, true);
         }
-            // this.c.entities.destroy(this);
-
-
 
     };
 
