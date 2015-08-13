@@ -110,8 +110,6 @@ define(function(require) {
     };
 
     var makeLurker = (function (n) {
-        //console.log(Lurker);
-        console.log(self.c.entities.all(Lurker).length);
         if (self.c.entities.all(Lurker).length >= n ||
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
