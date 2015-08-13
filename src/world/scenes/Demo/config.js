@@ -7,7 +7,7 @@ define(function(require) {
             MAX_ENEMIES: 250,
             MAX_MICROS: 0,
             MAX_LURKERS: 8,
-            MAX_AVOIDERS: 20,
+            MAX_AVOIDERS: 0,
             color:"#efefef"
         },
 

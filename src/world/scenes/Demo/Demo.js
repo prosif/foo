@@ -42,6 +42,8 @@ define(function(require) {
             return !I.isDown(I.R);
         },
         update: function() {
+            //console.log(this.c.entities.all(EnemyBullet).length);
+            //console.log(this.c.entities.all(Lurker).length);
             var playerAlive = this.c.entities.all(Player).length;
 
             if (!playerAlive && !this.game.pauser.isPaused()) {
@@ -108,13 +110,15 @@ define(function(require) {
     };
 
     var makeLurker = (function (n) {
+        //console.log(Lurker);
+        console.log(self.c.entities.all(Lurker).length);
         if (self.c.entities.all(Lurker).length >= n ||
                 self.c.entities._entities.length >= Scene.MAX_ENEMIES)
             return;
 
         // var center = R.point(Global.Game.width, Global.Game.height);
 
-        var center = { x: 0, y: 0 };
+        var center = { x: 400, y: 200 };
 
         if (R.bool()) {
             center.x = R.bool() ? Global.Game.width : 0;
@@ -122,8 +126,8 @@ define(function(require) {
         } else {
             center.y = R.bool() ? Global.Game.height : 0;
             center.x = R.scale(Global.Game.width);
-        }
-        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
+       }
+//        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
 
         return self.c.entities.create(Lurker, Utils.extend({ center: center }, Settings.Lurker));
     }.bind(null, Scene.MAX_LURKERS));

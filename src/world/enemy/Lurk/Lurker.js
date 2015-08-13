@@ -3,6 +3,7 @@ define(function(require){
     var Bullet = require("world/bullet/Bullet");
     var EnemyBullet = require("world/bullet/EnemyBullet");
     var Timer = require("engine/Timer");
+    var Wall = require("world/wall/Wall");
     //var bConfig = require("world/bullet/Config");
     var Sprite = require("mixins/Sprite");
     var Utils = require("mixins/Utils");
@@ -44,24 +45,24 @@ define(function(require){
         this.shoot = function() {
             var bulletSettings = {
                 color: "#000",
-                center: {
-                    x: this.center.x,
-                    y: this.center.y
-                },
-                vel:{
-                    x: .01,//Math.cos(this.center.x),
-                    y: 0//Math.sin(this.center.y)
-                },
+                speed: .1,//1,//.01,
                 size:{
                     x: 5,
                     y: 5
                 }
             };
-            for (var i = 0; i < 360; i+=60){
-                //vel.x = this.vel.x * (i+1);
-                //this.vel.y = this.vel.y * (i+1);
-                game.c.entities.create(EnemyBullet, bulletSettings);
-                //bulletSettings.vel.y += .05;
+            var n = 6;
+            for (var i = 0; i < n; i++){
+                game.c.entities.create(EnemyBullet, Utils.extend(bulletSettings, {
+                    vel: {
+                        x: bulletSettings.speed * Math.cos(2*Math.PI / n * i),
+                        y: bulletSettings.speed * Math.sin(2*Math.PI / n * i),
+                    },
+                    center: {
+                        x: this.center.x,
+                        y: this.center.y
+                    },
+                }));
             }
      
         };
@@ -97,9 +98,13 @@ define(function(require){
         }
 
         this.collision = function(other) {
-            if (other instanceof Bullet)
+            if (other instanceof Bullet){
                 game.c.entities.destroy(this);
                 this.mounted = false;
+            }
+            else if(other instanceof Wall){
+                other.alignPlayer(this);
+            }
         }
 
         this.draw = function(ctx) {
@@ -114,7 +119,7 @@ define(function(require){
                        , rect.size.y);
         }
 
-        this.timer.every(500, function(){
+        this.timer.every(1000, function(){
             this.shoot();
         }.bind(this));
     }
