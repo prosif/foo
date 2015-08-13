@@ -19,9 +19,10 @@ define(function(require){
             center: { x:100, y:100 },
             size: { x:10, y:10 },
             color : "black",
+            pointValue: 10,
             speed : 24 / 17 // pixels per 17ms
         }
-
+    
         this.timer = new Timer();
         Utils.extend(this, defaults);
         Utils.extend(this, settings);
@@ -100,6 +101,7 @@ define(function(require){
         this.collision = function(other) {
             if (other instanceof Bullet){
                 game.c.entities.destroy(this);
+                game.scorer.add(this.pointValue);
                 this.mounted = false;
             }
             else if(other instanceof Wall){

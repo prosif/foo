@@ -12,12 +12,13 @@ define(function(require){
         var defaults = {
             size: { x:5, y:5 },
             vel: { x: 0, y: 0 },
-            color : "#fff",
+            color : "red",
+            pointValue: 1,
             speed : 200 / 17 // pixels per 17ms
         }
 
         this.c = game.c;
-        this.addPoints = game.addPoints;
+        this.scorer = game.scorer;
         Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
         Utils.extend(this, defaults);
         Utils.extend(this, settings);
@@ -49,7 +50,7 @@ define(function(require){
     Micro.prototype.collision = function(other) {
         if (other instanceof Bullet){   
             this.c.entities.destroy(this);
-            this.addPoints(1);
+            this.scorer.add(this.pointValue);
         }
         // // if intersecting target, don't do change position!
         // else if (this.target && Maths.pointInsideCircle(this, this.target))

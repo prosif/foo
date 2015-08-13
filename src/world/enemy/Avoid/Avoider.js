@@ -14,6 +14,7 @@ define(function(require){
             size: { x:100, y:100 },
             vel: { x: 0, y: 0 },
             color : "#fa0",
+            pointValue: 5,
             speed : 200 / 17 // pixels per 17ms
         };
 
@@ -145,7 +146,7 @@ define(function(require){
     Avoider.prototype.collision = function(other) {
         if (other instanceof Bullet) {
             if (Maths.pointInsideCircle(other.center, this.core)) {
-                this.game.scorer.add(5);
+                this.game.scorer.add(this.pointValue);
                 this.c.entities.destroy(this);
             } else {
                 this.moveAway.call(this, other, 5);
