@@ -2,15 +2,15 @@ var Timer        = require("engine/Timer");
 var Player       = require("world/player/Player");
 var Simple       = require("world/enemy/Simple/Simple");
 var TextBox      = require("world/hud/TextBox");
-var Global       = require("main/config");
 var Settings     = require("./config");
+var Global = require("main/config");
 var R            = require("mixins/Random");
 var Base         = require("mixins/Wave");
 var Utils        = require("mixins/Utils");
 
 var Scene = Settings.Scene;
 
-var Wave = function (game) {
+var Wave = function (game, settings) {
     this.c = game.c;
     this.game = game;
     this.timer = new Timer();
@@ -24,7 +24,7 @@ Wave.prototype.init = function() {
     // define what happens at beginning
 
     this.timer = new Timer();
-    var make = Utils.atMost(Scene.MAX_SIMPLE, makeSimple);
+    var make = Utils.atMost(Scene.MAX_SIMPLE, makeSimple.bind(this));
     make();
     this.timer.every(Scene.spawnDelay, make); 
     this.c.entities.create(Player, Settings.Player);
@@ -70,7 +70,8 @@ Wave.prototype.exit = function() {
     game.scorer.reset();
     if (game.pauser.isPaused())
         game.pauser.unpause();
-    game.scener.start("Wave 1");
+    console.log("Wave exit:");
+    game.scener.start(Wave);
 };
 
 var makeSimple = function () {
@@ -84,7 +85,7 @@ var makeSimple = function () {
         center.x = R.scale(Global.Game.width);
     }
 
-    self.c.entities.create( Simple, 
+    this.c.entities.create( Simple, 
             Utils.extend({ center: center }, Settings.Simple));
 
 };

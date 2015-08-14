@@ -65,8 +65,6 @@ var Joystick = function(game, settings) {
 
                     if (noInput) return false;
 
-                    console.log(this.timer.getTime());
-
                     // Input direction changed
                     var dirChange = 
                         this.timer.getTime() > 0 &&
@@ -164,7 +162,6 @@ Joystick.prototype.getInputVector = function() {
     };
 };
 Joystick.prototype.update = function(delta) {
-    console.log(this.stater.cur.name);
     this.stater.update(delta);
 };
 

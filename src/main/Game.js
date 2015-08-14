@@ -4,29 +4,30 @@ var Pauser       = require("engine/Pauser");
 var Scener       = require("engine/Scener");
 var Scorer       = require("engine/Scorer");
 var Global       = require("main/config");
-var Scenes       = require("world/scenes/config");
 
-(function() {
-    var self = this;
+var me = 
+    Global.DEBUG
+    ? window
+    : {};
 
-    this.c = new Coquette(this,
-            "canvas",
-            Global.Game.width,
-            Global.Game.height,
-            Global.Game.color);
+me.c = new Coquette(me,
+        "canvas",
+        Global.Game.width,
+        Global.Game.height,
+        Global.Game.color);
 
-    // Main coquette modules
-    this.timer = new Timer();
-    this.pauser = new Pauser(this,
-            [this.c.entities, this.c.collider, this.c.renderer]);
+// Main coquette modules
+me.timer = new Timer();
+me.pauser = new Pauser(me,
+        [me.c.entities, me.c.collider, me.c.renderer]);
 
-    this.scorer = new Scorer(this);
+me.scorer = new Scorer(me);
 
-    this.update = function(delta) {
-        this.timer.update(delta);
-        this.scener.update(delta);
-    }
+me.update = function(delta) {
+    me.timer.update(delta);
+    me.scener.update(delta);
+}
 
-    this.scener = new Scener(this, Scenes.scenes);
-    this.scener.start(Scenes.first);
-})();
+me.scener = new Scener(me);
+
+me.scener.start(require("world/scenes/Splash/Splash"));

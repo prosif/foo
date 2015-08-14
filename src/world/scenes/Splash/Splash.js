@@ -5,6 +5,7 @@ var Avoid        = require("world/enemy/Avoid/Avoider");
 var TextBox      = require("world/hud/TextBox");
 var Global       = require("main/config");
 var R            = require("mixins/Random");
+var Wave1        = require("world/scenes/waves/1/1");
 var Utils        = require("mixins/Utils");
 
 var Splash = function (game) {
@@ -14,7 +15,7 @@ var Splash = function (game) {
 
 Splash.prototype = {
     init: function() {
-        makeFoo();
+        makeFoo.bind(this)();
         this.c.entities.create(TextBox, {
             text: "Press S to start", 
             x: 325, y: 300
@@ -34,12 +35,11 @@ Splash.prototype = {
         ([Micro, Wall, TextBox]).forEach(function(type){
             self.c.entities.all(type).forEach(destroy);
         });
-        this.game.scener.start("Demo");
+        this.game.scener.start(Wave1);
     }
 };
 
 var makeFoo = function(){
-    // f
     for(var i = 0; i < 20; i++){
         this.c.entities.create(Micro, {
             center: {x: 0, y: 0},
