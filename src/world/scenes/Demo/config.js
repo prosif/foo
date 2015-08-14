@@ -80,7 +80,18 @@ define(function(require) {
         },
 
         Lurker: {
-            speed: 40/17
+            Lurker: {
+                speed: 40/17,
+                numBullets: 10
+            },
+            Bullet: {
+                color: "#000",
+                speed: .05,//1,//.01,
+                size:{
+                    x: 5,
+                    y: 5
+                }
+            },
         }
     };
 

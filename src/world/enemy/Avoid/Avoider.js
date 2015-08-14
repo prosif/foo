@@ -20,27 +20,30 @@ define(function(require){
         this.boundingBox = game.c.collider.CIRCLE;
 
         // Extend this
-        Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
+        Utils.extend(this, Sprite, ["moveAway", "drawFilledCircle"]);
         Utils.fill(Utils.extend(this, {
             size: { x:100, y:100 },
             color: "rgba(127, 127, 127, 0.05)",
-            vel: { x: 0, y: 0 },
-            center: settings.center,
-        }, settings);
+        }), settings);
 
         // Extend core
         this.core = Utils.extend({
-            vel: this.vel
+            vel: { x: 0, y: 0 }
         }, settings);
+        Utils.extend(this.core, Sprite, ["follow", "moveAway", "drawFilledCircle"]);
+
+        // Both centers must refer to same object
+        this.center = settings.center;
+        this.core.center = settings.center;
     };
 
     Avoider.prototype.draw = function(ctx) {
-        if (DEBUG)
-            this.drawFilledCircle(ctx);
-        this.drawFilledCircle.call(this.core, ctx);
+        // if (DEBUG)
+        //     this.drawFilledCircle(ctx);
+
+        this.core.drawFilledCircle(ctx);
     };
     Avoider.prototype.update = function(delta) {
-        console.log(this.pointValue);
         var temp;
 
         // Try to set enemy to target Player
@@ -53,7 +56,7 @@ define(function(require){
         }
 
         // VV buggy
-        this.follow.call(this.core, this.target);
+        this.core.follow(this.target);
 
         var avel, vx, vy, vr;
         if (false && this.threats.length > 0) {
@@ -73,9 +76,8 @@ define(function(require){
             }
         }
 
-        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
-        this.center.x += this.vel.x * delta;
-        this.center.y += this.vel.y * delta;
+        this.core.center.x += this.core.vel.x * delta;
+        this.core.center.y += this.core.vel.y * delta;
 
         //  Clear threats array, repopulated in this.collision
         this.threats.length = 0;
@@ -95,7 +97,7 @@ define(function(require){
             var i = bulletAndCoreFutureIntersections[0];
             var j =
                 Geom.intersectionRayAndPerpendicularLineThroughPoint(threat,
-                        self.core.center) 
+                        self.core.center);
             var rayBetweenCoreCenterAndJ = Geom.rayBetween(self.core.center, j);
             var outerCoreIntersection =
                 Geom.intersectionsOfRayAndCircle(rayBetweenCoreCenterAndJ,
@@ -133,7 +135,7 @@ define(function(require){
         return {
             x: vx,
             y: vy,
-        }
+        };
     };
 
     Avoider.prototype.collision = function(other) {
@@ -145,20 +147,20 @@ define(function(require){
             // If the core is near the player (target), don't move away from
             // bullets, prevents bug where enemies hover around a shooting player
             } else if (!Maths.circlesIntersecting(this, this.target)) {
-                this.moveAway.call(this, other, this.bulletAway);
+                this.moveAway(other, this.bulletAway);
                 // this.threats.push(other);
             }
         }
 
         else if (other instanceof Player) {
             if (Maths.circlesIntersecting(this.core, other))
-                this.c.entities.destroy(other)
+                this.c.entities.destroy(other);
         } else if (other instanceof Wall) {
             if (Maths.circleAndRectangleIntersecting(this.core, other))
                 other.alignPlayer(this.core);
                 // this.c.entities.destroy(this);
         } else if (other instanceof Avoider) {
-            this.moveAway.call(this.core, other.core, this.away, true);
+            this.core.moveAway(other.core, this.away, true);
         }
 
     };

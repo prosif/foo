@@ -126,7 +126,7 @@ define(function(require) {
 
         // var center = R.point(Global.Game.width, Global.Game.height);
 
-        var center = { x: 400, y: 200 };
+        var center = {};
 
         if (R.bool()) {
             center.x = R.bool() ? Global.Game.width : 0;
@@ -134,10 +134,10 @@ define(function(require) {
         } else {
             center.y = R.bool() ? Global.Game.height : 0;
             center.x = R.scale(Global.Game.width);
-       }
-//        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
+        }
 
-        return self.c.entities.create(Lurker, Utils.extend({ center: center }, Settings.Lurker));
+        return self.c.entities.create(Lurker, 
+                Utils.extend({ Lurker: { center: center } }, Settings.Lurker));
     }.bind(null, Scene.MAX_LURKERS));
 
     
