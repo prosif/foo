@@ -1,138 +1,134 @@
+var Bullet = require("world/bullet/Bullet");
+var Config = require("world/player/config");
+var Global = require("main/config");
+var R = require("mixins/Random");
+var Sprite = require("mixins/Sprite");
+var Utils = require("mixins/Utils");
+var Wall = require("world/wall/Wall");
 
+var Player = function(game, settings) {
 
-    var Bullet = require("world/bullet/Bullet");
-    var Config = require("world/player/config");
-    var Global = require("main/config");
-    var R = require("mixins/Random");
-    var Sprite = require("mixins/Sprite");
-    var Utils = require("mixins/Utils");
-    var Wall = require("world/wall/Wall");
+    this.c = game.c;
 
-    var Player = function(game, settings) {
+    // Config
+    Utils.extend(Utils.extend(this, Config.Player), settings.Player);
+    Utils.extend(this, Sprite, ["drawCircle"]);
 
-        this.c = game.c;
+    // Bullet config
+    var bsettings =
+        Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
 
-        // Config
-        Utils.extend(Utils.extend(this, Config.Player), settings.Player);
-        Utils.extend(this, Sprite, ["drawCircle"]);
+    // State
+    this.lastBullet = 0;
+    this.boundingBox = game.c.collider.CIRCLE;
+    this.vel = { x: 0, y: 0 };
+    this.center = { x: 400, y: 200 };
 
-        // Bullet config
-        var bsettings =
-            Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
+    this.update = function(delta) {
+        this.move(delta);
+        this.shoot(delta);
+    };
 
-        // State
-        this.lastBullet = 0;
-        this.boundingBox = game.c.collider.CIRCLE;
-        this.vel = { x: 0, y: 0 };
-        this.center = { x: 400, y: 200 };
+    this.move = function(delta) {
 
-        this.update = function(delta) {
-            this.move(delta);
-            this.shoot(delta);
-        };
+        var Input = game.c.inputter;
 
-        this.move = function(delta) {
+        // The direction of motion
+        var xdir, ydir;
+        xdir = (Input.isDown(Input.D) ? 1 : (Input.isDown(Input.A) ? -1 : 0));
+        ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
 
-            var Input = game.c.inputter;
+        // The diffs of initial/final player position
+        // theta is the angle of motion relative to the ground
+        var x, y, h, theta;
+        h = this.speed / 17;
+        theta = Math.atan2(ydir, xdir);
+        this.vel.x = h * Math.cos(theta) * (xdir === 0 ? 0 : 1);
+        this.vel.y = h * Math.sin(theta);
 
-            // The direction of motion
-            var xdir, ydir;
-            xdir = (Input.isDown(Input.D) ? 1 : (Input.isDown(Input.A) ? -1 : 0));
-            ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
+        this.center.x += this.vel.x * delta;
+        this.center.y += this.vel.y * delta;
 
-            // The diffs of initial/final player position
-            // theta is the angle of motion relative to the ground
-            var x, y, h, theta;
-            h = this.speed / 17;
-            theta = Math.atan2(ydir, xdir);
-            this.vel.x = h * Math.cos(theta) * (xdir === 0 ? 0 : 1);
-            this.vel.y = h * Math.sin(theta);
+        // Force player coordinates within world
+        this.restrict();
+    };
 
-            this.center.x += this.vel.x * delta;
-            this.center.y += this.vel.y * delta;
+    this.restrict = function() {
 
-            // Force player coordinates within world
-            this.restrict();
-        };
+        // min/max values for player location in world
+        var minx, maxx, miny, maxy;
 
-        this.restrict = function() {
+        // pad accounts for the stroke width affecting player dimensions
+        var pad = 3;
 
-            // min/max values for player location in world
-            var minx, maxx, miny, maxy;
+        maxx = Global.Game.width - this.size.x / 2 - pad;
+        minx = this.size.x / 2 + pad;
+        maxy = Global.Game.height - this.size.x / 2 - pad;
+        miny = this.size.x / 2 + pad;
+        this.center.x = Math.max(Math.min(this.center.x, maxx), minx);
+        this.center.y = Math.max(Math.min(this.center.y, maxy), miny);
+    };
 
-            // pad accounts for the stroke width affecting player dimensions
-            var pad = 3;
+    this.shoot = function(delta) {
 
-            maxx = Global.Game.width - this.size.x / 2 - pad;
-            minx = this.size.x / 2 + pad;
-            maxy = Global.Game.height - this.size.x / 2 - pad;
-            miny = this.size.x / 2 + pad;
-            this.center.x = Math.max(Math.min(this.center.x, maxx), minx);
-            this.center.y = Math.max(Math.min(this.center.y, maxy), miny);
-        };
+        var Input = game.c.inputter;
 
-        this.shoot = function(delta) {
+        // The direction of bullet attack
+        var left, right, down, up;
+        left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H);
+        right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L);
+        up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K);
+        down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J);
 
-            var Input = game.c.inputter;
+        var bxdir, bydir, btheta;
+        bxdir = (right ? 1 : left ? -1 : 0);
+        bydir = (down ? 1 : up ? -1 : 0);
+        btheta = Math.atan2(bydir, bxdir);
 
-            // The direction of bullet attack
-            var left, right, down, up;
-            left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H);
-            right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L);
-            up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K);
-            down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J);
+        // If gun has direction, shoot
+        if (bxdir || bydir) {
+            if ((game.timer.getTime() - this.lastBullet) > bsettings.delay) {
+                this.lastBullet = game.timer.getTime();
 
-            var bxdir, bydir, btheta;
-            bxdir = (right ? 1 : left ? -1 : 0);
-            bydir = (down ? 1 : up ? -1 : 0);
-            btheta = Math.atan2(bydir, bxdir);
+                var any =  R.any(-1, 1);
+                var xtheta = btheta + (R.scale(bsettings.disorder) * any );
+                var xcomp = Math.cos(xtheta);
+                var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
 
-            // If gun has direction, shoot
-            if (bxdir || bydir) {
-                if ((game.timer.getTime() - this.lastBullet) > bsettings.delay) {
-                    this.lastBullet = game.timer.getTime();
-
-                    var any =  R.any(-1, 1);
-                    var xtheta = btheta + (R.scale(bsettings.disorder) * any );
-                    var xcomp = Math.cos(xtheta);
-                    var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
-
-                    Utils.extend(bsettings, {
-                        center: {
-                            x: this.center.x,
-                            y: this.center.y,
-                        },
-                        vel: {
-                            x: bsettings.speed / 17 * xcomp,
-                            y: bsettings.speed / 17 * ycomp,
-                        }
-                    });
-                    game.c.entities.create(Bullet, bsettings);
-                }
+                Utils.extend(bsettings, {
+                    center: {
+                        x: this.center.x,
+                        y: this.center.y,
+                    },
+                    vel: {
+                        x: bsettings.speed / 17 * xcomp,
+                        y: bsettings.speed / 17 * ycomp,
+                    }
+                });
+                game.c.entities.create(Bullet, bsettings);
             }
-
-        };
-
-        this.collision = function(other) {
-            // if (!(other instanceof Wall ||
-            //       other instanceof Bullet)) {
-            //     game.c.entities.destroy(this);
-            //     if (Global.DEBUG) {
-            //         other.color = "#f00";
-            //         other.draw(this.c.renderer.getCtx());
-            //         // this.color = "#0f0";
-            //         // this.draw(this.c.renderer.getCtx());
-            //     }
-            // }
-        };
-
-        this.draw = function(ctx) {
-            ctx.strokeStyle = this.color || "#f00";
-            ctx.lineWidth = 4;
-            this.drawCircle(ctx, this.size.x / 2 - 1);
-        };
+        }
 
     };
-    module.exports = Player;
 
+    this.collision = function(other) {
+        // if (!(other instanceof Wall ||
+        //       other instanceof Bullet)) {
+        //     game.c.entities.destroy(this);
+        //     if (Global.DEBUG) {
+        //         other.color = "#f00";
+        //         other.draw(this.c.renderer.getCtx());
+        //         // this.color = "#0f0";
+        //         // this.draw(this.c.renderer.getCtx());
+        //     }
+        // }
+    };
 
+    this.draw = function(ctx) {
+        ctx.strokeStyle = this.color || "#f00";
+        ctx.lineWidth = 4;
+        this.drawCircle(ctx, this.size.x / 2 - 1);
+    };
+
+};
+module.exports = Player;

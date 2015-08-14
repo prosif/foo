@@ -131,3 +131,4 @@ var Camera = function(game) {
 Camera.RELATIVE = 0;
 Camera.ABSOLUTE = 1;
 
+module.exports = Camera;

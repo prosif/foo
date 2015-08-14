@@ -26,7 +26,7 @@ var Pauser = function(game, modules) {
 
     this.isPaused = function() {
         return this.paused;
-    }
+    };
 
     this.pause = function() {
         var self = this;
@@ -54,6 +54,5 @@ var Pauser = function(game, modules) {
     };
 
 };
+
 module.exports = Pauser;
-
-

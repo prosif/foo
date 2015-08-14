@@ -1,22 +1,20 @@
- 
 
-    var Scorer = function(game) {
 
-        var score = 0;
-            
-        this.add = function(n) {
-            score += n;
-        };
+var Scorer = function(game) {
 
-        this.get = function() {
-            return score;
-        };
+    var score = 0;
 
-        this.reset = function() {
-            score = 0;
-        };
+    this.add = function(n) {
+        score += n;
     };
 
-    module.exports = Scorer;
+    this.get = function() {
+        return score;
+    };
 
+    this.reset = function() {
+        score = 0;
+    };
+};
 
+module.exports = Scorer;

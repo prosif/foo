@@ -14,7 +14,7 @@ var Joystick = function(game, settings) {
 
     // Rotation speed
     // 11.25deg / 17msframe
-    this.speed = Math.PI / 30 / 17
+    this.speed = Math.PI / 30 / 17;
 
         // State
 
@@ -52,7 +52,7 @@ var Joystick = function(game, settings) {
         children: {
             "first direction" : {
                 init: function() {
-                    defaultInit()
+                    defaultInit();
                         this.timer = new Timer();
                 },
                 active: function() {
@@ -73,7 +73,7 @@ var Joystick = function(game, settings) {
                         (me.dir.x != newDir.x || me.dir.y != newDir.y);
 
                     // Active if no direction change or a big change (> 45deg)
-                    return 
+                    return
                         !dirChange ||
                         !Geom.angleWithin(newTheta, me.input, Math.PI/4);
 
@@ -107,7 +107,7 @@ var Joystick = function(game, settings) {
                                 me.theta == newTheta;
 
                             // Active if no direction change
-                            return !dirChange && !angleReached
+                            return !dirChange && !angleReached;
                         },
                         update: function(delta) {
                             defaultInit();
@@ -123,7 +123,7 @@ var Joystick = function(game, settings) {
             }
         },
     });
-}
+};
 
 Joystick.prototype.keysDown = function() {
     var input = this.game.c.inputter;
@@ -170,18 +170,17 @@ Joystick.prototype.update = function(delta) {
 
 Joystick.prototype.getX = function() {
     return this.dir.x;
-} 
+}; 
 Joystick.prototype.getY = function() {
     return this.dir.y;
-} 
+}; 
 Joystick.prototype.getTheta = function() {
     // console.log("this.theta % (Math.PI*2)", this.theta % (Math.PI*2));
     // console.log("this.theta;", this.theta);
     return this.theta;
-} 
+}; 
 Joystick.prototype.isHot = function() {
     return this.active;
-} 
+}; 
+
 module.exports = Joystick;
-
-
