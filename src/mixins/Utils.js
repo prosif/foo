@@ -1,4 +1,4 @@
-define(function(require){
+
     var Utils = {
 
         // Extend a, but do not override
@@ -48,5 +48,6 @@ define(function(require){
         },
 
     };
-    return Utils;
-});
+    module.exports = Utils;
+
+

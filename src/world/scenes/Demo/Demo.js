@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var Wall         = require("world/wall/Wall");
     var Player       = require("world/player/Player");
@@ -135,6 +135,7 @@ define(function(require) {
 
         return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
     }.bind(null, Scene.MAX_AVOIDERS));
-    return Demo;
-});
+    module.exports = Demo;
+
+
 

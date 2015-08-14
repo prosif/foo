@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Bullet = require("bullet/Bullet");
     var EnemyBullet = require("bullet/EnemyBullet");
@@ -146,5 +146,6 @@ define(function(require){
             this.shoot();
         }.bind(this));
     }
-    return Lurker;
-});
+    module.exports = Lurker;
+
+

@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var R = require("mixins/Random");
     var Utils = require("mixins/Utils");
@@ -123,5 +123,6 @@ define(function(require){
         this.center.y -= ydiff / hdiff * dist;
     }
 
-    return Sprite;
-});
+    module.exports = Sprite;
+
+

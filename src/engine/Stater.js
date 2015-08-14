@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Utils = require("mixins/Utils");
     var assert = Utils.assert;
@@ -80,5 +80,6 @@ define(function(require){
     };
 
 
-    return Stater;
-});
+    module.exports = Stater;
+
+

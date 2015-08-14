@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Random = {};
     Random.bool =  function() {
@@ -32,5 +32,6 @@ define(function(require){
 
         return Math.random() * (b - a) + a;
     }
-    return Random;
-});
+    module.exports = Random;
+
+

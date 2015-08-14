@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var Scene = function (game) {
     };
@@ -18,6 +18,7 @@ define(function(require) {
             // ex. this.game.scener.start(this.next);
         }
     };
-    return Scene;
-});
+    module.exports = Scene;
+
+
 

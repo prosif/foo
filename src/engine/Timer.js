@@ -1,4 +1,4 @@
-define(function(require) {
+
     var Timer = function() {
         this.time = 0;
         this.callbacks = [];
@@ -35,5 +35,6 @@ define(function(require) {
         }
     };
 
-    return Timer;
-});
+    module.exports = Timer;
+
+

@@ -1,9 +1,6 @@
-define(["require",
-        "world/player/Player",
-        "mixins/Sprite",
-        "mixins/Utils"],
-
-    function(require, Player, Sprite, Utils) {
+var Player = require('world/player/Player');
+var Sprite = require('mixins/Sprite');
+var Utils = require('mixins/Utils');
 
     var Bullet = function(game, settings) {
 
@@ -45,5 +42,6 @@ define(["require",
         this.drawFilledCircle(ctx, this.size.x / 2);
     };
 
-    return Bullet;
-});
+    module.exports = Bullet;
+
+

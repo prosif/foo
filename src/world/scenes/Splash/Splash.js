@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var Wall         = require("world/wall/Wall");
     var Player       = require("world/player/Player");
@@ -102,6 +102,7 @@ define(function(require) {
         }
     };
 
-    return Splash;
-});
+    module.exports = Splash;
+
+
 

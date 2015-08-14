@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Bullet = require("world/bullet/Bullet");
     var Player = require("world/player/Player");
@@ -70,5 +70,6 @@ define(function(require){
 
     }
 
-    return Simple;
-});
+    module.exports = Simple;
+
+

@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Player = require("world/player/Player");
     var Bullet = require("world/bullet/Bullet");
@@ -68,5 +68,6 @@ define(function(require){
 
     }
 
-    return Micro;
-});
+    module.exports = Micro;
+
+

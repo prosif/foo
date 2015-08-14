@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     // A list of scene constructors
     var Scenes = {
@@ -14,6 +14,7 @@ define(function(require) {
             ],
         first: "Splash",
     };
-    return Scenes;
+    module.exports = Scenes;
 
-});
+
+

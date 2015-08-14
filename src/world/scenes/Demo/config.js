@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var deepFreeze = require("mixins/Utils").deepFreeze;
 
@@ -78,5 +78,6 @@ define(function(require) {
         },
     };
 
-    return deepFreeze(Config);
-});
+    module.exports = deepFreeze(Config);
+
+

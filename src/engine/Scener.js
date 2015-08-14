@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var assert = require("mixins/Utils").assert;
 
@@ -60,6 +60,7 @@ define(function(require) {
     var doNothing = function() {};
     var getTrue = function() { return true; };
 
-    return Scener;
+    module.exports = Scener;
 
-});
+
+

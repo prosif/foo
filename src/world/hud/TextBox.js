@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Bullet = require("world/bullet/Bullet");
     var Utils = require("mixins/Utils");
@@ -28,5 +28,6 @@ define(function(require){
 
     };
 
-    return TextBox;
-});
+    module.exports = TextBox;
+
+

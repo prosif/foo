@@ -1,4 +1,4 @@
-define(function(require) { 
+ 
 
     var Scorer = function(game) {
 
@@ -17,5 +17,6 @@ define(function(require) {
         };
     };
 
-    return Scorer;
-});
+    module.exports = Scorer;
+
+

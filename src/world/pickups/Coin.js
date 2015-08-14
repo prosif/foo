@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Bullet = require("bullet/Bullet");
     var Enemy = function(game, settings) {
@@ -43,5 +43,6 @@ define(function(require){
            ctx.stroke();
         }
     }
-    return Enemy;
-});
+    module.exports = Enemy;
+
+

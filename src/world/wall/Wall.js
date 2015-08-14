@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     // A wall is a simple boundary for the bounds of the world
     //
@@ -110,5 +110,6 @@ define(function(require) {
     Wall.TOP    = 2;
     Wall.BOTTOM = 3;
 
-    return Wall;
-});
+    module.exports = Wall;
+
+

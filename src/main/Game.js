@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var Coquette     = require("coquette");
     var Timer        = require("engine/Timer");
@@ -32,4 +32,5 @@ define(function(require) {
         this.scener = new Scener(this, Scenes.scenes);
         this.scener.start(Scenes.first);
     })();
-});
+
+

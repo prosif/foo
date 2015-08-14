@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var Wall         = require("world/wall/Wall");
     var Player       = require("world/player/Player");
@@ -97,6 +97,7 @@ define(function(require) {
             jitter: 0.02
         });
     }.bind(null, Scene.MAX_AVOIDERS));
-    return Start;
-});
+    module.exports = Start;
+
+
 

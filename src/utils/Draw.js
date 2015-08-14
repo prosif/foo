@@ -1,4 +1,4 @@
-define(function(require){
+
     var Draw = {};
     Draw.drawRect = function(obj, ctx, color) {
             ctx.fillStyle = "black";
@@ -21,5 +21,6 @@ define(function(require){
         ctx.stroke();
     }
 
-    return Draw;
-});
+    module.exports = Draw;
+
+

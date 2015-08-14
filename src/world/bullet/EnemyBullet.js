@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Wall = require("world/Wall");
     var EnemyBullet = function(game, settings) {
@@ -33,5 +33,6 @@ define(function(require){
 
         }
     }
-    return EnemyBullet;
-});
+    module.exports = EnemyBullet;
+
+

@@ -1,4 +1,4 @@
-define(function(require){
+
 
     var Utils = require("mixins/Utils");
 
@@ -253,5 +253,6 @@ define(function(require){
         },
 
     }
-    return Geometry;
-});
+    module.exports = Geometry;
+
+

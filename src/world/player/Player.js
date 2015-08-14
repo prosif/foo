@@ -1,4 +1,4 @@
-define(function(require) {
+
 
     var Bullet = require("world/bullet/Bullet");
     var Config = require("world/player/config");
@@ -133,5 +133,6 @@ define(function(require) {
         };
 
     };
-    return Player;
-});
+    module.exports = Player;
+
+

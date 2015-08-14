@@ -1,14 +1,7 @@
-define(["require",
-        "player/Player",
-        "bullet/Bullet",
-        "engine/Timer",
-        "mixins/Utils"],
-
-    function(require,
-             Player,
-             Bullet,
-             Timer,
-             Utils) {
+var Player = require('player/Player');
+var Bullet = require('bullet/Bullet');
+var Timer = require('engine/Timer');
+var Utils = require('mixins/Utils');
 
     var Enemy = function(game, settings) {
         var self = this;
@@ -78,5 +71,6 @@ define(["require",
 
         }
     }
-    return Enemy;
-});
+    module.exports = Enemy;
+
+
