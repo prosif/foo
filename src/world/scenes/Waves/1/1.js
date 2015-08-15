@@ -24,8 +24,7 @@ var Wave = function (game, settings) {
     this.game = game;
     this.timer = new Timer();
 
-    this.base = Utils.bind(this, Base);
-    Utils.extend(this, Base, ["destroyExcept"]);
+    Utils.extend(this, Base, ["playerDead", "resetPressed", "destroyExcept"]);
 };
 
 Wave.prototype = {};
@@ -46,7 +45,7 @@ Wave.prototype.init = function() {
 Wave.prototype.active = function() {
     // Exit if key R(eset) is pressed
     // or player is dead
-    return this.base.active();
+    return !this.resetPressed();
 };
 Wave.prototype.update = function(delta) {
     this.timer.update(delta);
@@ -54,9 +53,7 @@ Wave.prototype.update = function(delta) {
     // Update score 
     this.scoreBox.text = this.game.scorer.get();
 
-    var playerAlive = this.c.entities.all(Player).length;
-
-    if (!playerAlive && !this.game.pauser.isPaused()) {
+    if (this.playerDead() && !this.game.pauser.isPaused()) {
 
         this.textBox = this.c.entities.create(TextBox, {
             text: "Press R to restart", 

@@ -25,30 +25,13 @@ define(function(require){
         }).forEach(destroy);
     };
 
-    Wave.active = function() {
+    Wave.playerDead = function() {
+        return this.c.entities.all(Player).length === 0;
+    };
+
+    Wave.resetPressed = function() {
         var I = this.c.inputter;
-        if (I.isDown(I.R))
-            return false;
-
-        var playerDead = this.c.entities.all(Player).length === 0;
-        if (playerDead)
-            return false
-
-        return true;
-    };
-
-    Wave.init = function() {
-        this.timer = new Timer();
-        this.c.entities.create(Player, Settings.Player);
-    };
-
-    Wave.exit = function() {
-
-        var me = this;
-        this.c.entities._entities.forEach(function(ent) {
-            if (!(ent instanceof Player)) 
-                me.c.entities.destroy(ent);
-        });
+        return I.isDown(I.R);
     };
 
     return Wave;
