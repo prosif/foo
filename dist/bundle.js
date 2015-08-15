@@ -44,41 +44,40 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var Coquette = __webpack_require__(1);
+	var Timer = __webpack_require__(2);
+	var Pauser = __webpack_require__(3);
+	var Scener = __webpack_require__(5);
+	var Scorer = __webpack_require__(8);
+	var Global = __webpack_require__(7);
 
-	    var Coquette     = __webpack_require__(1);
-	    var Timer        = __webpack_require__(2);
-	    var Pauser       = __webpack_require__(3);
-	    var Scener       = __webpack_require__(5);
-	    var Scorer       = __webpack_require__(8);
-	    var Global       = __webpack_require__(7);
-	    var Scenes       = __webpack_require__(9);
+	var me =
+	    Global.DEBUG
+	    ? window
+	    : {};
 
-	    (function() {
-	        var self = this;
+	me.c = new Coquette(me,
+	        "canvas",
+	        Global.Game.width,
+	        Global.Game.height,
+	        Global.Game.color);
 
-	        this.c = new Coquette(this,
-	                "canvas",
-	                Global.Game.width,
-	                Global.Game.height,
-	                Global.Game.color);
+	// Main coquette modules
+	me.timer = new Timer();
+	me.pauser = new Pauser(me,
+	        [me.c.entities, me.c.collider, me.c.renderer]);
 
-	        // Main coquette modules
-	        this.timer = new Timer();
-	        this.pauser = new Pauser(this,
-	                [this.c.entities, this.c.collider, this.c.renderer]);
+	me.scorer = new Scorer(me);
 
-	        this.scorer = new Scorer(this);
+	me.update = function(delta) {
+	    me.timer.update(delta);
+	    me.scener.update(delta);
+	}
 
-	        this.update = function(delta) {
-	            this.timer.update(delta);
-	            this.scener.update(delta);
-	        }
+	me.scener = new Scener(me);
 
-	        this.scener = new Scener(this, Scenes.scenes);
-	        this.scener.start(Scenes.first);
-	    })();
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	me.scener.start(__webpack_require__(9));
+	// me.scener.start(require("world/scenes/waves/1/1"));
 
 
 /***/ },
@@ -1016,113 +1015,109 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
-	    var Timer = function() {
-	        this.time = 0;
-	        this.callbacks = [];
-	    }
+	var Timer = function() {
+	    this.time = 0;
+	    this.callbacks = [];
+	};
 
-	    Timer.prototype = {
-	        update: function(delta) {
-	            var self = this;
+	Timer.prototype = {
+	    update: function(delta) {
+	        var self = this;
 
-	            this.time += delta;
+	        this.time += delta;
 
-	            if (this.callbacks) {
-	                this.callbacks.forEach(function(cbObj) {
-	                    if (self.time - cbObj.lastTime >=
-	                            cbObj.interval) {
-	                        cbObj.callback();
-	                        cbObj.lastTime = self.time;
-	                    }
-	                });
-	            }
-	        },
-	        getTime: function() {
-	            return this.time;
-	        },
-	        reset: function() {
-	            this.time = 0;
-	        },
-	        every: function(interval, callback) {
-	            this.callbacks.push({
-	                interval : interval,
-	                callback : callback,
-	                lastTime : 0
+	        if (this.callbacks) {
+	            this.callbacks.forEach(function(cbObj) {
+	                if (self.time - cbObj.lastTime >=
+	                        cbObj.interval) {
+	                    cbObj.callback();
+	                    cbObj.lastTime = self.time;
+	                }
 	            });
 	        }
-	    };
+	    },
+	    getTime: function() {
+	        return this.time;
+	    },
+	    reset: function() {
+	        this.time = 0;
+	    },
+	    every: function(interval, callback) {
+	        this.callbacks.push({
+	            interval : interval,
+	            callback : callback,
+	            lastTime : 0
+	        });
+	    }
+	};
 
-	    return Timer;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = Timer;
 
 
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var visible = __webpack_require__(4);
+	var Pauser = function(game, modules) {
 
-	    var visible = __webpack_require__(4);
-	    var Pauser = function(game, modules) {
+	    var self = this;
 
+	    this.paused = false;
+	    this.backups = [];
+
+	    // Toggle pause on P down
+	    window.addEventListener("keydown", function(e) {
+	        if (e.keyCode == 80)
+	            self.toggle();
+	    }, false);
+
+	    // Pause on tab switch, leaving window;
+	    visible.on("blur", function() {
+	        self.pause();
+	    });
+
+	    this.toggle = function() {
+	        if (this.paused)
+	            this.unpause();
+	        else
+	            this.pause();
+	    };
+
+	    this.isPaused = function() {
+	        return this.paused;
+	    };
+
+	    this.pause = function() {
 	        var self = this;
 
-	        this.paused = false;
+	        if (this.paused)
+	            return;
+
 	        this.backups = [];
-
-	        // Toggle pause on P down
-	        window.addEventListener("keydown", function(e) {
-	            if (e.keyCode == 80)
-	                self.toggle();
-	        }, false);
-
-	        // Pause on tab switch, leaving window;
-	        visible.on("blur", function() {
-	            self.pause();
+	        modules.forEach(function(m) {
+	            self.backups.push(m.update);
+	            m.update = function(){};
 	        });
-
-	        this.toggle = function() {
-	            if (this.paused)
-	                this.unpause();
-	            else
-	                this.pause();
-	        };
-
-	        this.isPaused = function() {
-	            return this.paused;
-	        }
-
-	        this.pause = function() {
-	            var self = this;
-
-	            if (this.paused)
-	                return;
-
-	            this.backups = [];
-	            modules.forEach(function(m) {
-	                self.backups.push(m.update);
-	                m.update = function(){};
-	            });
-	            this.paused = true;
-	        };
-	        this.unpause = function() {
-	            var self = this;
-
-	            if (!this.paused)
-	                return;
-
-	            this.backups.forEach(function(update, i) {
-	                modules[i].update = update;
-	            });
-	            this.paused = false;
-	        };
-
+	        this.paused = true;
 	    };
-	    return Pauser;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    this.unpause = function() {
+	        var self = this;
+
+	        if (!this.paused)
+	            return;
+
+	        this.backups.forEach(function(update, i) {
+	            modules[i].update = update;
+	        });
+	        this.paused = false;
+	    };
+
+	};
+
+	module.exports = Pauser;
 
 
 /***/ },
@@ -1439,1193 +1434,1195 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var assert = __webpack_require__(6).assert;
+	var G = __webpack_require__(7);
 
-	    var assert = __webpack_require__(6).assert;
+	/*
+	 * THE SCENER API:
 
-	    var Scener = function(game, scenes) {
-	        var scenes;
-	        var paused = false;
-	        var store = {};
-	        var cur;
+	   // Advance next scene
+	   scener.start(NextSceneConstructor);
 
-	        scenes.forEach(function(scene) {
+	   // Advance a temporary scene
+	   scener.push();
 
-	            var s = new scene.ctor(game);
+	   // Leave a temporary scene
+	   scener.pop();
 
-	            assert("Scene requires a name property", scene.name);
-	            store[scene.name] = s;
+	 * EXAMPLES:
 
-	            // Provide defaults for necessary functions
-	            ["init", "active", "update", "exit"].forEach(function(func) {
-	                if (func in s)
-	                    return;
+	   // Lalala start the main game
+	   scener.push(MainGameScene);
 
-	                if (func == "active")
-	                    s[func] = getTrue;
-	                else
-	                    s[func] = doNothing;
-	            });
+	   // When pause is pressed
+	   scener.push(PauseMenu);
+	        
+	       // When controls is pressed
+	       scener.push(PauseControlsSubMenu);
 
-	        });
+	       // When back is pressed
+	       scener.pop();
+	       
+	   // When back is pressed
+	   scener.pop();
 
-	        this.start = function(name) {
-	            assert("Scene: " + name + " does not exist", store[name]);
-	            cur = store[name];
-	            cur.init();
-	        };
+	*/
+	var Scener = function(game) {
+	    this.stack = [];
+	    this.game = game;
+	    this.cur;
+	}
 
-	        this.update = function(delta) {
-	            if (!paused) {
-	                if (cur.active()){
-	                    cur.update(delta);
-	                } else {
-	                   cur.exit();
-	                }
-	            }
-	        };
+	Scener.prototype.start = function(scene, settings) {
+	    // Pop will throw an err if length is 0,
+	    // this check ensures that calls to start never throw the error 
+	    // (calling start for the first time) 
+	    // while user errors (calling pop too many times) are raised
+	    if (this.stack.length) 
+	        this.pop();
+	    this.push(scene, settings);
+	};
 
-	        this.pause = function() {
-	            paused = true;
-	        };
+	Scener.prototype.push = function(scene, settings) {
+	    var s = new scene(this.game, settings);
 
-	        this.unPause = function() {
-	            paused = false;
-	        };
+	    // Provide defaults for necessary functions
+	    ["init", "active", "update", "exit"].forEach(function(func) {
+	        if (func in s)
+	            return;
 
-	        this.isPaused = function() {
-	            return paused;
-	        }
+	        if (func == "active")
+	            s[func] = getTrue;
+	        else
+	            s[func] = doNothing;
+	    });
+
+	    s.init();
+	    this.stack.push(s);
+	};
+
+	Scener.prototype.pop = function() {
+	    assert("Cannot pop without a previous scene", this.stack.length);
+	    this.stack.pop();
+	};
+
+	Scener.prototype.update = function(delta) {
+
+	    // Save quick refs
+	    var cur, stack = this.stack;
+	    
+	    // Update current scene
+	    cur = this.cur = stack[stack.length - 1];
+
+	    if (cur.active()) {
+	        cur.update(delta);
+	        assert("A scene must change scenes in exit()", 
+	                cur == stack[stack.length - 1]);
+	    } else {
+	        cur.exit();
+	        assert("An inactive scene must change scenes in exit()",
+	                cur != stack[this.stack.length - 1]);
 	    }
+	};
 
-	    var doNothing = function() {};
-	    var getTrue = function() { return true; };
+	var doNothing = function() {};
+	var getTrue = function() { return true; };
 
-	    return Scener;
-
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = Scener;
 
 
 /***/ },
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
-	    var Utils = {
+	var Utils = {
 
-	        // Extend a, but do not override
-	        fill: function(a, b, props) {
-	            // Extend a with props it doesn't have
-	            return Utils.extend(a, b, 
+	    // Extend a, but do not override
+	    fill: function(a, b, props) {
+	        // Extend a with props it doesn't have
+	        return Utils.extend(a, b, 
 	                (props || Object.getOwnPropertyNames(b))
 	                .filter(function(p) { return !(p in a) }));
-	        },
+	    },
 
-	        // Extend/override a
-	        extend: function(a, b, props) {
-	            if (props == undefined)
-	                props = Object.getOwnPropertyNames(b);
+	    // Extend/override a, rebinds functions as well
+	    extend: function(a, b, props) {
+	        if (props == undefined)
+	            props = Object.getOwnPropertyNames(b);
 
-	            props.forEach(function(p) {
-	                Utils.assert("Property " + p + " missing on target", p in b);
-	                if (b[p].contstructor == Function)
-	                    a[p] = b[p].bind(a);
-	                else
-	                    a[p] = b[p];
-	            });
-	            return a;
-	        },
+	        props.forEach(function(p) {
+	            Utils.assert("Property " + p + " missing on target", p in b);
+	            if (b[p].contstructor == Function)
+	                a[p] = b[p].bind(a);
+	            else
+	                a[p] = b[p];
+	        });
+	        return a;
+	    },
 
-	        // TODO: Extend to take a function as an expr
-	        assert: function(str, expr) {
-	            if (!expr)
-	                throw new Error(str);
-	            return true;
-	        },
+	    // Impose a call limit on a func.
+	    // Wrap a func with a call limit, calling the wrapper will only call
+	    // the func up to n times
+	    atMost: function(n, func) {
+	        var count = 0;
+	        return function() {
+	            if (count++ >= n)
+	                return;
+	            func();
+	        }
+	    },
 
-	        // Freeze all props on object recursively
-	        deepFreeze: function deepFreeze(obj) {
+	    // Return a bag of bs' functions bound to a. Does not affect a.
+	    bind: function(a, b, props) {
+	        var result = {};
+	        if (props == undefined)
+	            props = Object.getOwnPropertyNames(b);
 
-	            // Freeze properties before freezing self
-	            Object.getOwnPropertyNames(obj).forEach(function(name) {
-	                var prop = obj[name];
+	        props.forEach(function(p) {
+	            Utils.assert("Property " + p + " missing on target", p in b);
+	            if (typeof b[p] == "function")
+	                result[p] = b[p].bind(a);
+	        });
+	        return result;
+	    },
 
-	                // Freeze prop if it is an object
-	                if (typeof prop == 'object' && !Object.isFrozen(prop))
-	                    deepFreeze(prop);
-	            });
+	    // TODO: Extend to take a function as an expr
+	    assert: function(str, expr) {
+	        if (!expr)
+	            throw new Error(str);
+	        return true;
+	    },
 
-	            // Freeze self
-	            return Object.freeze(obj);
-	        },
+	    // Freeze all props on object recursively
+	    deepFreeze: function deepFreeze(obj) {
 
-	    };
-	    return Utils;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        // Freeze properties before freezing self
+	        Object.getOwnPropertyNames(obj).forEach(function(name) {
+	            var prop = obj[name];
+
+	            // Freeze prop if it is an object
+	            if (typeof prop == 'object' && !Object.isFrozen(prop))
+	                deepFreeze(prop);
+	        });
+
+	        // Freeze self
+	        return Object.freeze(obj);
+	    },
+
+	};
+
+	module.exports = Utils;
 
 
 /***/ },
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var deepFreeze = __webpack_require__(6).deepFreeze;
 
-	    var deepFreeze = __webpack_require__(6).deepFreeze;
-
-	    var Config = {
-	        DEBUG: false,
-	        Game: {
-	            width: 800,
-	            height: 400,
-	            color:"#efefef"
-	        },
-	    }
-
-	    return deepFreeze(Config);
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = {
+	    DEBUG: false,
+	    Game: {
+	        width: 800,
+	        height: 400,
+	        color:"#efefef"
+	    },
+	}
 
 
 /***/ },
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) { 
+	
 
-	    var Scorer = function(game) {
+	var Scorer = function(game) {
 
-	        var score = 0;
-	            
-	        this.add = function(n) {
-	            score += n;
-	        };
+	    var score = 0;
 
-	        this.get = function() {
-	            return score;
-	        };
-
-	        this.reset = function() {
-	            score = 0;
-	        };
+	    this.add = function(n) {
+	        score += n;
 	    };
 
-	    return Scorer;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    this.get = function() {
+	        return score;
+	    };
+
+	    this.reset = function() {
+	        score = 0;
+	    };
+	};
+
+	module.exports = Scorer;
 
 
 /***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var Wall         = __webpack_require__(10);
+	var Player       = __webpack_require__(11);
+	var Micro        = __webpack_require__(18);
+	var Avoid        = __webpack_require__(15);
+	var TextBox      = __webpack_require__(19);
+	var Global       = __webpack_require__(7);
+	var R            = __webpack_require__(14);
+	var Wave1        = __webpack_require__(20);
+	var Utils        = __webpack_require__(6);
 
-	    // A list of scene constructors
-	    var Scenes = {
-	        scenes: [
-	                { 
-	                    name: "Splash", 
-	                    ctor: __webpack_require__(10) 
-	                },
-	                { 
-	                    name: "Demo", 
-	                    ctor: __webpack_require__(21)
-	                },
-	            ],
-	        first: "Splash",
-	    };
-	    return Scenes;
+	var Splash = function (game) {
+	    this.game = game;
+	    this.c = game.c;
+	};
 
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	Splash.prototype = {
+	    init: function() {
+	        makeFoo.bind(this)();
+	        this.c.entities.create(TextBox, {
+	            text: "Press S to start", 
+	            x: 325, y: 300
+	        });
+	        Wall.makeBoundaries(this);   
+	    },
+	    active:function() {
+	        var In = this.c.inputter;
+	        return !In.isDown(In.S);;
+	    },
+	    exit: function() {
+	        var self = this;
+	        var destroy = this.c.entities.destroy.bind(this.c.entities);
+	        var length = this.c.entities.all(Micro).length; 
+
+	        // Destroy all created entities
+	        ([Micro, Wall, TextBox]).forEach(function(type){
+	            self.c.entities.all(type).forEach(destroy);
+	        });
+	        this.game.scener.start(Wave1);
+	    }
+	};
+
+	var makeFoo = function(){
+	    for(var i = 0; i < 20; i++){
+	        this.c.entities.create(Micro, {
+	            center: {x: 0, y: 0},
+	            speed: 100/17,
+	            away: 0,
+	            within: 0,
+	            jitter: 0.02,
+	            target: {center:{x: 300 + 3*i, y: 100}}
+	        });
+	    }
+	    for(var i = 0; i < 30; i++){
+	        this.c.entities.create(Micro, {
+	            center: {x: 0, y: 0},
+	            speed: 100/17,
+	            away: 0,
+	            within: 0,
+	            jitter: 0.02,
+	            target: {center:{x: 300, y: 100 + 4*i}}
+	        });
+	    }
+	    for(var i = 0; i < 20; i++){
+	        this.c.entities.create(Micro, {
+	            center: {x: 0, y: 0},
+	            speed: 100/17,
+	            away: 0,
+	            within: 0,
+	            jitter: 0.02,
+	            target: {center:{x: 300 + 3*i, y: 160}}
+	        });
+	    }
+
+	    // o
+	    for(var i = 0; i < 32; i++){
+	        var x = 410 + 35 * Math.cos((360/32) * i),
+	            y = 180 + 35 * Math.sin((360/32) * i);
+
+	        this.c.entities.create(Micro, {
+	            center: {x: 0, y: 0},
+	            speed: 100/17,
+	            away: 0,
+	            within: 0,
+	            jitter: 0.02,
+	            target: {center:{x: x , y: y}}
+	        });
+	    }
+	    for(var i = 0; i < 32; i++){
+	        var x = 500 + 35 * Math.cos((360/32) * i),
+	            y = 180 + 35 * Math.sin((360/32) * i);
+
+	        this.c.entities.create(Micro, {
+	            center: {x: 0, y: 0},
+	            speed: 100/17,
+	            away: 0,
+	            within: 0,
+	            jitter: 0.02,
+	            target: {center:{x: x , y: y}}
+	        });
+	    }
+	};
+
+	module.exports = Splash;
 
 
 /***/ },
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	// A wall is a simple boundary for the bounds of the world
+	//
+	// If a player collides with a wall and calls alignPlayer passing itself
+	// then that player will be be moved. If wall.type == Wall.RIGHT, then the
+	// character will be moved to the left side of the wall, etc.
 
-	    var Wall         = __webpack_require__(11);
-	    var Player       = __webpack_require__(12);
-	    var Micro        = __webpack_require__(19);
-	    var Avoid        = __webpack_require__(16);
-	    var TextBox      = __webpack_require__(20);
-	    var Global       = __webpack_require__(7);
-	    var R            = __webpack_require__(15);
-	    var Utils        = __webpack_require__(6);
+	var Wall = function(game, settings) {
 
-	    var Splash = function (game) {
-	        this.game = game;
-	        this.c = game.c;
+	    if (settings.type === undefined ||
+	            settings.target === undefined) {
+	        throw("Error: Wall settings must include target, and type");
+	    }
+
+	    var target = settings.target;
+
+	    for (var i in settings) {
+	        this[i] = settings[i];
+	    }
+
+	    // defaults.shift brings the wall closer to the target by 'shift'
+	    // pixels, useful in accounting for the player's strokewidth (which
+	    // increases the player's perceived size). It might be better to
+	    // remove that illusion.
+	    var defaults = {
+	        width : 50,
+	        shift : 2
 	    };
 
-	    Splash.prototype = {
-	        init: function() {
-	            makeFoo();
-	            this.c.entities.create(TextBox, {
-	                text: "Press S to start", 
-	                x: 325, y: 300
-	            });
-	            Wall.makeBoundaries(this);   
-	        },
-	        active:function() {
-	            var In = this.c.inputter;
-	            return !In.isDown(In.S);;
-	        },
-	        exit: function() {
-	            var self = this;
-	            var destroy = this.c.entities.destroy.bind(this.c.entities);
-	            var length = this.c.entities.all(Micro).length; 
+	    this.boundingBox = game.c.collider.RECTANGLE;
+	    this.center = { x: 0, y: 0 };
+	    this.size = { x: 0, y: 0 };
+	    this.color = "#f00";
 
-	            // Destroy all created entities
-	            ([Micro, Wall, TextBox]).forEach(function(type){
-	                self.c.entities.all(type).forEach(destroy);
-	            });
-	            this.game.scener.start("Demo");
-	        }
+	    if (this.type == Wall.LEFT) {
+	        this.center.x =
+	            target.center.x - target.size.x / 2 - defaults.width / 2 + defaults.shift;
+	        this.center.y = target.center.y;
+	        this.size.x = defaults.width;
+	        this.size.y = target.size.y;
+	    } else if (this.type == Wall.RIGHT) {
+	        this.center.x =
+	            target.center.x + target.size.x / 2 + defaults.width / 2 - defaults.shift;
+	        this.center.y = target.center.y;
+	        this.size.x = defaults.width;
+	        this.size.y = target.size.y;
+	    } else if (this.type == Wall.TOP) {
+	        this.center.x = target.center.x;
+	        this.center.y =
+	            target.center.y - target.size.y / 2 - defaults.width / 2 + defaults.shift;
+	        this.size.x = target.size.x;
+	        this.size.y = defaults.width;
+	    } else if (this.type == Wall.BOTTOM) {
+	        this.center.x = target.center.x;
+	        this.center.y =
+	            target.center.y + target.size.y / 2 + defaults.width / 2 - defaults.shift;
+	        this.size.x = target.size.x;
+	        this.size.y = defaults.width;
+	    }
+
+
+	    // this.draw = function(ctx) {
+	    //     if (Global.DEBUG)
+	    //         drawRect(this, ctx, this.color);
+	    // }
+
+	};
+
+	Wall.prototype = {};
+	Wall.prototype.alignPlayer = function(player) {
+	    // console.log("alignPlayer");
+	    if (this.type == Wall.LEFT)
+	        player.center.x = this.center.x + this.size.x / 2 + player.size.x / 2;
+	    else if (this.type == Wall.RIGHT)
+	        player.center.x = this.center.x - this.size.x / 2 - player.size.x / 2;
+	    else if (this.type == Wall.TOP)
+	        player.center.y = this.center.y + this.size.y / 2 + player.size.y / 2;
+	    else if (this.type == Wall.BOTTOM)
+	        player.center.y = this.center.y - this.size.y / 2 - player.size.y / 2;
+	};
+
+	// Convenience method to make four walls around world(view)
+	Wall.makeBoundaries = function(game) {
+	    var c = game.c;
+	    var target = {
+	        center : c.renderer.getViewCenter(),
+	        size : c.renderer.getViewSize()
 	    };
-	    
-	    var makeFoo = function(){
-	        // f
-	        for(var i = 0; i < 20; i++){
-	            this.c.entities.create(Micro, {
-	                center: {x: 0, y: 0},
-	                speed: 100/17,
-	                away: 0,
-	                within: 0,
-	                jitter: 0.02,
-	                target: {center:{x: 300 + 3*i, y: 100}}
-	            });
-	        }
-	        for(var i = 0; i < 30; i++){
-	            this.c.entities.create(Micro, {
-	                center: {x: 0, y: 0},
-	                speed: 100/17,
-	                away: 0,
-	                within: 0,
-	                jitter: 0.02,
-	                target: {center:{x: 300, y: 100 + 4*i}}
-	            });
-	        }
-	        for(var i = 0; i < 20; i++){
-	            this.c.entities.create(Micro, {
-	                center: {x: 0, y: 0},
-	                speed: 100/17,
-	                away: 0,
-	                within: 0,
-	                jitter: 0.02,
-	                target: {center:{x: 300 + 3*i, y: 160}}
-	            });
-	        }
+	    c.entities.create(Wall, {
+	        type: Wall.LEFT,
+	        target: target
+	    });
+	    c.entities.create(Wall, {
+	        type: Wall.RIGHT,
+	        target: target
+	    });
+	    c.entities.create(Wall, {
+	        type: Wall.TOP,
+	        target: target
+	    });
+	    c.entities.create(Wall, {
+	        type: Wall.BOTTOM,
+	        target: target
+	    });
+	};
 
-	        // o
-	        for(var i = 0; i < 32; i++){
-	            var x = 410 + 35 * Math.cos((360/32) * i),
-	                y = 180 + 35 * Math.sin((360/32) * i);
+	Wall.LEFT   = 0;
+	Wall.RIGHT  = 1;
+	Wall.TOP    = 2;
+	Wall.BOTTOM = 3;
 
-	            this.c.entities.create(Micro, {
-	                center: {x: 0, y: 0},
-	                speed: 100/17,
-	                away: 0,
-	                within: 0,
-	                jitter: 0.02,
-	                target: {center:{x: x , y: y}}
-	            });
-	        }
-	         for(var i = 0; i < 32; i++){
-	            var x = 500 + 35 * Math.cos((360/32) * i),
-	                y = 180 + 35 * Math.sin((360/32) * i);
-
-	            this.c.entities.create(Micro, {
-	                center: {x: 0, y: 0},
-	                speed: 100/17,
-	                away: 0,
-	                within: 0,
-	                jitter: 0.02,
-	                target: {center:{x: x , y: y}}
-	            });
-	        }
-	    };
-
-	    return Splash;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
+	module.exports = Wall;
 
 
 /***/ },
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var Bullet = __webpack_require__(12);
+	var Config = __webpack_require__(17);
+	var Global = __webpack_require__(7);
+	var R = __webpack_require__(14);
+	var Sprite = __webpack_require__(13);
+	var Utils = __webpack_require__(6);
+	var Wall = __webpack_require__(10);
 
-	    // A wall is a simple boundary for the bounds of the world
-	    //
-	    // If a player collides with a wall and calls alignPlayer passing itself
-	    // then that player will be be moved. If wall.type == Wall.RIGHT, then the
-	    // character will be moved to the left side of the wall, etc.
+	var Player = function(game, settings) {
 
-	    var Wall = function(game, settings) {
+	    this.c = game.c;
 
-	        if (settings.type === undefined ||
-	                settings.target === undefined) {
-	            throw("Error: Wall settings must include target, and type");
+	    // Config
+	    Utils.extend(Utils.extend(this, Config.Player), settings.Player);
+	    Utils.extend(this, Sprite, ["drawCircle"]);
+
+	    // Bullet config
+	    var bsettings =
+	        Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
+
+	    // State
+	    this.lastBullet = 0;
+	    this.boundingBox = game.c.collider.CIRCLE;
+	    this.vel = { x: 0, y: 0 };
+	    this.center = { x: 400, y: 200 };
+
+	    this.update = function(delta) {
+	        this.move(delta);
+	        this.shoot(delta);
+	    };
+
+	    this.move = function(delta) {
+
+	        var Input = game.c.inputter;
+
+	        // The direction of motion
+	        var xdir, ydir;
+	        xdir = (Input.isDown(Input.D) ? 1 : (Input.isDown(Input.A) ? -1 : 0));
+	        ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
+
+	        // The diffs of initial/final player position
+	        // theta is the angle of motion relative to the ground
+	        var x, y, h, theta;
+	        h = this.speed / 17;
+	        theta = Math.atan2(ydir, xdir);
+	        this.vel.x = h * Math.cos(theta) * (xdir === 0 ? 0 : 1);
+	        this.vel.y = h * Math.sin(theta);
+
+	        this.center.x += this.vel.x * delta;
+	        this.center.y += this.vel.y * delta;
+
+	        // Force player coordinates within world
+	        this.restrict();
+	    };
+
+	    this.restrict = function() {
+
+	        // min/max values for player location in world
+	        var minx, maxx, miny, maxy;
+
+	        // pad accounts for the stroke width affecting player dimensions
+	        var pad = 3;
+
+	        maxx = Global.Game.width - this.size.x / 2 - pad;
+	        minx = this.size.x / 2 + pad;
+	        maxy = Global.Game.height - this.size.x / 2 - pad;
+	        miny = this.size.x / 2 + pad;
+	        this.center.x = Math.max(Math.min(this.center.x, maxx), minx);
+	        this.center.y = Math.max(Math.min(this.center.y, maxy), miny);
+	    };
+
+	    this.shoot = function(delta) {
+
+	        var Input = game.c.inputter;
+
+	        // The direction of bullet attack
+	        var left, right, down, up;
+	        left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H);
+	        right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L);
+	        up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K);
+	        down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J);
+
+	        var bxdir, bydir, btheta;
+	        bxdir = (right ? 1 : left ? -1 : 0);
+	        bydir = (down ? 1 : up ? -1 : 0);
+	        btheta = Math.atan2(bydir, bxdir);
+
+	        // If gun has direction, shoot
+	        if (bxdir || bydir) {
+	            if ((game.timer.getTime() - this.lastBullet) > bsettings.delay) {
+	                this.lastBullet = game.timer.getTime();
+
+	                var any =  R.any(-1, 1);
+	                var xtheta = btheta + (R.scale(bsettings.disorder) * any );
+	                var xcomp = Math.cos(xtheta);
+	                var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
+
+	                Utils.extend(bsettings, {
+	                    center: {
+	                        x: this.center.x,
+	                        y: this.center.y,
+	                    },
+	                    vel: {
+	                        x: bsettings.speed / 17 * xcomp,
+	                        y: bsettings.speed / 17 * ycomp,
+	                    }
+	                });
+	                game.c.entities.create(Bullet, bsettings);
+	            }
 	        }
 
-	        var target = settings.target;
+	    };
 
-	        for (var i in settings) {
-	          this[i] = settings[i];
-	        }
-
-	        // defaults.shift brings the wall closer to the target by 'shift'
-	        // pixels, useful in accounting for the player's strokewidth (which
-	        // increases the player's perceived size). It might be better to
-	        // remove that illusion.
-	        var defaults = {
-	            width : 50,
-	            shift : 2
-	        };
-
-	        this.boundingBox = game.c.collider.RECTANGLE;
-	        this.center = { x: 0, y: 0 };
-	        this.size = { x: 0, y: 0 };
-	        this.color = "#f00";
-
-	        if (this.type == Wall.LEFT) {
-	            this.center.x =
-	                target.center.x - target.size.x / 2 - defaults.width / 2 + defaults.shift;
-	            this.center.y = target.center.y;
-	            this.size.x = defaults.width;
-	            this.size.y = target.size.y;
-	        } else if (this.type == Wall.RIGHT) {
-	            this.center.x =
-	                target.center.x + target.size.x / 2 + defaults.width / 2 - defaults.shift;
-	            this.center.y = target.center.y;
-	            this.size.x = defaults.width;
-	            this.size.y = target.size.y;
-	        } else if (this.type == Wall.TOP) {
-	            this.center.x = target.center.x;
-	            this.center.y =
-	                target.center.y - target.size.y / 2 - defaults.width / 2 + defaults.shift;
-	            this.size.x = target.size.x;
-	            this.size.y = defaults.width;
-	        } else if (this.type == Wall.BOTTOM) {
-	            this.center.x = target.center.x;
-	            this.center.y =
-	                target.center.y + target.size.y / 2 + defaults.width / 2 - defaults.shift;
-	            this.size.x = target.size.x;
-	            this.size.y = defaults.width;
-	        }
-
-
-	        // this.draw = function(ctx) {
-	        //     if (Global.DEBUG)
-	        //         drawRect(this, ctx, this.color);
+	    this.collision = function(other) {
+	        // if (!(other instanceof Wall ||
+	        //       other instanceof Bullet)) {
+	        //     game.c.entities.destroy(this);
+	        //     if (Global.DEBUG) {
+	        //         other.color = "#f00";
+	        //         other.draw(this.c.renderer.getCtx());
+	        //         // this.color = "#0f0";
+	        //         // this.draw(this.c.renderer.getCtx());
+	        //     }
 	        // }
-
 	    };
 
-	    Wall.prototype = {};
-	    Wall.prototype.alignPlayer = function(player) {
-	        // console.log("alignPlayer");
-	        if (this.type == Wall.LEFT)
-	            player.center.x = this.center.x + this.size.x / 2 + player.size.x / 2;
-	        else if (this.type == Wall.RIGHT)
-	            player.center.x = this.center.x - this.size.x / 2 - player.size.x / 2;
-	        else if (this.type == Wall.TOP)
-	            player.center.y = this.center.y + this.size.y / 2 + player.size.y / 2;
-	        else if (this.type == Wall.BOTTOM)
-	            player.center.y = this.center.y - this.size.y / 2 - player.size.y / 2;
+	    this.draw = function(ctx) {
+	        ctx.strokeStyle = this.color || "#f00";
+	        ctx.lineWidth = 4;
+	        this.drawCircle(ctx, this.size.x / 2 - 1);
 	    };
 
-	    // Convenience method to make four walls around world(view)
-	    Wall.makeBoundaries = function(game) {
-	        var c = game.c;
-	        var target = {
-	            center : c.renderer.getViewCenter(),
-	            size : c.renderer.getViewSize()
-	        };
-	        c.entities.create(Wall, {
-	            type: Wall.LEFT,
-	            target: target
-	        });
-	        c.entities.create(Wall, {
-	            type: Wall.RIGHT,
-	            target: target
-	        });
-	        c.entities.create(Wall, {
-	            type: Wall.TOP,
-	            target: target
-	        });
-	        c.entities.create(Wall, {
-	            type: Wall.BOTTOM,
-	            target: target
-	        });
-	    };
-
-	    Wall.LEFT   = 0;
-	    Wall.RIGHT  = 1;
-	    Wall.TOP    = 2;
-	    Wall.BOTTOM = 3;
-
-	    return Wall;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	};
+	module.exports = Player;
 
 
 /***/ },
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var Player = __webpack_require__(11);
+	var Sprite = __webpack_require__(13);
+	var Utils = __webpack_require__(6);
 
-	    var Bullet = __webpack_require__(13);
-	    var Config = __webpack_require__(18);
-	    var Global = __webpack_require__(7);
-	    var R = __webpack_require__(15);
-	    var Sprite = __webpack_require__(14);
-	    var Utils = __webpack_require__(6);
-	    var Wall = __webpack_require__(11);
+	var Bullet = function(game, settings) {
 
-	    var Player = function(game, settings) {
+	    this.c = game.c;
 
-	        this.c = game.c;
+	    // Note: Player is a circular dependency
+	    Player = __webpack_require__(11);
+	    Avoid = __webpack_require__(15);
 
-	        // Config
-	        Utils.extend(Utils.extend(this, Config.Player), settings.Player);
-	        Utils.extend(this, Sprite, ["drawCircle"]);
+	    Utils.extend(this, Sprite, ["drawFilledCircle"]);
+	    Utils.extend(this, {
+	        size: {x: 5, y: 5},
+	        color : "#000",
+	        boundingBox : game.c.collider.CIRCLE,
+	    });
+	    Utils.extend(this, settings);
 
-	        // Bullet config
-	        var bsettings =
-	            Utils.extend(Utils.extend({}, Config.Bullet), settings.Bullet);
+	    Utils.assert("Bullet requires a velocity from settings", this.vel);
+	};
 
-	        // State
-	        this.lastBullet = 0;
-	        this.boundingBox = game.c.collider.CIRCLE;
-	        this.vel = { x: 0, y: 0 };
-	        this.center = { x: 400, y: 200 };
+	Bullet.prototype = {};
 
-	        this.update = function(delta) {
-	            this.move(delta);
-	            this.shoot(delta);
-	        };
+	Bullet.prototype.update = function(delta) {
+	    // console.log(this.center, this.vel);
+	    this.center.x += this.vel.x * delta;
+	    this.center.y += this.vel.y * delta;
+	};
 
-	        this.move = function(delta) {
+	Bullet.prototype.collision = function(other) {
+	    if (!(other instanceof Bullet) &&
+	            !(other instanceof Avoid)  &&
+	            !(other instanceof Player)) {
+	        this.c.entities.destroy(this);
+	    }
+	};
 
-	            var Input = game.c.inputter;
+	Bullet.prototype.draw = function(ctx) {
+	    ctx.fillStyle = this.color || "#f00";
+	    this.drawFilledCircle(ctx, this.size.x / 2);
+	};
 
-	            // The direction of motion
-	            var xdir, ydir;
-	            xdir = (Input.isDown(Input.D) ? 1 : (Input.isDown(Input.A) ? -1 : 0));
-	            ydir = (Input.isDown(Input.S) ? 1 : (Input.isDown(Input.W) ? -1 : 0));
-
-	            // The diffs of initial/final player position
-	            // theta is the angle of motion relative to the ground
-	            var x, y, h, theta;
-	            h = this.speed / 17;
-	            theta = Math.atan2(ydir, xdir);
-	            this.vel.x = h * Math.cos(theta) * (xdir === 0 ? 0 : 1);
-	            this.vel.y = h * Math.sin(theta);
-
-	            this.center.x += this.vel.x * delta;
-	            this.center.y += this.vel.y * delta;
-
-	            // Force player coordinates within world
-	            this.restrict();
-	        };
-
-	        this.restrict = function() {
-
-	            // min/max values for player location in world
-	            var minx, maxx, miny, maxy;
-
-	            // pad accounts for the stroke width affecting player dimensions
-	            var pad = 3;
-
-	            maxx = Global.Game.width - this.size.x / 2 - pad;
-	            minx = this.size.x / 2 + pad;
-	            maxy = Global.Game.height - this.size.x / 2 - pad;
-	            miny = this.size.x / 2 + pad;
-	            this.center.x = Math.max(Math.min(this.center.x, maxx), minx);
-	            this.center.y = Math.max(Math.min(this.center.y, maxy), miny);
-	        };
-
-	        this.shoot = function(delta) {
-
-	            var Input = game.c.inputter;
-
-	            // The direction of bullet attack
-	            var left, right, down, up;
-	            left = Input.isDown(Input.LEFT_ARROW) || Input.isDown(Input.H);
-	            right = Input.isDown(Input.RIGHT_ARROW) || Input.isDown(Input.L);
-	            up = Input.isDown(Input.UP_ARROW) || Input.isDown(Input.K);
-	            down = Input.isDown(Input.DOWN_ARROW) || Input.isDown(Input.J);
-
-	            var bxdir, bydir, btheta;
-	            bxdir = (right ? 1 : left ? -1 : 0);
-	            bydir = (down ? 1 : up ? -1 : 0);
-	            btheta = Math.atan2(bydir, bxdir);
-
-	            // If gun has direction, shoot
-	            if (bxdir || bydir) {
-	                if ((game.timer.getTime() - this.lastBullet) > bsettings.delay) {
-	                    this.lastBullet = game.timer.getTime();
-
-	                    var any =  R.any(-1, 1);
-	                    var xtheta = btheta + (R.scale(bsettings.disorder) * any );
-	                    var xcomp = Math.cos(xtheta);
-	                    var ycomp = Math.sin(btheta + (R.scale(bsettings.disorder) * R.any(-1, 1)));
-
-	                    Utils.extend(bsettings, {
-	                        center: {
-	                            x: this.center.x,
-	                            y: this.center.y,
-	                        },
-	                        vel: {
-	                            x: bsettings.speed / 17 * xcomp,
-	                            y: bsettings.speed / 17 * ycomp,
-	                        }
-	                    });
-	                    game.c.entities.create(Bullet, bsettings);
-	                }
-	            }
-
-	        };
-
-	        this.collision = function(other) {
-	            // if (!(other instanceof Wall ||
-	            //       other instanceof Bullet)) {
-	            //     game.c.entities.destroy(this);
-	            //     if (Global.DEBUG) {
-	            //         other.color = "#f00";
-	            //         other.draw(this.c.renderer.getCtx());
-	            //         // this.color = "#0f0";
-	            //         // this.draw(this.c.renderer.getCtx());
-	            //     }
-	            // }
-	        };
-
-	        this.draw = function(ctx) {
-	            ctx.strokeStyle = this.color || "#f00";
-	            ctx.lineWidth = 4;
-	            this.drawCircle(ctx, this.size.x / 2 - 1);
-	        };
-
-	    };
-	    return Player;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = Bullet;
 
 
 /***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__,
-	        __webpack_require__(12),
-	        __webpack_require__(14),
-	        __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function(require, Player, Sprite, Utils) {
+	var R = __webpack_require__(14);
+	var Utils = __webpack_require__(6);
 
-	    var Bullet = function(game, settings) {
+	var Sprite = {};
+	Sprite.drawRect = function(ctx) {
+	    var color = this.color || "#fff";
+	    ctx.fillStyle = color;
 
-	        this.c = game.c;
+	    var x, y, w, h;
+	    x = this.center.x - this.size.x/2;
+	    y = this.center.y - this.size.y/2;
+	    w = this.size.x;
+	    h = this.size.y;
 
-	        // Note: Player is a circular dependency
-	        Player = __webpack_require__(12);
-	        Avoid = __webpack_require__(16);
+	    ctx.fillRect(x, y, w, h);
+	};
 
-	        Utils.extend(this, Sprite, ["drawFilledCircle"]);
-	        Utils.extend(this, {
-	            size: {x: 5, y: 5},
-	            color : "#000",
-	            boundingBox : game.c.collider.CIRCLE,
-	        });
-	        Utils.extend(this, settings);
+	Sprite.drawPoint = function(ctx, width) {
+	    var color = this.color || "#fff";
+	    width = width || 2;
+	    ctx.fillStyle = color;
 
-	        Utils.assert("Bullet requires a velocity from settings", this.vel);
-	    };
+	    var x, y, w, h;
+	    x = this.center.x - width/2;
+	    y = this.center.y - width/2;
+	    w = h = width;
 
-	    Bullet.prototype = {};
+	    ctx.fillRect(x, y, w, h);
+	};
 
-	    Bullet.prototype.update = function(delta) {
-	        // console.log(this.center, this.vel);
-	        this.center.x += this.vel.x * delta;
-	        this.center.y += this.vel.y * delta;
-	    };
+	Sprite.drawCircle = function(ctx, radius) {
+	    ctx.beginPath();
+	    ctx.arc(this.center.x,
+	            this.center.y,
+	            radius,
+	            0,
+	            2 * Math.PI);
+	    ctx.stroke();
+	};
 
-	    Bullet.prototype.collision = function(other) {
-	        if (!(other instanceof Bullet) &&
-	            !(other instanceof Avoid)  &&
-	            !(other instanceof Player)) {
-	            this.c.entities.destroy(this);
-	        }
-	    };
+	Sprite.drawFilledCircle = function(ctx, radius) {
 
-	    Bullet.prototype.draw = function(ctx) {
-	        ctx.fillStyle = this.color || "#f00";
-	        this.drawFilledCircle(ctx, this.size.x / 2);
-	    };
+	    var color = this.color || "#fff";
+	    ctx.fillStyle = color;
 
-	    return Bullet;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    radius = radius || this.size.x / 2;
+	    ctx.beginPath();
+	    ctx.arc(this.center.x,
+	            this.center.y,
+	            radius,
+	            0,
+	            2 * Math.PI);
+	    ctx.fill();
+	};
+
+	Sprite.follow = function(target, settings) {
+
+	    settings = settings || {};
+
+	    // If this is in the "within" distance from the target, it will
+	    // repel. "jitter" introduces randomness into the motion.
+	    var within = settings.within || this.within || 0;
+	    var jitter = Math.min(settings.jitter || this.jitter || 0, 1);
+
+	    // The initial enemy/target position diffs, where hdiff is the
+	    // across distance
+	    var xdiff, ydiff, hdiff;
+	    xdiff = target.center.x - this.center.x;
+	    ydiff = target.center.y - this.center.y;
+
+	    xdiff += (R.bool() ? -1 : 1) * jitter * xdiff;
+	    ydiff += (R.bool() ? -1 : 1) * jitter * ydiff;
+	    hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+
+	    // If the direct distance is less than the follow within distance,
+	    // closeness
+	    var closeness = within / hdiff;
+
+	    var speed = this.speed - (closeness * this.speed);
+	    // console.log("this:", this, "spd:",this.speed * 17);
+	    // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
+	    // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
+
+	    var velx, vely;
+	    velx = xdiff / hdiff * speed / 17;
+	    vely = ydiff / hdiff * speed / 17;
+
+	    // if (isNaN(velx) || isNaN(vely)) {
+	    //     console.log(this.center.x, target.center.x, xdiff, ydiff, hdiff, speed, this.vel.x, this.vel.y);
+	    //     game.c.entities.destroy(this);
+	    //     return;
+	    // }
+	    this.vel.x = velx;
+	    this.vel.y = vely;
+	};
+
+	Sprite.moveAway = function(target, dist, strict) {
+
+	    if (typeof dist == "undefined")
+	        dist = 3;
+
+	    // Strict flag 
+	    // strict will only perform the move if the centers are within dist
+	    if (typeof strict == "undefined")
+	        strict = false;
+
+	    var xdiff, ydiff, hdiff;
+	    xdiff = target.center.x - this.center.x;
+	    ydiff = target.center.y - this.center.y;
+	    hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+
+	    // Only occurs when entity is pressed against a wall
+	    if (hdiff === 0) {
+	        hdiff = 0.1 * Math.random();
+	    } 
+
+	    if (hdiff > dist && strict) {
+	        return;
+	    }
+
+	    this.center.x -= xdiff / hdiff * dist;
+	    this.center.y -= ydiff / hdiff * dist;
+	};
+
+	module.exports = Sprite;
 
 
 /***/ },
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
+	var Random = {};
+	Random.bool =  function() {
+	    return Math.random() > 0.5;
+	}
+	Random.any = function() {
+	    return arguments[Math.floor(Math.random() * arguments.length)]
+	}
+	Random.scale = function(a) {
+	    return Math.random() * a;
+	}
+	Random.point = function(xMax, yMax) {
 
-	    var R = __webpack_require__(15);
-	    var Utils = __webpack_require__(6);
+	    xMax = xMax || 1;
+	    yMax = yMax || 1;
 
-	    var Sprite = {};
-	    Sprite.drawRect = function(ctx) {
-	        var color = this.color || "#fff";
-	        ctx.fillStyle = color;
+	    return {
+	        x: Random.between(0, xMax),
+	        y: Random.between(0, yMax)
+	    }
+	}
+	Random.between = function(a, b) {
+	    var _a;
 
-	        var x, y, w, h;
-	        x = this.center.x - this.size.x/2;
-	        y = this.center.y - this.size.y/2;
-	        w = this.size.x;
-	        h = this.size.y;
-
-	        ctx.fillRect(x, y, w, h);
-	    };
-
-	    Sprite.drawPoint = function(ctx, width) {
-	        var color = this.color || "#fff";
-	        width = width || 2;
-	        ctx.fillStyle = color;
-
-	        var x, y, w, h;
-	        x = this.center.x - width/2;
-	        y = this.center.y - width/2;
-	        w = h = width;
-
-	        ctx.fillRect(x, y, w, h);
-	    };
-
-	    Sprite.drawCircle = function(ctx, radius) {
-	        ctx.beginPath();
-	        ctx.arc(this.center.x,
-	                this.center.y,
-	                radius,
-	                0,
-	                2 * Math.PI);
-	        ctx.stroke();
+	    // Guarantee b > a, for comparison
+	    if (a > b) {
+	        _a = a;
+	        a = b;
+	        b = _a;
 	    }
 
-	    Sprite.drawFilledCircle = function(ctx, radius) {
-
-	        var color = this.color || "#fff";
-	        ctx.fillStyle = color;
-
-	        radius = radius || this.size.x / 2;
-	        ctx.beginPath();
-	        ctx.arc(this.center.x,
-	                this.center.y,
-	                radius,
-	                0,
-	                2 * Math.PI);
-	        ctx.fill();
-	    }
-
-	    Sprite.follow = function(target, settings) {
-
-	        var settings = settings || {};
-
-	        // If this is in the "within" distance from the target, it will
-	        // repel. "jitter" introduces randomness into the motion.
-	        var within = settings.within || this.within || 0;
-	        var jitter = Math.min(settings.jitter || this.jitter || 0, 1);
-
-	        // The initial enemy/target position diffs, where hdiff is the
-	        // across distance
-	        var xdiff, ydiff, hdiff;
-	        xdiff = target.center.x - this.center.x;
-	        ydiff = target.center.y - this.center.y;
-
-	        xdiff += (R.bool() ? -1 : 1) * jitter * xdiff;
-	        ydiff += (R.bool() ? -1 : 1) * jitter * ydiff;
-	        hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
-
-	        // If the direct distance is less than the follow within distance,
-	        // closeness
-	        var closeness = within / hdiff;
-
-	        var speed = this.speed - (closeness * this.speed);
-	        // console.log("this:", this, "spd:",this.speed * 17);
-	        // console.log("cl:", closeness, "this.sp", this.speed, "sp", speed);
-	        // console.log("tn:", turn, "dif", penalty * turn, "sp", speed);
-
-	        var velx, vely;
-	        velx = xdiff / hdiff * speed / 17;
-	        vely = ydiff / hdiff * speed / 17;
-
-	        // if (isNaN(velx) || isNaN(vely)) {
-	        //     console.log(this.center.x, target.center.x, xdiff, ydiff, hdiff, speed, this.vel.x, this.vel.y);
-	        //     game.c.entities.destroy(this);
-	        //     return;
-	        // }
-	        this.vel.x = velx;
-	        this.vel.y = vely;
-	    },
-	    Sprite.moveAway = function(target, dist, strict) {
-
-	        if (typeof dist == "undefined")
-	            dist = 3;
-
-	        // Strict flag 
-	        // strict will only perform the move if the centers are within dist
-	        if (typeof strict == "undefined")
-	            strict = false;
-
-	        var xdiff, ydiff, hdiff;
-	        xdiff = target.center.x - this.center.x;
-	        ydiff = target.center.y - this.center.y;
-	        hdiff = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
-
-	        // Only occurs when entity is pressed against a wall
-	        if (hdiff == 0) {
-	            hdiff = 0.1 * Math.random();
-	        } 
-
-	        if (hdiff > dist && strict) {
-	            return;
-	        }
-
-	        this.center.x -= xdiff / hdiff * dist;
-	        this.center.y -= ydiff / hdiff * dist;
-	    }
-
-	    return Sprite;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    return Math.random() * (b - a) + a;
+	}
+	module.exports = Random;
 
 
 /***/ },
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
+	var Bullet = __webpack_require__(12);
+	var Player = __webpack_require__(11);
+	var Utils = __webpack_require__(6);
+	var Wall = __webpack_require__(10);
+	var Sprite = __webpack_require__(13);
+	var Maths = __webpack_require__(1).Collider.Maths;
+	var Geom = __webpack_require__(16);
+	var DEBUG = __webpack_require__(7).DEBUG;
 
-	    var Random = {};
-	    Random.bool =  function() {
-	        return Math.random() > 0.5;
-	    }
-	    Random.any = function() {
-	       return arguments[Math.floor(Math.random() * arguments.length)]
-	    }
-	    Random.scale = function(a) {
-	        return Math.random() * a;
-	    }
-	    Random.point = function(xMax, yMax) {
+	var Avoider = function(game, settings) {
+	    this.c = game.c;
+	    this.game = game;
 
-	        xMax = xMax || 1;
-	        yMax = yMax || 1;
+	    // list of bullets that collided with fake external shell
+	    this.threats = [];
 
-	        return {
-	            x: Random.between(0, xMax),
-	            y: Random.between(0, yMax)
+	    this.boundingBox = game.c.collider.CIRCLE;
+
+	    // Extend this
+	    Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
+	    Utils.extend(this, {
+	        size: { x:100, y:100 },
+	        color: "rgba(127, 127, 127, 0.05)",
+	        vel: { x: 0, y: 0 },
+	        center: settings.center
+	    });
+
+	    // Extend core
+	    this.core = Utils.extend({
+	        vel: this.vel
+	    }, settings);
+	};
+
+	Avoider.prototype.draw = function(ctx) {
+	    if (DEBUG)
+	        this.drawFilledCircle(ctx);
+	    this.drawFilledCircle.call(this.core, ctx);
+	};
+	Avoider.prototype.update = function(delta) {
+	    var temp;
+
+	    // Try to set enemy to target Player
+	    if (!this.target) {
+	        temp = this.c.entities.all(__webpack_require__(11));
+	        if (temp.length)
+	            this.target = temp[0];
+	        else
+	            return;
+	    }
+
+	    // VV buggy
+	    this.follow.call(this.core, this.target);
+
+	    var avel, vx, vy, vr;
+	    if (false) {
+
+	        avel = this.avoid();
+	        vx = avel.x;
+	        vy = avel.y;
+	        vr = Math.sqrt(vx * vx + vy * vy);
+
+	        if (!(isNaN(vx) || isNaN(vy) || isNaN(vr) || vr === 0)) {
+	            // console.log("vx", vx, "vy", vy, "vr", vr);
+	            // console.log("vx", vx / vr * this.speed / 17, "vy", vy / vr * this.speed / 17);
+	            // console.log("nvx", this.vel.x, "nvy", this.vel.y);
+	            this.vel.x = vx / vr * this.speed / 17;
+	            this.vel.y = vy / vr * this.speed / 17;
+	            // this.game.pauser.pause();
 	        }
 	    }
-	    Random.between = function(a, b) {
-	        var _a;
 
-	        // Guarantee b > a, for comparison
-	        if (a > b) {
-	            _a = a;
-	            a = b;
-	            b = _a;
+	    // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
+	    this.center.x += this.vel.x * delta;
+	    this.center.y += this.vel.y * delta;
+
+	    //  Clear threats array, repopulated in this.collision
+	    this.threats.length = 0;
+	};
+
+	Avoider.prototype.avoid = function() {
+	    // Net velocity of threats
+	    var vel = { x: 0, y: 0 };
+	    var self = this;
+	    var moves = [];
+
+	    this.threats.forEach(function(threat) {
+	        // Intersections of bullet and core ([front, back]);
+	        var bulletAndCoreFutureIntersections = Geom.intersectionsOfRayAndCircle(threat, self.core); 
+	        if (bulletAndCoreFutureIntersections.length === 0)
+	            return;
+	        var i = bulletAndCoreFutureIntersections[0];
+	        var j =
+	            Geom.intersectionRayAndPerpendicularLineThroughPoint(threat,
+	                    self.core.center); 
+	            var rayBetweenCoreCenterAndJ = Geom.rayBetween(self.core.center, j);
+	        var outerCoreIntersection =
+	            Geom.intersectionsOfRayAndCircle(rayBetweenCoreCenterAndJ,
+	                    self.core)[0]; 
+	        var distanceToImpact = Maths.distance(i, threat.center); 
+	        // console.log("distanceToImpact", distanceToImpact);
+	        if (DEBUG) {
+	            threat.color = "#0f0";
+	            threat.draw(self.c.renderer.getCtx());
+	            var p = { center: i };
+	            var r = { center: j };
+	            var s = { center: outerCoreIntersection };
+	            // Red is on outer shell
+	            p.color = "#f00";
+	            Sprite.drawPoint.call(p, self.c.renderer.getCtx(), 4);
+	            r.color = "#00f";
+	            Sprite.drawPoint.call(r, self.c.renderer.getCtx(), 4);
+	            s.color = "#0ff";
+	            Sprite.drawPoint.call(s, self.c.renderer.getCtx(), 4);
 	        }
+	        // console.log("(j.x - outerCoreIntersection.x) * 1  / distanceToImpact", (j.x - outerCoreIntersection.x) * 1 / distanceToImpact);
+	        // console.log("(j.y - outerCoreIntersection.y) * 1  / distanceToImpact", (j.y - outerCoreIntersection.y) * 1 / distanceToImpact);
+	        moves.push({
+	            x: (j.x - outerCoreIntersection.x) / distanceToImpact,
+	            y: (j.y - outerCoreIntersection.y) / distanceToImpact,
+	        });
+	    });
 
-	        return Math.random() * (b - a) + a;
+	    var vx = 0, vy = 0;
+	    moves.forEach(function(m) {
+	        vx += m.x;
+	        vy += m.y;
+	    });
+
+	    return {
+	        x: vx,
+	        y: vy,
+	    };
+	};
+
+	Avoider.prototype.collision = function(other) {
+	    if (other instanceof Bullet) {
+	        if (Maths.pointInsideCircle(other.center, this.core)) {
+	            this.game.scorer.add(5);
+	            this.c.entities.destroy(this);
+
+	            // If the core is near the player (target), don't move away from
+	            // bullets, prevents bug where enemies hover around a shooting player
+	        } else if (!Maths.circlesIntersecting(this, this.target)) {
+	            this.moveAway.call(this, other, this.bulletAway);
+	            // this.threats.push(other);
+	        }
 	    }
-	    return Random;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+	    else if (other instanceof Player) {
+	        if (Maths.circlesIntersecting(this.core, other))
+	            this.c.entities.destroy(other);
+	    } else if (other instanceof Wall) {
+	        if (Maths.circleAndRectangleIntersecting(this.core, other))
+	            other.alignPlayer(this.core);
+	        // this.c.entities.destroy(this);
+	    } else if (other instanceof Avoider) {
+	        this.moveAway.call(this.core, other.core, this.away, true);
+	    }
+
+	};
+
+	module.exports = Avoider;
 
 
 /***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
+	var Utils = __webpack_require__(6);
 
-	    var Bullet = __webpack_require__(13);
-	    var Player = __webpack_require__(12);
-	    var Utils = __webpack_require__(6);
-	    var Wall = __webpack_require__(11);
-	    var Sprite = __webpack_require__(14);
-	    var Maths = __webpack_require__(1).Collider.Maths;
-	    var Geom = __webpack_require__(17);
-	    var DEBUG = __webpack_require__(7).DEBUG;
+	var Geometry = {
+	    angleShortestApproach: function(a, b, delta) {
 
-	    var Avoider = function(game, settings) {
-	        this.c = game.c;
-	        this.game = game;
-
-	        // list of bullets that collided with fake external shell
-	        this.threats = [];
-
-	        this.boundingBox = game.c.collider.CIRCLE;
-
-	        // Extend this
-	        Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
-	        Utils.extend(this, {
-	            size: { x:100, y:100 },
-	            color: "rgba(127, 127, 127, 0.05)",
-	            vel: { x: 0, y: 0 },
-	            center: settings.center
-	        });
-
-	        // Extend core
-	        this.core = Utils.extend({
-	            vel: this.vel
-	        }, settings);
-	    };
-
-	    Avoider.prototype.draw = function(ctx) {
-	        if (DEBUG)
-	            this.drawFilledCircle(ctx);
-	        this.drawFilledCircle.call(this.core, ctx);
-	    };
-	    Avoider.prototype.update = function(delta) {
-	        var temp;
-
-	        // Try to set enemy to target Player
-	        if (!this.target) {
-	            temp = this.c.entities.all(__webpack_require__(12));
-	            if (temp.length)
-	                this.target = temp[0];
-	            else
-	                return;
-	        }
-
-	        // VV buggy
-	        this.follow.call(this.core, this.target);
-
-	        var avel, vx, vy, vr;
-	        if (false) {
-
-	            avel = this.avoid();
-	            vx = avel.x;
-	            vy = avel.y;
-	            vr = Math.sqrt(vx * vx + vy * vy);
-
-	            if (!(isNaN(vx) || isNaN(vy) || isNaN(vr) || vr === 0)) {
-	                // console.log("vx", vx, "vy", vy, "vr", vr);
-	                // console.log("vx", vx / vr * this.speed / 17, "vy", vy / vr * this.speed / 17);
-	                // console.log("nvx", this.vel.x, "nvy", this.vel.y);
-	                this.vel.x = vx / vr * this.speed / 17;
-	                this.vel.y = vy / vr * this.speed / 17;
-	                // this.game.pauser.pause();
-	            }
-	        }
-
-	        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
-	        this.center.x += this.vel.x * delta;
-	        this.center.y += this.vel.y * delta;
-
-	        //  Clear threats array, repopulated in this.collision
-	        this.threats.length = 0;
-	    };
-
-	    Avoider.prototype.avoid = function() {
-	        // Net velocity of threats
-	        var vel = { x: 0, y: 0 };
-	        var self = this;
-	        var moves = [];
-
-	        this.threats.forEach(function(threat) {
-	            // Intersections of bullet and core ([front, back]);
-	            var bulletAndCoreFutureIntersections = Geom.intersectionsOfRayAndCircle(threat, self.core); 
-	            if (bulletAndCoreFutureIntersections.length === 0)
-	                return;
-	            var i = bulletAndCoreFutureIntersections[0];
-	            var j =
-	                Geom.intersectionRayAndPerpendicularLineThroughPoint(threat,
-	                        self.core.center) 
-	            var rayBetweenCoreCenterAndJ = Geom.rayBetween(self.core.center, j);
-	            var outerCoreIntersection =
-	                Geom.intersectionsOfRayAndCircle(rayBetweenCoreCenterAndJ,
-	                        self.core)[0]; 
-	            var distanceToImpact = Maths.distance(i, threat.center); 
-	            // console.log("distanceToImpact", distanceToImpact);
-	            if (DEBUG) {
-	                threat.color = "#0f0";
-	                threat.draw(self.c.renderer.getCtx());
-	                var p = { center: i };
-	                var r = { center: j };
-	                var s = { center: outerCoreIntersection };
-	                // Red is on outer shell
-	                p.color = "#f00";
-	                Sprite.drawPoint.call(p, self.c.renderer.getCtx(), 4);
-	                r.color = "#00f";
-	                Sprite.drawPoint.call(r, self.c.renderer.getCtx(), 4);
-	                s.color = "#0ff";
-	                Sprite.drawPoint.call(s, self.c.renderer.getCtx(), 4);
-	            }
-	                // console.log("(j.x - outerCoreIntersection.x) * 1  / distanceToImpact", (j.x - outerCoreIntersection.x) * 1 / distanceToImpact);
-	                // console.log("(j.y - outerCoreIntersection.y) * 1  / distanceToImpact", (j.y - outerCoreIntersection.y) * 1 / distanceToImpact);
-	            moves.push({
-	                x: (j.x - outerCoreIntersection.x) / distanceToImpact,
-	                y: (j.y - outerCoreIntersection.y) / distanceToImpact,
-	            });
-	        });
-
-	        var vx = 0, vy = 0;
-	        moves.forEach(function(m) {
-	            vx += m.x;
-	            vy += m.y;
-	        });
-
-	        return {
-	            x: vx,
-	            y: vy,
-	        }
-	    };
-
-	    Avoider.prototype.collision = function(other) {
-	        if (other instanceof Bullet) {
-	            if (Maths.pointInsideCircle(other.center, this.core)) {
-	                this.game.scorer.add(5);
-	                this.c.entities.destroy(this);
-
-	            // If the core is near the player (target), don't move away from
-	            // bullets, prevents bug where enemies hover around a shooting player
-	            } else if (!Maths.circlesIntersecting(this, this.target)) {
-	                this.moveAway.call(this, other, this.bulletAway);
-	                // this.threats.push(other);
-	            }
-	        }
-
-	        else if (other instanceof Player) {
-	            if (Maths.circlesIntersecting(this.core, other))
-	                this.c.entities.destroy(other)
-	        } else if (other instanceof Wall) {
-	            if (Maths.circleAndRectangleIntersecting(this.core, other))
-	                other.alignPlayer(this.core);
-	                // this.c.entities.destroy(this);
-	        } else if (other instanceof Avoider) {
-	            this.moveAway.call(this.core, other.core, this.away, true);
-	        }
-
-	    };
-
-	    return Avoider;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
-
-	    var Utils = __webpack_require__(6);
-
-	    var Geometry = {
-	        angleShortestApproach: function(a, b, delta) {
-
-	            var diff = Math.abs(b - a);
-	            var maxDelta = 
-	                diff > Math.PI
-	                ? 2 * Math.PI - diff
-	                : diff
+	        var diff = Math.abs(b - a);
+	        var maxDelta = 
+	            diff > Math.PI
+	            ? 2 * Math.PI - diff
+	            : diff
 
 	            // Magnitude to change by
 	            var shift = Math.min(maxDelta, delta);
 
-	            // Factors which affect direction
-	            var aGreaterB = a - b > 0;
-	            var shorterPath = diff > Math.PI;
+	        // Factors which affect direction
+	        var aGreaterB = a - b > 0;
+	        var shorterPath = diff > Math.PI;
 
-	            return Geometry.angleNormalize(a + 
-	                    (aGreaterB ? -1 : 1) * 
-	                    (shorterPath ? -1 : 1) * 
-	                    shift);
-	        },
-	        angleNormalize: function(_a) {
-	            // a is between (-2π 2π)
-	            var a = _a % (Math.PI * 2)
+	        return Geometry.angleNormalize(a + 
+	                (aGreaterB ? -1 : 1) * 
+	                (shorterPath ? -1 : 1) * 
+	                shift);
+	    },
+	    angleNormalize: function(_a) {
+	        // a is between (-2π 2π)
+	        var a = _a % (Math.PI * 2)
 	            if (a < 0) {
 	                a = 2 * Math.PI + a;
 	            }
-	            // a in [0 2π)
-	            // console.log("a", a * 180 / Math.PI, "_a", _a * 180 / Math.PI);
-	            return a;
-	        },
-	        angleWithin: function(a, b, margin) {
-	            var diff = Math.abs(a - b);
-	            return diff > Math.PI
-	                ? (2 * Math.PI - diff) <= margin
-	                : diff <= margin
-	        },
-	        /* rotate : { x, y } -> radians -> { x, y } */
-	        rotate: function(vector, theta) {
-	            var x, y;
-	            x = vector.x;
-	            y = vector.y;
+	        // a in [0 2π)
+	        // console.log("a", a * 180 / Math.PI, "_a", _a * 180 / Math.PI);
+	        return a;
+	    },
+	    angleWithin: function(a, b, margin) {
+	        var diff = Math.abs(a - b);
+	        return diff > Math.PI
+	            ? (2 * Math.PI - diff) <= margin
+	            : diff <= margin
+	    },
+	    /* rotate : { x, y } -> radians -> { x, y } */
+	    rotate: function(vector, theta) {
+	        var x, y;
+	        x = vector.x;
+	        y = vector.y;
 
-	            
-	            var mag; /* Magnitude of vector */
-	            mag = Math.sqrt(x * x + y * y);
 
-	            var curTheta; /* Current angle of vector */
-	            curTheta = Math.atan2(x, y); 
+	        var mag; /* Magnitude of vector */
+	        mag = Math.sqrt(x * x + y * y);
 
-	            return {
-	                x: mag * Math.cos(theta + curTheta),
-	                y: mag * Math.sin(theta + curTheta)
-	            };
-	        },
-	        rayBetween: function(a, b) {
-	            return {
-	                center: { 
-	                    x: a.x, 
-	                    y: a.y 
-	                },
-	                vel: { 
-	                    x: b.x - a.x, 
-	                    y: b.y - a.y 
-	                } 
-	            };
-	        },
-	        intersectionRayAndPerpendicularLineThroughPoint: function(ray, point) {
+	        var curTheta; /* Current angle of vector */
+	        curTheta = Math.atan2(x, y); 
 
-	            // line defined by ray
-	            // ry = rm(rx) + rb
-	            var rm, rb;
+	        return {
+	            x: mag * Math.cos(theta + curTheta),
+	            y: mag * Math.sin(theta + curTheta)
+	        };
+	    },
+	    rayBetween: function(a, b) {
+	        return {
+	            center: { 
+	                x: a.x, 
+	                y: a.y 
+	            },
+	            vel: { 
+	                x: b.x - a.x, 
+	                y: b.y - a.y 
+	            } 
+	        };
+	    },
+	    intersectionRayAndPerpendicularLineThroughPoint: function(ray, point) {
 
-	            // line defined perpendicular to ray
-	            // y = mx + b, where b = -mc + d
-	            var y, x, m, b;
+	        // line defined by ray
+	        // ry = rm(rx) + rb
+	        var rm, rb;
 
-	            if (ray.vel.x === 0) { // vertical ray
-	                y = point.y
+	        // line defined perpendicular to ray
+	        // y = mx + b, where b = -mc + d
+	        var y, x, m, b;
+
+	        if (ray.vel.x === 0) { // vertical ray
+	            y = point.y
 	                x = ray.center.x
-	            } else if (ray.vel.y === 0) { // horizontal ray
-	                y = ray.center.y; 
-	                x = point.x;
-	            } else { 
+	        } else if (ray.vel.y === 0) { // horizontal ray
+	            y = ray.center.y; 
+	            x = point.x;
+	        } else { 
 
-	                rm = ray.vel.y / ray.vel.x; // undefined when bullet path up/down
-	                rb = -rm * (ray.center.x) + ray.center.y
+	            rm = ray.vel.y / ray.vel.x; // undefined when bullet path up/down
+	            rb = -rm * (ray.center.x) + ray.center.y
 
-	                    m = - 1 / rm; // undefined when bullet path up/down
-	                b = -m * point.x + point.y;
+	                m = - 1 / rm; // undefined when bullet path up/down
+	            b = -m * point.x + point.y;
 
-	                // rx = (ry - rb) / rm 
-	                // rx = (y - rb) / rm, ry == x
-	                // rx = (y - rb) / rm, ry == x
-	                // 
-	                // y = m(x) + b, subst. rx for x
-	                // y = m((y - rb) / rm) + b
-	                // y = m/rm(y) - m/rm(rb) + b
-	                // y - m/rm(y) =  - m/rm(rb) + b
-	                // (1 - m/rm)y =  - m/rm(rb) + b
-	                // y = (- m/rm(rb) + b) / (1 - m/rm)
-	                y = (b - m * rb / rm) / (1 - m / rm);
-	                x = (y - rb) / rm;
-	            };
+	            // rx = (ry - rb) / rm 
+	            // rx = (y - rb) / rm, ry == x
+	            // rx = (y - rb) / rm, ry == x
+	            // 
+	            // y = m(x) + b, subst. rx for x
+	            // y = m((y - rb) / rm) + b
+	            // y = m/rm(y) - m/rm(rb) + b
+	            // y - m/rm(y) =  - m/rm(rb) + b
+	            // (1 - m/rm)y =  - m/rm(rb) + b
+	            // y = (- m/rm(rb) + b) / (1 - m/rm)
+	            y = (b - m * rb / rm) / (1 - m / rm);
+	            x = (y - rb) / rm;
+	        };
 
-	            return {
-	                x: x,
-	                y: y,
-	            }
-	        },
+	        return {
+	            x: x,
+	            y: y,
+	        }
+	    },
 
-	        // Returns an array of intersections the first is the closest to the
-	        // ray's start (.center prop)
-	        intersectionsOfRayAndCircle: function(ray, circle) {
-	            Utils.assert("Argument ray must have a valid velocity", 
-	                    ray.vel &&
-	                    typeof(ray.vel.x + ray.vel.y) == "number");
-	            Utils.assert("Arguments ray and circle must have centers", 
-	                    ray.center && circle.center &&
-	                    typeof(ray.center.x + ray.center.y + circle.center.x + circle.center.y) == "number");
+	    // Returns an array of intersections the first is the closest to the
+	    // ray's start (.center prop)
+	    intersectionsOfRayAndCircle: function(ray, circle) {
+	        Utils.assert("Argument ray must have a valid velocity", 
+	                ray.vel &&
+	                typeof(ray.vel.x + ray.vel.y) == "number");
+	        Utils.assert("Arguments ray and circle must have centers", 
+	                ray.center && circle.center &&
+	                typeof(ray.center.x + ray.center.y + circle.center.x + circle.center.y) == "number");
 
-	            // ray center
-	            var rx, ry;
-	            rx = ray.center.x;
-	            ry = ray.center.y;
+	        // ray center
+	        var rx, ry;
+	        rx = ray.center.x;
+	        ry = ray.center.y;
 
-	            // circle is defined by (x - a)^2 + (y - b)^2 = r2
-	            var a;
-	            a = circle.center.x;
+	        // circle is defined by (x - a)^2 + (y - b)^2 = r2
+	        var a;
+	        a = circle.center.x;
 
-	            var b;
-	            b = circle.center.y;
+	        var b;
+	        b = circle.center.y;
 
-	            var r;
-	            r = circle.size.x / 2;
+	        var r;
+	        r = circle.size.x / 2;
 
-	            // two possible x coordinates of intersection
-	            var x1, x2;
+	        // two possible x coordinates of intersection
+	        var x1, x2;
 
-	            // corresponding y coordinates of intersection
-	            var y1, y2;
+	        // corresponding y coordinates of intersection
+	        var y1, y2;
 
-	            var determinant;
+	        var determinant;
 
-	            // if ray is non zero, i.e. non-vertical
-	            if (ray.vel.x) {
+	        // if ray is non zero, i.e. non-vertical
+	        if (ray.vel.x) {
 
-	                // ray is defined by y = mx + z, where z = -mc + d
-	                var m;
-	                m = ray.vel.y / ray.vel.x; // undefined when bullet path up/down
+	            // ray is defined by y = mx + z, where z = -mc + d
+	            var m;
+	            m = ray.vel.y / ray.vel.x; // undefined when bullet path up/down
 
-	                var z;
-	                z = -m * rx + ry; // undefined when bullet path up/down
+	            var z;
+	            z = -m * rx + ry; // undefined when bullet path up/down
 
-	                // system of cirle and ray is: kx^2 + nx + o = 0
-	                var k;
-	                k = 1 + m * m;
+	            // system of cirle and ray is: kx^2 + nx + o = 0
+	            var k;
+	            k = 1 + m * m;
 
-	                var n;
-	                n = (-2 * a) + (2 * m * (z - b));
+	            var n;
+	            n = (-2 * a) + (2 * m * (z - b));
 
-	                var o;
-	                o = (a * a) + ((z - b) * (z - b)) - (r * r);
+	            var o;
+	            o = (a * a) + ((z - b) * (z - b)) - (r * r);
 
-	                determinant = n * n - 4 * k * o;
+	            determinant = n * n - 4 * k * o;
+
+	            if (determinant < 0)
+	                return [];
+
+	            // two possible values for x
+	            x1 = (-n + Math.sqrt(n * n - 4 * k * o)) / 2 / k;
+	            x2 = (-n - Math.sqrt(n * n - 4 * k * o)) / 2 / k;
+
+
+	            // two possible values for y
+	            y1 = m * x1 + z;
+	            y2 = m * x2 + z;
+
+	        } else {
+
+	            // Ray is vertical so intersection and ray share an x
+	            x1 = x2 = rx;
+	            y1 = -Math.sqrt((r * r) - ((x1 - a) * (x1 - a))) + b;
+	            y2 = Math.sqrt((r * r) - ((x2 - a) * (x2 - a))) + b;
+
+	            determinant = (r * r) - ((x1 - a) * (x1 - a))
 
 	                if (determinant < 0)
 	                    return [];
+	        }
 
-	                // two possible values for x
-	                x1 = (-n + Math.sqrt(n * n - 4 * k * o)) / 2 / k;
-	                x2 = (-n - Math.sqrt(n * n - 4 * k * o)) / 2 / k;
+	        // Utils.assert("A solution does not exist", determinant >= 0);
 
+	        // console.log("x1", x1, "y1", y1, "x2", x2, "y2", y2);
+	        // find soln with shortest dist to ray's center
+	        var d1, d2;
+	        d1 = Math.sqrt((rx - x1) * (rx - x1) + (ry - y1) * (ry - y1));
+	        d2 = Math.sqrt((rx - x2) * (rx - x2) + (ry - y2) * (ry - y2));
 
-	                // two possible values for y
-	                y1 = m * x1 + z;
-	                y2 = m * x2 + z;
+	        var dx1 = ray.vel.x * (x1 - rx);
+	        var dx2 = ray.vel.x * (x2 - rx);
+	        var dy1 = ray.vel.y * (y1 - ry);
+	        var dy2 = ray.vel.y * (y2 - ry);
 
-	            } else {
-
-	                // Ray is vertical so intersection and ray share an x
-	                x1 = x2 = rx;
-	                y1 = -Math.sqrt((r * r) - ((x1 - a) * (x1 - a))) + b;
-	                y2 = Math.sqrt((r * r) - ((x2 - a) * (x2 - a))) + b;
-
-	                determinant = (r * r) - ((x1 - a) * (x1 - a))
-
-	                if (determinant < 0)
-	                    return [];
-	            }
-
-	            // Utils.assert("A solution does not exist", determinant >= 0);
-
-	            // console.log("x1", x1, "y1", y1, "x2", x2, "y2", y2);
-	            // find soln with shortest dist to ray's center
-	            var d1, d2;
-	            d1 = Math.sqrt((rx - x1) * (rx - x1) + (ry - y1) * (ry - y1));
-	            d2 = Math.sqrt((rx - x2) * (rx - x2) + (ry - y2) * (ry - y2));
-
-	            var dx1 = ray.vel.x * (x1 - rx);
-	            var dx2 = ray.vel.x * (x2 - rx);
-	            var dy1 = ray.vel.y * (y1 - ry);
-	            var dy2 = ray.vel.y * (y2 - ry);
-
-	            // The direction of d1 and d2 away from ray
-	            var s1 = (dx1 >= 0 && dy1 >= 0 ? 1 : -1)
+	        // The direction of d1 and d2 away from ray
+	        var s1 = (dx1 >= 0 && dy1 >= 0 ? 1 : -1)
 	            var s2 = (dx2 >= 0 && dy2 >= 0 ? 1 : -1)
 
 	            // console.log("(rx, ry)", rx, ry);
@@ -2635,501 +2632,558 @@
 	            // set soln x and y
 	            var x, y;
 
-	            var solutions = [];
+	        var solutions = [];
 
-	            var p1 = {
-	                x: x1,
-	                y: y1,
-	            };
+	        var p1 = {
+	            x: x1,
+	            y: y1,
+	        };
 
-	            var p2 = {
-	                x: x2,
-	                y: y2,
-	            };
+	        var p2 = {
+	            x: x2,
+	            y: y2,
+	        };
 
-	            // Only push solutions where s[1,2] is positive, meaning solutions in the direction of the ray
-	            if (s1 > 0 && s2 > 0) {
-	                if (d1 < d2) {
-	                    solutions.push(p1);
-	                    solutions.push(p2);
-	                } else {
-	                    solutions.push(p2);
-	                    solutions.push(p1);
-	                }
-	            } else if (s1 > 0) {
+	        // Only push solutions where s[1,2] is positive, meaning solutions in the direction of the ray
+	        if (s1 > 0 && s2 > 0) {
+	            if (d1 < d2) {
 	                solutions.push(p1);
+	                solutions.push(p2);
 	            } else {
 	                solutions.push(p2);
+	                solutions.push(p1);
 	            }
+	        } else if (s1 > 0) {
+	            solutions.push(p1);
+	        } else {
+	            solutions.push(p2);
+	        }
 
-	            if (determinant == 0)
-	                solutions.length = 1;
-	            else if (determinant < 0)
-	                solutions.length = 0;
+	        if (determinant == 0)
+	            solutions.length = 1;
+	        else if (determinant < 0)
+	            solutions.length = 0;
 
-	            return solutions;
-	        },
+	        return solutions;
+	    },
 
+	}
+	module.exports = Geometry;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var deepFreeze = __webpack_require__(6).deepFreeze;
+
+	var Config = {
+	    Player: {
+	        size: {x: 20, y: 20},
+	        color : "#000",
+	        speed: 80 / 17, // pixels per 17ms
+	        bulletDelay: 30,
+	        bulletDeviation: 0.35
+	    },
+	    Bullet: {
+	        delay: 30,
+	        disorder: 0.35,
+	        speed : 200 / 17,
 	    }
-	    return Geometry;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	}
+
+	module.exports = deepFreeze(Config);
 
 
 /***/ },
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var Player = __webpack_require__(11);
+	var Bullet = __webpack_require__(12);
+	var Utils = __webpack_require__(6);
+	var Wall = __webpack_require__(10);
+	var Sprite = __webpack_require__(13);
+	var Maths = __webpack_require__(1).Collider.Maths;
 
-	    var deepFreeze = __webpack_require__(6).deepFreeze;
+	var Micro = function(game, settings) {
 
-	    var Config = {
-	        Player: {
-	            size: {x: 20, y: 20},
-	            color : "#000",
-	            speed: 80 / 17, // pixels per 17ms
-	            bulletDelay: 30,
-	            bulletDeviation: 0.35
-	        },
-	        Bullet: {
-	            delay: 30,
-	            disorder: 0.35,
-	            speed : 200 / 17,
-	        }
+	    var defaults = {
+	        size: { x:5, y:5 },
+	        vel: { x: 0, y: 0 },
+	        color : "#fff",
+	        speed : 200 / 17 // pixels per 17ms
 	    }
 
-	    return deepFreeze(Config);
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    this.c = game.c;
+	    this.game = game;
+	    Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
+	    Utils.extend(this, defaults);
+	    Utils.extend(this, settings);
+
+	    this.draw = this.drawRect;
+	}
+
+	Micro.prototype.update = function(delta) {
+	    var temp;
+
+	    // Try to set enemy to target Player
+	    if (!this.target) {
+	        temp = this.c.entities.all(__webpack_require__(11));
+	        if (temp.length)
+	            this.target = temp[0]
+	        else
+	            return
+	    }
+
+	    this.follow(this.target, {
+	        within : this.within,
+	        jitter : this.jitter
+	    });
+
+	    // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
+	    this.center.x += this.vel.x * delta;
+	    this.center.y += this.vel.y * delta;
+	};
+
+	Micro.prototype.collision = function(other) {
+	    if (other instanceof Bullet) {   
+	        this.c.entities.destroy(this);
+	        this.game.scorer.add(1);
+	    }
+	    else if (other instanceof Player)
+	        this.c.entities.destroy(other)
+	            // // if intersecting target, don't do change position!
+	            // else if (this.target && Maths.pointInsideCircle(this, this.target))
+	            //     return
+
+	    else if (other instanceof Wall)
+	        other.alignPlayer(this);
+	    // this.c.entities.destroy(this);
+
+	    else if (other instanceof Micro)
+	        this.moveAway(other, this.away);
+
+
+	}
+
+	module.exports = Micro;
 
 
 /***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
+	var Bullet = __webpack_require__(12);
+	var Utils = __webpack_require__(6);
+	var Wall = __webpack_require__(10);
 
-	    var Player = __webpack_require__(12);
-	    var Bullet = __webpack_require__(13);
-	    var Utils = __webpack_require__(6);
-	    var Wall = __webpack_require__(11);
-	    var Sprite = __webpack_require__(14);
-	    var Maths = __webpack_require__(1).Collider.Maths;
+	var Maths = __webpack_require__(1).Collider.Maths;
 
-	    var Micro = function(game, settings) {
+	var TextBox = function(game, settings) {
+	    this.c = game.c;
 
-	        var defaults = {
-	            size: { x:5, y:5 },
-	            vel: { x: 0, y: 0 },
-	            color : "#fff",
-	            speed : 200 / 17 // pixels per 17ms
-	        }
+	    Utils.assert("Settings contains coordinates (x, y)", 
+	            "x" in settings && "y" in settings);
+	    Utils.extend(this, settings)
+	}
 
-	        this.c = game.c;
-	        this.game = game;
-	        Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
-	        Utils.extend(this, defaults);
-	        Utils.extend(this, settings);
+	TextBox.prototype.draw = function(ctx){
+	    ctx.save();
+	    ctx.font = this.font || '18pt Verdana';
+	    ctx.fillStyle = this.color || "#000";
+	    ctx.textAlign = this.align || "left";
+	    ctx.fillText(this.text, this.x, this.y);
+	    ctx.restore();
+	};
 
-	        this.draw = this.drawRect;
-	    }
-
-	    Micro.prototype.update = function(delta) {
-	        var temp;
-
-	        // Try to set enemy to target Player
-	        if (!this.target) {
-	            temp = this.c.entities.all(__webpack_require__(12));
-	            if (temp.length)
-	                this.target = temp[0]
-	            else
-	                return
-	        }
-
-	        this.follow(this.target, {
-	            within : this.within,
-	            jitter : this.jitter
-	        });
-
-	        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
-	        this.center.x += this.vel.x * delta;
-	        this.center.y += this.vel.y * delta;
-	    };
-
-	    Micro.prototype.collision = function(other) {
-	        if (other instanceof Bullet) {   
-	            this.c.entities.destroy(this);
-	            this.game.scorer.add(1);
-	        }
-	        else if (other instanceof Player)
-	            this.c.entities.destroy(other)
-	        // // if intersecting target, don't do change position!
-	        // else if (this.target && Maths.pointInsideCircle(this, this.target))
-	        //     return
-
-	        else if (other instanceof Wall)
-	            other.alignPlayer(this);
-	            // this.c.entities.destroy(this);
-
-	        else if (other instanceof Micro)
-	            this.moveAway(other, this.away);
-
-
-	    }
-
-	    return Micro;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = TextBox;
 
 
 /***/ },
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
+	var Base = __webpack_require__(21);
+	var Global = __webpack_require__(7);
+	var Player = __webpack_require__(11);
+	var R = __webpack_require__(14);
+	var Settings = __webpack_require__(22);
+	var Simple = __webpack_require__(23);
+	var TextBox = __webpack_require__(19);
+	var Transition = __webpack_require__(24);
+	var Timer = __webpack_require__(2);
+	var Utils = __webpack_require__(6);
 
-	    var Bullet = __webpack_require__(13);
-	    var Utils = __webpack_require__(6);
-	    var Wall = __webpack_require__(11);
-	    var Sprite = __webpack_require__(14);
+	var Scene = Settings.Scene;
 
-	    var Maths = __webpack_require__(1).Collider.Maths;
+	var PreWave = function(game) {
+	    return new Transition(game, {
+	        duration: 1000,
+	        sceneName: "Wave 1",
+	        nextScene: Wave
+	    });
+	};
 
-	    var TextBox = function(game, settings) {
-	        this.c = game.c;
+	var Wave = function (game, settings) {
+	    this.c = game.c;
+	    this.game = game;
+	    this.timer = new Timer();
 
-	        Utils.assert("Settings contains coordinates (x, y)", 
-	                "x" in settings && "y" in settings);
-	        Utils.extend(this, settings)
+	    this.base = Utils.bind(this, Base);
+	    Utils.extend(this, Base, ["destroyExcept"]);
+	};
+
+	Wave.prototype = {};
+	Wave.prototype.init = function() {
+	    // define what happens at beginning
+
+	    this.timer = new Timer();
+	    var make = Utils.atMost(Scene.MAX_SIMPLE, makeSimple.bind(this));
+	    make();
+	    this.timer.every(Scene.spawnDelay, make); 
+	    this.c.entities.create(Player, Settings.Player);
+	    this.scoreBox = this.c.entities.create(TextBox, {
+	        font: '30pt Verdana',
+	        x: 15, y: 45, 
+	        text: this.game.scorer.get(),
+	    });
+	};
+	Wave.prototype.active = function() {
+	    // Exit if key R(eset) is pressed
+	    // or player is dead
+	    return this.base.active();
+	};
+	Wave.prototype.update = function(delta) {
+	    this.timer.update(delta);
+
+	    // Update score 
+	    this.scoreBox.text = this.game.scorer.get();
+
+	    var playerAlive = this.c.entities.all(Player).length;
+
+	    if (!playerAlive && !this.game.pauser.isPaused()) {
+
+	        this.textBox = this.c.entities.create(TextBox, {
+	            text: "Press R to restart", 
+	            x: Global.Game.width / 2,
+	            y: 0.4 * Global.Game.height,
+	            align: "center"
+	        }).draw(this.c.renderer.getCtx());
+
+	        this.game.pauser.pause();
+	    }            
+
+	};
+	Wave.prototype.exit = function() {
+	    var self = this;
+	    var game = this.game;
+	    var destroy = this.c.entities.destroy.bind(this.c.entities);
+
+	    this.destroyExcept(/* destroy everything */);
+
+	    game.scorer.reset();
+	    if (game.pauser.isPaused())
+	        game.pauser.unpause();
+	    game.scener.start(PreWave);
+	};
+
+	var makeSimple = function () {
+	    var center = { x: 0, y: 0 };
+
+	    if (R.bool()) {
+	        center.x = R.bool() ? Global.Game.width : 0;
+	        center.y = R.scale(Global.Game.height);
+	    } else {
+	        center.y = R.bool() ? Global.Game.height : 0;
+	        center.x = R.scale(Global.Game.width);
 	    }
-	    
-	    TextBox.prototype.draw = function(ctx){
-	        ctx.save();
-	        ctx.font = this.font || '18pt Verdana';
-	        ctx.fillStyle = this.color || "#000";
-	        ctx.textAlign = this.align || "left";
-	        ctx.fillText(this.text, this.x, this.y);
-	        ctx.restore();
-	    };
 
-	    TextBox.prototype.update = function(delta) {
+	    this.c.entities.create( Simple, 
+	            Utils.extend({ center: center }, Settings.Simple));
 
-	    };
+	};
 
-	    return TextBox;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	module.exports = PreWave;
 
 
 /***/ },
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
 
-	    var Wall         = __webpack_require__(11);
-	    var Player       = __webpack_require__(12);
-	    var Micro        = __webpack_require__(19);
-	    var Simple       = __webpack_require__(22);
-	    var Bullet       = __webpack_require__(13);
-	    var Avoid        = __webpack_require__(16);
-	    var TextBox      = __webpack_require__(20);
-	    var Global       = __webpack_require__(7);
-	    var Settings     = __webpack_require__(23);
-	    var R            = __webpack_require__(15);
-	    var Utils        = __webpack_require__(6);
+	    var R = __webpack_require__(14);
+	    var Utils = __webpack_require__(6);
+	    var Time = __webpack_require__(2);
+	    var Player = __webpack_require__(11);
 
-	    var Scene = Settings.Scene;
+	    var Wave = {};
 
-	    var Demo = function (game) {
-	        this.c = game.c;
-	        this.game = game;
+	    Wave.destroyExcept = function(exceptions) {
+	        Utils.assert("destroyExcept requires scene: " + this.name + 
+	                " to have a reference to the coquette game object", "c" in this);
+
+	        exceptions = 
+	            exceptions === undefined
+	            ? []
+	            : typeof exceptions != "array"
+	            ? [ exceptions ]
+	            : exceptions
+
+	        var destroy = this.c.entities.destroy.bind(this.c.entities);
+	        this.c.entities._entities.filter(function(ent){
+	            // If entity isn't an exception
+	            return exceptions.indexOf(ent.constructor) == -1;
+	        }).forEach(destroy);
 	    };
 
-	    Demo.prototype = {
-	        init: function() {
-	            // define what happens at beginning
+	    Wave.active = function() {
+	        var I = this.c.inputter;
+	        if (I.isDown(I.R))
+	            return false;
 
-	            this.c.entities.create(Player, Settings.Player);
-	            this.scoreBox = this.c.entities.create(TextBox, {
-	                font: '30pt Verdana',
-	                x: 15, y: 45, 
-	                text: this.game.scorer.get(),
-	            });
-	            makeAvoider();
-	            makeMicro();
-	            makeSimple();
-	            setInterval(function() {
-	                makeSimple();
-	                makeMicro();
-	                makeAvoider();
-	            }, 100);
-	            Wall.makeBoundaries(this);
-	        },
-	        active: function() {
-	            var I = this.c.inputter;
-	            return !I.isDown(I.R);
-	        },
-	        update: function() {
+	        var playerDead = this.c.entities.all(Player).length === 0;
+	        if (playerDead)
+	            return false
 
-	            // Update score 
-	            this.scoreBox.text = this.game.scorer.get();
-
-	            var playerAlive = this.c.entities.all(Player).length;
-
-	            if (!playerAlive && !this.game.pauser.isPaused()) {
-
-	                this.textBox = this.c.entities.create(TextBox, {
-	                    text: "Press R to restart", 
-	                    x: Global.Game.width / 2,
-	                    y: 0.4 * Global.Game.height,
-	                    align: "center"
-	                }).draw(this.c.renderer.getCtx());
-
-	                this.game.pauser.pause();
-	            }            
-
-	        },
-	        exit: function() {
-	            var self = this;
-	            var game = this.game;
-	            var destroy = this.c.entities.destroy.bind(this.c.entities);
-	            // Destroy all created entities
-	            ([Player, Bullet, Simple, Avoid, TextBox, Micro, Wall]).forEach(function(type){
-	                self.c.entities.all(type).forEach(destroy);
-	            });
-	            game.scorer.reset();
-	            if (game.pauser.isPaused())
-	                game.pauser.unpause();
-	            game.scener.start("Demo");
-	        }
+	        return true;
 	    };
 
-	    var makeSimple = (function (n) {
-	        if (self.c.entities.all(Simple).length >= n ||
-	                self.c.entities._entities.length >= Scene.MAX_ENEMIES)
-	            return;
+	    Wave.init = function() {
+	        this.timer = new Timer();
+	        this.c.entities.create(Player, Settings.Player);
+	    };
 
-	        var center = { x: 0, y: 0 };
+	    Wave.exit = function() {
 
-	        if (R.bool()) {
-	            center.x = R.bool() ? Global.Game.width : 0;
-	            center.y = R.scale(Global.Game.height);
-	        } else {
-	            center.y = R.bool() ? Global.Game.height : 0;
-	            center.x = R.scale(Global.Game.width);
-	        }
+	        var me = this;
+	        this.c.entities._entities.forEach(function(ent) {
+	            if (!(ent instanceof Player)) 
+	                me.c.entities.destroy(ent);
+	        });
+	    };
 
-	        return self.c.entities.create(Simple, Utils.extend({ center: center }, Settings.Simple));
-	    }.bind(null, Scene.MAX_SIMPLE));
-
-	    // make n micro enemies
-	    var makeMicro = (function (n) {
-	        if (self.c.entities.all(Micro).length >= n ||
-	                self.c.entities._entities.length >= Scene.MAX_ENEMIES)
-	            return;
-
-	        var center = { x: 0, y: 0 };
-
-	        if (R.bool()) {
-	            center.x = R.bool() ? Global.Game.width : 0;
-	            center.y = R.scale(Global.Game.height);
-	        } else {
-	            center.y = R.bool() ? Global.Game.height : 0;
-	            center.x = R.scale(Global.Game.width);
-	        }
-
-	        return self.c.entities.create(Micro, Utils.extend({ center: center }, Settings.Micro));
-	    }.bind(null, Scene.MAX_MICROS));
-
-	    var makeAvoider = (function (n) {
-	        if (self.c.entities.all(Avoid).length >= n ||
-	                self.c.entities._entities.length >= Scene.MAX_ENEMIES)
-	            return;
-
-	        // var center = R.point(Global.Game.width, Global.Game.height);
-
-	        var center = { x: 0, y: 0 };
-
-	        if (R.bool()) {
-	            center.x = R.bool() ? Global.Game.width : 0;
-	            center.y = R.scale(Global.Game.height);
-	        } else {
-	            center.y = R.bool() ? Global.Game.height : 0;
-	            center.x = R.scale(Global.Game.width);
-	        }
-	        // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
-
-	        return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
-	    }.bind(null, Scene.MAX_AVOIDERS));
-	    return Demo;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
+	    return Wave;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)); 
 
 
 /***/ },
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
+	var deepFreeze = __webpack_require__(6).deepFreeze;
 
-	    var Bullet = __webpack_require__(13);
-	    var Player = __webpack_require__(12);
-	    var Utils = __webpack_require__(6);
-	    var Wall = __webpack_require__(11);
-	    var Sprite = __webpack_require__(14);
+	var Config = {
 
-	    var Maths = __webpack_require__(1).Collider.Maths;
+	    Scene: {
+	        MAX_SIMPLE:  30,
+	        color:"#efefef",
+	        spawnDelay: 100
+	    },
 
-	    var Simple = function(game, settings) {
-
-	        var defaults = {
-	            size: { x:15, y:15 },
-	            vel: { x: 0, y: 0 },
-	            angle: 0, 
-	            color : "#fff",
-	            speed : 200 / 17, // pixels per 17ms
-	            rotation: (2 * Math.PI / 17) * 0.5
+	    // Completely namespace player and player's bullet
+	    Player: {
+	        Player: {},
+	        Bullet: {
+	            delay: 30,
+	            speed: 200 / 17,
+	            disorder: 0.3,
 	        }
+	    },
 
-	        this.c = game.c;
-	        this.game = game;
-	        Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
-	        Utils.extend(this, defaults);
-	        Utils.extend(this, settings);
-	        this.draw = this.drawRect;
-	    }
+	    Avoid: {
+	        // speed : 10 / 17,
+	        speed : 40 / 17,
 
-	    Simple.prototype.update = function(delta) {
-	        var temp;
+	        size: { x:20, y:20 },
 
-	        // Try to set enemy to target Player
-	        if (!this.target) {
-	            temp = this.c.entities.all(__webpack_require__(12));
-	            if (temp.length)
-	                this.target = temp[0]
-	            else
-	                return
-	        }
+	        // How far like enemies move away from each other
+	        away: 12,
 
-	        this.follow(this.target, {
-	            jitter : this.jitter,
-	            within: this.within
-	        });
+	        // How far enemy moves away from bullet
+	        bulletAway: 5,
 
-	        // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
-	        this.center.x += this.vel.x * delta;
-	        this.center.y += this.vel.y * delta;
-	        this.angle += this.rotation * delta;
-	    };
+	        color: "#f0af0f",
 
-	    Simple.prototype.collision = function(other) {
-	        if (other instanceof Bullet){   
-	            this.c.entities.destroy(this);
-	            this.game.scorer.add(1);
-	        }
-	        // // if intersecting target, don't do change position!
-	        // else if (this.target && Maths.pointInsideCircle(this, this.target))
-	        //     return
+	        // Enemies stay within distance from target
+	        // within: 250,
+	        within: 10,
 
-	        else if (other instanceof Player)
-	            this.c.entities.destroy(other)
-	        else if (other instanceof Wall)
-	            other.alignPlayer(this);
-	            // this.c.entities.destroy(this);
+	        // Enemy divergence from following player
+	        jitter: 0
+	    },
 
-	        else if (other instanceof Simple)
-	            this.moveAway(other, this.away);
+	    Micro: {
+	        // speed : 500 / 17,
+	        speed : 100 / 17,
 
-	    }
+	        // How far micro's move away from each other
+	        away: 3,
 
-	    return Simple;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        // Micro's stay within distance from target
+	        within: 50,
+
+	        // Micro divergence from following player
+	        jitter: 0.02
+	    },
+	    Simple: {
+	        speed : 40 / 17,
+
+	        size: {
+	            x: 20,
+	            y: 20,
+	        },
+
+	        // How far enemyies move away from each other
+	        away: 5,
+
+	        color: "#beb",
+
+	        // Enemies stay within distance from target
+	        // within: 250,
+	        within: 10,
+
+	        // Enemy divergence from following player
+	        jitter: 0
+	    },
+	};
+
+	module.exports = deepFreeze(Config);
 
 
 /***/ },
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+	var Bullet = __webpack_require__(12);
+	var Player = __webpack_require__(11);
+	var Utils = __webpack_require__(6);
+	var Wall = __webpack_require__(10);
+	var Sprite = __webpack_require__(13);
 
-	    var deepFreeze = __webpack_require__(6).deepFreeze;
+	var Maths = __webpack_require__(1).Collider.Maths;
 
-	    var Config = {
-	        Scene: {
-	            MAX_ENEMIES: 250,
-	            MAX_MICROS: 0,
-	            MAX_AVOIDERS: 20,
-	            MAX_SIMPLE:  4,
-	            color:"#efefef"
-	        },
+	var Simple = function(game, settings) {
 
-	        // Completely namespace player and player's bullet
-	        Player: {
-	            Player: {},
-	            Bullet: {
-	                delay: 30,
-	                speed: 200 / 17,
-	                disorder: 0.3,
-	            }
-	        },
-	        
-	        Avoid: {
-	            // speed : 10 / 17,
-	            speed : 40 / 17,
+	    var defaults = {
+	        size: { x:15, y:15 },
+	        vel: { x: 0, y: 0 },
+	        angle: 0, 
+	        color : "#fff",
+	        speed : 200 / 17, // pixels per 17ms
+	        rotation: (2 * Math.PI / 17) * 0.5
+	    }
 
-	            size: { x:20, y:20 },
+	    this.c = game.c;
+	    this.game = game;
+	    Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect"]);
+	    Utils.extend(this, defaults);
+	    Utils.extend(this, settings);
+	    this.draw = this.drawRect;
+	}
 
-	            // How far like enemies move away from each other
-	            away: 12,
+	Simple.prototype.update = function(delta) {
+	    var temp;
 
-	            // How far enemy moves away from bullet
-	            bulletAway: 5,
+	    // Try to set enemy to target Player
+	    if (!this.target) {
+	        temp = this.c.entities.all(__webpack_require__(11));
+	        if (temp.length)
+	            this.target = temp[0]
+	        else
+	            return
+	    }
 
-	            color: "#f0af0f",
+	    this.follow(this.target, {
+	        jitter : this.jitter,
+	        within: this.within
+	    });
 
-	            // Enemies stay within distance from target
-	            // within: 250,
-	            within: 10,
+	    // console.log("ut:", this.center.x, this.center.y, this.vel.x, this.vel.y);
+	    this.center.x += this.vel.x * delta;
+	    this.center.y += this.vel.y * delta;
+	    this.angle += this.rotation * delta;
+	};
 
-	            // Enemy divergence from following player
-	            jitter: 0
-	        },
+	Simple.prototype.collision = function(other) {
+	    if (other instanceof Bullet){   
+	        this.c.entities.destroy(this);
+	        this.game.scorer.add(1);
+	    }
+	    // // if intersecting target, don't do change position!
+	    // else if (this.target && Maths.pointInsideCircle(this, this.target))
+	    //     return
 
-	        Micro: {
-	            // speed : 500 / 17,
-	            speed : 100 / 17,
+	    else if (other instanceof Player)
+	        this.c.entities.destroy(other)
+	    else if (other instanceof Wall)
+	        other.alignPlayer(this);
+	    // this.c.entities.destroy(this);
 
-	            // How far micro's move away from each other
-	            away: 3,
+	    else if (other instanceof Simple)
+	        this.moveAway(other, this.away);
 
-	            // Micro's stay within distance from target
-	            within: 50,
+	}
 
-	            // Micro divergence from following player
-	            jitter: 0.02
-	        },
-	        Simple: {
-	            speed : 40 / 17,
+	module.exports = Simple;
 
-	            size: {
-	                x: 20,
-	                y: 20,
-	            },
 
-	            // How far enemyies move away from each other
-	            away: 5,
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
 
-	            color: "#beb",
+	var Utils = __webpack_require__(6);
+	var Base = __webpack_require__(21);
+	var TextBox = __webpack_require__(19);
+	var Global = __webpack_require__(7);
+	var Timer = __webpack_require__(2);
 
-	            // Enemies stay within distance from target
-	            // within: 250,
-	            within: 10,
+	// A transition is just a simple object which adheres to the scene interface
+	// (see the scene skeleton.js). 
+	var Transition = function(game, settings) {
+	    Utils.assert("Transition requires a next scene", 
+	            "nextScene" in settings);
 
-	            // Enemy divergence from following player
-	            jitter: 0
-	        },
-	    };
+	    var defaults = {
+	        duration: 1000,
+	        message: "blah blah"
+	    }
 
-	    return deepFreeze(Config);
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    Utils.extend(this, Utils.extend(defaults, settings));
+	    Utils.extend(this, Base, ["destroyExcept"]);
+	    this.game = game;
+	    this.c = game.c;
+	};
+
+	Transition.prototype = {
+	    init: function() {
+	        // define what happens at beginning
+	        this.c.renderer.setBackground('#000');
+	        this.timer = new Timer();
+	        this.c.entities.create(TextBox, {
+	            text: this.sceneName, 
+	            color: "#fff",
+	            x: Global.Game.width / 2,
+	            y: Global.Game.height / 2,
+	            align: "center"
+	        }).draw(this.c.renderer.getCtx());
+	    },
+	    active:function() {
+	        // return true if scene is active
+	        return this.timer.getTime() < this.duration;
+	    },
+	    update:function(delta) {
+	        this.timer.update(delta);
+	    },
+	    exit: function() {
+	        this.destroyExcept(/* destroy everything */);
+	        this.c.renderer.setBackground(Global.Game.color);
+	        this.game.scener.start(this.nextScene);
+	    }
+	};
+
+	module.exports = Transition;
 
 
 /***/ }
