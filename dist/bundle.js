@@ -50,8 +50,8 @@
 	    var Timer        = __webpack_require__(2);
 	    var Pauser       = __webpack_require__(3);
 	    var Scener       = __webpack_require__(5);
-	    var Scorer       = __webpack_require__(7);
-	    var Global       = __webpack_require__(8);
+	    var Scorer       = __webpack_require__(8);
+	    var Global       = __webpack_require__(7);
 	    var Scenes       = __webpack_require__(9);
 
 	    (function() {
@@ -1568,6 +1568,27 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
+
+	    var deepFreeze = __webpack_require__(6).deepFreeze;
+
+	    var Config = {
+	        DEBUG: false,
+	        Game: {
+	            width: 800,
+	            height: 400,
+	            color:"#efefef"
+	        },
+	    }
+
+	    return deepFreeze(Config);
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) { 
 
 	    var Scorer = function(game) {
@@ -1588,27 +1609,6 @@
 	    };
 
 	    return Scorer;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require) {
-
-	    var deepFreeze = __webpack_require__(6).deepFreeze;
-
-	    var Config = {
-	        DEBUG: false,
-	        Game: {
-	            width: 800,
-	            height: 400,
-	            color:"#efefef"
-	        },
-	    }
-
-	    return deepFreeze(Config);
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
@@ -1648,7 +1648,7 @@
 	    var Micro        = __webpack_require__(19);
 	    var Avoid        = __webpack_require__(16);
 	    var TextBox      = __webpack_require__(20);
-	    var Global       = __webpack_require__(8);
+	    var Global       = __webpack_require__(7);
 	    var R            = __webpack_require__(15);
 	    var Utils        = __webpack_require__(6);
 
@@ -1878,7 +1878,7 @@
 
 	    var Bullet = __webpack_require__(13);
 	    var Config = __webpack_require__(18);
-	    var Global = __webpack_require__(8);
+	    var Global = __webpack_require__(7);
 	    var R = __webpack_require__(15);
 	    var Sprite = __webpack_require__(14);
 	    var Utils = __webpack_require__(6);
@@ -2254,7 +2254,7 @@
 	    var Sprite = __webpack_require__(14);
 	    var Maths = __webpack_require__(1).Collider.Maths;
 	    var Geom = __webpack_require__(17);
-	    var DEBUG = __webpack_require__(8).DEBUG;
+	    var DEBUG = __webpack_require__(7).DEBUG;
 
 	    var Avoider = function(game, settings) {
 	        this.c = game.c;
@@ -2831,7 +2831,7 @@
 	    var Bullet       = __webpack_require__(13);
 	    var Avoid        = __webpack_require__(16);
 	    var TextBox      = __webpack_require__(20);
-	    var Global       = __webpack_require__(8);
+	    var Global       = __webpack_require__(7);
 	    var Settings     = __webpack_require__(23);
 	    var R            = __webpack_require__(15);
 	    var Utils        = __webpack_require__(6);
