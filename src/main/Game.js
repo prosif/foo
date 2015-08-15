@@ -1,11 +1,11 @@
-var Coquette     = require("coquette");
-var Timer        = require("engine/Timer");
-var Pauser       = require("engine/Pauser");
-var Scener       = require("engine/Scener");
-var Scorer       = require("engine/Scorer");
-var Global       = require("main/config");
+var Coquette = require("coquette");
+var Timer = require("engine/Timer");
+var Pauser = require("engine/Pauser");
+var Scener = require("engine/Scener");
+var Scorer = require("engine/Scorer");
+var Global = require("main/config");
 
-var me = 
+var me =
     Global.DEBUG
     ? window
     : {};
@@ -31,3 +31,4 @@ me.update = function(delta) {
 me.scener = new Scener(me);
 
 me.scener.start(require("world/scenes/Splash/Splash"));
+// me.scener.start(require("world/scenes/waves/1/1"));

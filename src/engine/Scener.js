@@ -1,6 +1,36 @@
 var assert = require("mixins/Utils").assert;
 var G = require("main/config");
 
+/*
+ * THE SCENER API:
+
+   // Advance next scene
+   scener.start(NextSceneConstructor);
+
+   // Advance a temporary scene
+   scener.push();
+
+   // Leave a temporary scene
+   scener.pop();
+
+ * EXAMPLES:
+
+   // Lalala start the main game
+   scener.push(MainGameScene);
+
+   // When pause is pressed
+   scener.push(PauseMenu);
+        
+       // When controls is pressed
+       scener.push(PauseControlsSubMenu);
+
+       // When back is pressed
+       scener.pop();
+       
+   // When back is pressed
+   scener.pop();
+
+*/
 var Scener = function(game) {
     this.stack = [];
     this.game = game;

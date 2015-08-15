@@ -1,14 +1,23 @@
-var Timer        = require("engine/Timer");
-var Player       = require("world/player/Player");
-var Simple       = require("world/enemy/Simple/Simple");
-var TextBox      = require("world/hud/TextBox");
-var Settings     = require("./config");
+var Base = require("mixins/Wave");
 var Global = require("main/config");
-var R            = require("mixins/Random");
-var Base         = require("mixins/Wave");
-var Utils        = require("mixins/Utils");
+var Player = require("world/player/Player");
+var R = require("mixins/Random");
+var Settings = require("./config");
+var Simple = require("world/enemy/Simple/Simple");
+var TextBox = require("world/hud/TextBox");
+var Transition = require("world/scenes/waves/transition");
+var Timer = require("engine/Timer");
+var Utils = require("mixins/Utils");
 
 var Scene = Settings.Scene;
+
+var PreWave = function(game) {
+    return new Transition(game, {
+        duration: 1000,
+        sceneName: "Wave 1",
+        nextScene: Wave
+    });
+};
 
 var Wave = function (game, settings) {
     this.c = game.c;
@@ -70,8 +79,7 @@ Wave.prototype.exit = function() {
     game.scorer.reset();
     if (game.pauser.isPaused())
         game.pauser.unpause();
-    console.log("Wave exit:");
-    game.scener.start(Wave);
+    game.scener.start(PreWave);
 };
 
 var makeSimple = function () {
@@ -90,4 +98,4 @@ var makeSimple = function () {
 
 };
 
-module.exports = Wave;
+module.exports = PreWave;

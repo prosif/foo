@@ -1,7 +1,6 @@
 var Bullet = require("world/bullet/Bullet");
 var Utils = require("mixins/Utils");
 var Wall = require("world/wall/Wall");
-var Sprite = require("mixins/Sprite");
 
 var Maths = require("coquette").Collider.Maths;
 
@@ -20,10 +19,6 @@ TextBox.prototype.draw = function(ctx){
     ctx.textAlign = this.align || "left";
     ctx.fillText(this.text, this.x, this.y);
     ctx.restore();
-};
-
-TextBox.prototype.update = function(delta) {
-
 };
 
 module.exports = TextBox;

@@ -13,7 +13,9 @@ Scene.prototype = {
     },
     exit: function() {
         // define cleanup/scene transition
-        // ex. this.game.scener.start(this.next);
+        // ex. this.game.scener.start(NextSceneConstructor);
+        // ex. this.game.scener.pop(NextSceneConstructor);
+        // ex. this.game.scener.push(NextSceneConstructor);
     }
 };
 
