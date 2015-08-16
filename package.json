@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "A game built on the coquette framework",
   "main": "''",
+  "scripts": {
+      "gh-pages": "webpack && cp dist/bundle.js /tmp/foo && git checkout gh-pages && cp /tmp/foo dist/bundle.js"
+  },
   "dependencies": {
     "coquette": "git://github.com/cdosborn/coquette.git",
     "ifvisible.js": "git://github.com/serkanyersen/ifvisible.js.git",
