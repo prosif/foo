@@ -1,4 +1,5 @@
 var Base = require("mixins/Wave");
+var Wall = require("world/wall/Wall");
 var Global = require("main/config");
 var Player = require("world/player/Player");
 var R = require("mixins/Random");
@@ -41,6 +42,7 @@ Wave.prototype.init = function() {
         x: 15, y: 45, 
         text: this.game.scorer.get(),
     });
+    Wall.makeBoundaries(this);
 };
 Wave.prototype.active = function() {
     // Exit if key R(eset) is pressed

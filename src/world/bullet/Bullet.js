@@ -31,8 +31,8 @@ Bullet.prototype.update = function(delta) {
 
 Bullet.prototype.collision = function(other) {
     if (!(other instanceof Bullet) &&
-            !(other instanceof Avoid)  &&
-            !(other instanceof Player)) {
+        !(other instanceof Avoid)  &&
+        !(other instanceof Player)) {
         this.c.entities.destroy(this);
     }
 };
