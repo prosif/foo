@@ -48,7 +48,7 @@
 	var Timer = __webpack_require__(2);
 	var Pauser = __webpack_require__(3);
 	var Scener = __webpack_require__(5);
-	var Scorer = __webpack_require__(8);
+	var Scorer = __webpack_require__(9);
 	var Global = __webpack_require__(7);
 
 	var me =
@@ -76,7 +76,7 @@
 
 	me.scener = new Scener(me);
 
-	me.scener.start(__webpack_require__(9));
+	me.scener.start(__webpack_require__(10));
 	// me.scener.start(require("world/scenes/waves/1/1"));
 
 
@@ -838,7 +838,7 @@
 	    this.game = game;
 	    canvas.style.outline = "none"; // stop browser outlining canvas when it has focus
 	    canvas.style.cursor = "default"; // keep pointer normal when hovering over canvas
-	    this._ctx = canvas.getContext('2d');
+	    this._ctx = canvas.getContext('2d', { alpha: false });
 	    this._backgroundColor = backgroundColor;
 
 	    canvas.width = wView;
@@ -1620,8 +1620,11 @@
 
 	var deepFreeze = __webpack_require__(6).deepFreeze;
 
+	package = __webpack_require__(8);
+
 	module.exports = {
 	    DEBUG: false,
+	    VERSION: package.version,
 	    Game: {
 	        width: 800,
 	        height: 400,
@@ -1632,6 +1635,39 @@
 
 /***/ },
 /* 8 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		"name": "foo",
+		"version": "0.0.1",
+		"description": "A game built on the coquette framework",
+		"main": "''",
+		"scripts": {
+			"gh-pages": "webpack && cp dist/bundle.js /tmp/foo && git checkout gh-pages && cp /tmp/foo dist/bundle.js"
+		},
+		"dependencies": {
+			"coquette": "git://github.com/cdosborn/coquette.git",
+			"ifvisible.js": "git://github.com/serkanyersen/ifvisible.js.git",
+			"json-loader": "^0.5.2",
+			"webpack": "^1.11.0"
+		},
+		"devDependencies": {
+			"blint": "^0.4.0"
+		},
+		"repository": {
+			"type": "git",
+			"url": "https://github.com/prosif/foo.git"
+		},
+		"author": "Connor Osborn",
+		"license": "MIT",
+		"bugs": {
+			"url": "https://github.com/prosif/foo/issues"
+		},
+		"homepage": "https://github.com/prosif/foo"
+	}
+
+/***/ },
+/* 9 */
 /***/ function(module, exports) {
 
 	
@@ -1657,36 +1693,76 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Wall         = __webpack_require__(10);
-	var Player       = __webpack_require__(11);
-	var Micro        = __webpack_require__(18);
-	var Avoid        = __webpack_require__(15);
-	var TextBox      = __webpack_require__(19);
-	var Global       = __webpack_require__(7);
-	var R            = __webpack_require__(14);
-	var Wave1        = __webpack_require__(20);
-	var Utils        = __webpack_require__(6);
+	var Wall = __webpack_require__(11);
+	var Player = __webpack_require__(12);
+	var Micro = __webpack_require__(19);
+	var Avoid = __webpack_require__(16);
+	var TextBox = __webpack_require__(20);
+	var Timer = __webpack_require__(2);
+	var Global = __webpack_require__(7);
+	var R = __webpack_require__(15);
+	var Wave1 = __webpack_require__(21);
+	var Utils = __webpack_require__(6);
 
 	var Splash = function (game) {
 	    this.game = game;
 	    this.c = game.c;
+	    this.timer = new Timer();
 	};
 
 	Splash.prototype = {
 	    init: function() {
-	        makeFoo.bind(this)();
+	        // makeFoo.bind(this)();
+	        var leftAlign = 200;
+	        var topAlign = 130;
 	        this.c.entities.create(TextBox, {
-	            text: "Press S to start", 
-	            x: 325, y: 300
+	            text: "Foo", 
+	            font: '60pt Verdana',
+	            x: leftAlign,
+	            y: topAlign,
 	        });
-	        Wall.makeBoundaries(this);   
+
+	        var pad = 5;
+	        var height = 20;
+	        var total = topAlign + 5;
+	        this.c.entities.create(TextBox, {
+	            text: "by cdosborn & prosif",
+	            font: '10pt Verdana',
+	            x: leftAlign + 6,
+	            y: total += height + pad,
+	        });
+	        this.c.entities.create(TextBox, {
+	            text: "v" + Global.VERSION, 
+	            font: '10pt Verdana',
+	            x: leftAlign + 6,
+	            y: total += height + pad,
+	        });
+
+	        var toggle = true;
+	        var pressSTextBox;
+	        var me = this;
+	        this.timer.every(400, function() {
+	            if (toggle)
+	                pressSTextBox = me.c.entities.create(TextBox, {
+	                    text: "press S to start",
+	                    font: '10pt Verdana',
+	                    x: leftAlign + 5,
+	                    y: total + height + pad + 50,
+	                });
+	            else
+	                me.c.entities.destroy(pressSTextBox);
+	            toggle = !toggle;
+	        });
 	    },
 	    active:function() {
 	        var In = this.c.inputter;
 	        return !In.isDown(In.S);;
+	    },
+	    update: function(delta) {
+	        this.timer.update(delta);
 	    },
 	    exit: function() {
 	        var self = this;
@@ -1766,7 +1842,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	// A wall is a simple boundary for the bounds of the world
@@ -1883,16 +1959,16 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Bullet = __webpack_require__(12);
-	var Config = __webpack_require__(17);
+	var Bullet = __webpack_require__(13);
+	var Config = __webpack_require__(18);
 	var Global = __webpack_require__(7);
-	var R = __webpack_require__(14);
-	var Sprite = __webpack_require__(13);
+	var R = __webpack_require__(15);
+	var Sprite = __webpack_require__(14);
 	var Utils = __webpack_require__(6);
-	var Wall = __webpack_require__(10);
+	var Wall = __webpack_require__(11);
 
 	var Player = function(game, settings) {
 
@@ -2023,11 +2099,11 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Player = __webpack_require__(11);
-	var Sprite = __webpack_require__(13);
+	var Player = __webpack_require__(12);
+	var Sprite = __webpack_require__(14);
 	var Utils = __webpack_require__(6);
 
 	var Bullet = function(game, settings) {
@@ -2035,8 +2111,8 @@
 	    this.c = game.c;
 
 	    // Note: Player is a circular dependency
-	    Player = __webpack_require__(11);
-	    Avoid = __webpack_require__(15);
+	    Player = __webpack_require__(12);
+	    Avoid = __webpack_require__(16);
 
 	    Utils.extend(this, Sprite, ["drawFilledCircle"]);
 	    Utils.extend(this, {
@@ -2059,8 +2135,8 @@
 
 	Bullet.prototype.collision = function(other) {
 	    if (!(other instanceof Bullet) &&
-	            !(other instanceof Avoid)  &&
-	            !(other instanceof Player)) {
+	        !(other instanceof Avoid)  &&
+	        !(other instanceof Player)) {
 	        this.c.entities.destroy(this);
 	    }
 	};
@@ -2074,10 +2150,10 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var R = __webpack_require__(14);
+	var R = __webpack_require__(15);
 	var Utils = __webpack_require__(6);
 
 	var Sprite = {};
@@ -2205,7 +2281,7 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	var Random = {};
@@ -2244,16 +2320,16 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Bullet = __webpack_require__(12);
-	var Player = __webpack_require__(11);
+	var Bullet = __webpack_require__(13);
+	var Player = __webpack_require__(12);
 	var Utils = __webpack_require__(6);
-	var Wall = __webpack_require__(10);
-	var Sprite = __webpack_require__(13);
+	var Wall = __webpack_require__(11);
+	var Sprite = __webpack_require__(14);
 	var Maths = __webpack_require__(1).Collider.Maths;
-	var Geom = __webpack_require__(16);
+	var Geom = __webpack_require__(17);
 	var DEBUG = __webpack_require__(7).DEBUG;
 
 	var Avoider = function(game, settings) {
@@ -2290,7 +2366,7 @@
 
 	    // Try to set enemy to target Player
 	    if (!this.target) {
-	        temp = this.c.entities.all(__webpack_require__(11));
+	        temp = this.c.entities.all(__webpack_require__(12));
 	        if (temp.length)
 	            this.target = temp[0];
 	        else
@@ -2412,7 +2488,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Utils = __webpack_require__(6);
@@ -2672,7 +2748,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var deepFreeze = __webpack_require__(6).deepFreeze;
@@ -2696,14 +2772,14 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Player = __webpack_require__(11);
-	var Bullet = __webpack_require__(12);
+	var Player = __webpack_require__(12);
+	var Bullet = __webpack_require__(13);
 	var Utils = __webpack_require__(6);
-	var Wall = __webpack_require__(10);
-	var Sprite = __webpack_require__(13);
+	var Wall = __webpack_require__(11);
+	var Sprite = __webpack_require__(14);
 	var Maths = __webpack_require__(1).Collider.Maths;
 
 	var Micro = function(game, settings) {
@@ -2729,7 +2805,7 @@
 
 	    // Try to set enemy to target Player
 	    if (!this.target) {
-	        temp = this.c.entities.all(__webpack_require__(11));
+	        temp = this.c.entities.all(__webpack_require__(12));
 	        if (temp.length)
 	            this.target = temp[0]
 	        else
@@ -2771,12 +2847,12 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Bullet = __webpack_require__(12);
+	var Bullet = __webpack_require__(13);
 	var Utils = __webpack_require__(6);
-	var Wall = __webpack_require__(10);
+	var Wall = __webpack_require__(11);
 
 	var Maths = __webpack_require__(1).Collider.Maths;
 
@@ -2801,17 +2877,18 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Base = __webpack_require__(21);
+	var Base = __webpack_require__(22);
+	var Wall = __webpack_require__(11);
 	var Global = __webpack_require__(7);
-	var Player = __webpack_require__(11);
-	var R = __webpack_require__(14);
-	var Settings = __webpack_require__(22);
-	var Simple = __webpack_require__(23);
-	var TextBox = __webpack_require__(19);
-	var Transition = __webpack_require__(24);
+	var Player = __webpack_require__(12);
+	var R = __webpack_require__(15);
+	var Settings = __webpack_require__(23);
+	var Simple = __webpack_require__(24);
+	var TextBox = __webpack_require__(20);
+	var Transition = __webpack_require__(25);
 	var Timer = __webpack_require__(2);
 	var Utils = __webpack_require__(6);
 
@@ -2830,8 +2907,7 @@
 	    this.game = game;
 	    this.timer = new Timer();
 
-	    this.base = Utils.bind(this, Base);
-	    Utils.extend(this, Base, ["destroyExcept"]);
+	    Utils.extend(this, Base, ["playerDead", "resetPressed", "destroyExcept"]);
 	};
 
 	Wave.prototype = {};
@@ -2848,11 +2924,12 @@
 	        x: 15, y: 45, 
 	        text: this.game.scorer.get(),
 	    });
+	    Wall.makeBoundaries(this);
 	};
 	Wave.prototype.active = function() {
 	    // Exit if key R(eset) is pressed
 	    // or player is dead
-	    return this.base.active();
+	    return !this.resetPressed();
 	};
 	Wave.prototype.update = function(delta) {
 	    this.timer.update(delta);
@@ -2860,9 +2937,7 @@
 	    // Update score 
 	    this.scoreBox.text = this.game.scorer.get();
 
-	    var playerAlive = this.c.entities.all(Player).length;
-
-	    if (!playerAlive && !this.game.pauser.isPaused()) {
+	    if (this.playerDead() && !this.game.pauser.isPaused()) {
 
 	        this.textBox = this.c.entities.create(TextBox, {
 	            text: "Press R to restart", 
@@ -2908,15 +2983,15 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require){
 
-	    var R = __webpack_require__(14);
+	    var R = __webpack_require__(15);
 	    var Utils = __webpack_require__(6);
 	    var Time = __webpack_require__(2);
-	    var Player = __webpack_require__(11);
+	    var Player = __webpack_require__(12);
 
 	    var Wave = {};
 
@@ -2938,30 +3013,13 @@
 	        }).forEach(destroy);
 	    };
 
-	    Wave.active = function() {
+	    Wave.playerDead = function() {
+	        return this.c.entities.all(Player).length === 0;
+	    };
+
+	    Wave.resetPressed = function() {
 	        var I = this.c.inputter;
-	        if (I.isDown(I.R))
-	            return false;
-
-	        var playerDead = this.c.entities.all(Player).length === 0;
-	        if (playerDead)
-	            return false
-
-	        return true;
-	    };
-
-	    Wave.init = function() {
-	        this.timer = new Timer();
-	        this.c.entities.create(Player, Settings.Player);
-	    };
-
-	    Wave.exit = function() {
-
-	        var me = this;
-	        this.c.entities._entities.forEach(function(ent) {
-	            if (!(ent instanceof Player)) 
-	                me.c.entities.destroy(ent);
-	        });
+	        return I.isDown(I.R);
 	    };
 
 	    return Wave;
@@ -2969,7 +3027,7 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var deepFreeze = __webpack_require__(6).deepFreeze;
@@ -3053,14 +3111,14 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Bullet = __webpack_require__(12);
-	var Player = __webpack_require__(11);
+	var Bullet = __webpack_require__(13);
+	var Player = __webpack_require__(12);
 	var Utils = __webpack_require__(6);
-	var Wall = __webpack_require__(10);
-	var Sprite = __webpack_require__(13);
+	var Wall = __webpack_require__(11);
+	var Sprite = __webpack_require__(14);
 
 	var Maths = __webpack_require__(1).Collider.Maths;
 
@@ -3088,7 +3146,7 @@
 
 	    // Try to set enemy to target Player
 	    if (!this.target) {
-	        temp = this.c.entities.all(__webpack_require__(11));
+	        temp = this.c.entities.all(__webpack_require__(12));
 	        if (temp.length)
 	            this.target = temp[0]
 	        else
@@ -3130,12 +3188,12 @@
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Utils = __webpack_require__(6);
-	var Base = __webpack_require__(21);
-	var TextBox = __webpack_require__(19);
+	var Base = __webpack_require__(22);
+	var TextBox = __webpack_require__(20);
 	var Global = __webpack_require__(7);
 	var Timer = __webpack_require__(2);
 
