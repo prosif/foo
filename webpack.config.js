@@ -9,6 +9,7 @@ module.exports = {
     resolve: {
         root: [
             __dirname + "/src",
+            __dirname,
         ],
         alias: {
             coquette: __dirname + "/node_modules/coquette/coquette",

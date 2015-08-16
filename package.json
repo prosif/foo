@@ -6,6 +6,7 @@
   "dependencies": {
     "coquette": "git://github.com/cdosborn/coquette.git",
     "ifvisible.js": "git://github.com/serkanyersen/ifvisible.js.git",
+    "json-loader": "^0.5.2",
     "webpack": "^1.11.0"
   },
   "devDependencies": {
