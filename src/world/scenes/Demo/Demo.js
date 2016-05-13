@@ -20,20 +20,18 @@ var Demo = function (game) {
 Demo.prototype = {
     init: function() {
         // define what happens at beginning
+        var self = this;
 
-        this.c.entities.create(Player, Settings.Player);
+        // this.c.entities.create(Player, Settings.Player);
         this.scoreBox = this.c.entities.create(TextBox, {
             font: '30pt Verdana',
-            x: 15, y: 45, 
+            x: 15, y: 45,
             text: this.game.scorer.get(),
         });
-        makeAvoider();
-        makeMicro();
-        makeSimple();
         setInterval(function() {
-            makeSimple();
-            makeMicro();
-            makeAvoider();
+            makeSimple.call(self, Scene.MAX_SIMPLE);
+            makeMicro.call(self, Scene.MAX_MICROS);
+            makeAvoider.call(self, Simple.MAX_AVOIDERS);
         }, 100);
         Wall.makeBoundaries(this);
     },
@@ -43,7 +41,7 @@ Demo.prototype = {
     },
     update: function() {
 
-        // Update score 
+        // Update score
         this.scoreBox.text = this.game.scorer.get();
 
         var playerAlive = this.c.entities.all(Player).length;
@@ -51,14 +49,14 @@ Demo.prototype = {
         if (!playerAlive && !this.game.pauser.isPaused()) {
 
             this.textBox = this.c.entities.create(TextBox, {
-                text: "Press R to restart", 
+                text: "Press R to restart",
                 x: Global.Game.width / 2,
                 y: 0.4 * Global.Game.height,
                 align: "center"
             }).draw(this.c.renderer.getCtx());
 
             this.game.pauser.pause();
-        }            
+        }
 
     },
     exit: function() {
@@ -76,7 +74,8 @@ Demo.prototype = {
     }
 };
 
-var makeSimple = (function (n) {
+var makeSimple = function (n) {
+    var self = this;
     if (self.c.entities.all(Simple).length >= n ||
             self.c.entities._entities.length >= Scene.MAX_ENEMIES)
         return;
@@ -92,10 +91,11 @@ var makeSimple = (function (n) {
     }
 
     return self.c.entities.create(Simple, Utils.extend({ center: center }, Settings.Simple));
-}.bind(null, Scene.MAX_SIMPLE));
+}
 
 // make n micro enemies
-var makeMicro = (function (n) {
+var makeMicro = function (n) {
+    var self = this;
     if (self.c.entities.all(Micro).length >= n ||
             self.c.entities._entities.length >= Scene.MAX_ENEMIES)
         return;
@@ -111,9 +111,10 @@ var makeMicro = (function (n) {
     }
 
     return self.c.entities.create(Micro, Utils.extend({ center: center }, Settings.Micro));
-}.bind(null, Scene.MAX_MICROS));
+}
 
-var makeAvoider = (function (n) {
+var makeAvoider = function (n) {
+    var self = this;
     if (self.c.entities.all(Avoid).length >= n ||
             self.c.entities._entities.length >= Scene.MAX_ENEMIES)
         return;
@@ -132,5 +133,5 @@ var makeAvoider = (function (n) {
     // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
 
     return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
-}.bind(null, Scene.MAX_AVOIDERS));
-module.exports = Demo;
+};
+module.exports = ;

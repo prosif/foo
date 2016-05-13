@@ -12,13 +12,13 @@ var Utils = require("mixins/Utils");
 
 var Scene = Settings.Scene;
 
-// var PreWave = function(game) {
-//     return new Transition(game, {
-//         duration: 1000,
-//         sceneName: "Wave 1",
-//         nextScene: Wave
-//     });
-// };
+var PreWave = function(game) {
+    return new Transition(game, {
+        duration: 1000,
+        sceneName: "Wave 2",
+        nextScene: Wave
+    });
+};
 
 var Wave = function (game, settings) {
     this.c = game.c;
@@ -96,5 +96,4 @@ var makeSimple = function () {
 
 };
 
-// module.exports = PreWave;
-module.exports = Wave;
+module.exports = PreWave;

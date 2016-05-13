@@ -9,6 +9,7 @@ var TextBox = require("world/hud/TextBox");
 var Transition = require("world/scenes/waves/transition");
 var Timer = require("engine/Timer");
 var Utils = require("mixins/Utils");
+var Demo = require("world/scenes/Demo/Demo");
 
 var Scene = Settings.Scene;
 
@@ -47,7 +48,8 @@ Wave.prototype.init = function() {
 Wave.prototype.active = function() {
     // Exit if key R(eset) is pressed
     // or player is dead
-    return !this.resetPressed();
+    return !this.resetPressed() &&
+            this.c.entities.all(Simple).length;
 };
 Wave.prototype.update = function(delta) {
     this.timer.update(delta);
@@ -55,6 +57,7 @@ Wave.prototype.update = function(delta) {
     // Update score 
     this.scoreBox.text = this.game.scorer.get();
 
+    console.log(this.c.entities.all(Simple).length);
     if (this.playerDead() && !this.game.pauser.isPaused()) {
 
         this.textBox = this.c.entities.create(TextBox, {
@@ -71,14 +74,19 @@ Wave.prototype.update = function(delta) {
 Wave.prototype.exit = function() {
     var self = this;
     var game = this.game;
-    var destroy = this.c.entities.destroy.bind(this.c.entities);
-
-    this.destroyExcept(/* destroy everything */);
+    // var destroy = this.c.entities.destroy.bind(this.c.entities);
 
     game.scorer.reset();
     if (game.pauser.isPaused())
         game.pauser.unpause();
-    game.scener.start(PreWave);
+    
+    if (this.playerDead()) {
+        game.scener.start(PreWave);
+    } else {
+        game.scener.start(Demo);
+    }
+
+    this.destroyExcept(Player);
 };
 
 var makeSimple = function () {
