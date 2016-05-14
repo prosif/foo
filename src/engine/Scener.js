@@ -30,11 +30,13 @@ var G = require("main/config");
    // When back is pressed
    scener.pop();
 
+ * MORE:
+    push is exactly like start, but it saves the prior scene
+
 */
 var Scener = function(game) {
     this.stack = [];
     this.game = game;
-    this.cur;
 }
 
 Scener.prototype.start = function(scene, settings) {
@@ -48,21 +50,7 @@ Scener.prototype.start = function(scene, settings) {
 };
 
 Scener.prototype.push = function(scene, settings) {
-    var s = new scene(this.game, settings);
-
-    // Provide defaults for necessary functions
-    ["init", "active", "update", "exit"].forEach(function(func) {
-        if (func in s)
-            return;
-
-        if (func == "active")
-            s[func] = getTrue;
-        else
-            s[func] = doNothing;
-    });
-
-    s.init();
-    this.stack.push(s);
+    this.stack.push(new Builder(scene, this.game, settings));
 };
 
 Scener.prototype.pop = function() {
@@ -73,14 +61,19 @@ Scener.prototype.pop = function() {
 Scener.prototype.update = function(delta) {
 
     // Save quick refs
-    var cur, stack = this.stack;
+    var stack = this.stack;
     
-    // Update current scene
-    cur = this.cur = stack[stack.length - 1];
+    // Get most recent scene
+    var cur = stack[stack.length - 1];
+
+    // Build the scene if necessary
+    if (cur instanceof Builder) {
+        stack[stack.length - 1] = cur = cur.build();
+    }
 
     if (cur.active()) {
         cur.update(delta);
-        assert("A scene must change scenes in exit()", 
+        assert("A scene can only change scenes in exit()", 
                 cur == stack[stack.length - 1]);
     } else {
         cur.exit();
@@ -89,7 +82,33 @@ Scener.prototype.update = function(delta) {
     }
 };
 
+var Builder = function(ctor, game, settings) {
+    this.ctor = ctor; 
+    this.game = game; 
+    this.settings = settings; 
+}
+
 var doNothing = function() {};
 var getTrue = function() { return true; };
+
+Builder.prototype = {
+    build: function() {
+        var s = new this.ctor(this.game, this.settings);
+
+        // Provide defaults for necessary functions
+        ["init", "active", "update", "exit"].forEach(function(func) {
+            if (func in s)
+                return;
+
+            if (func == "active")
+                s[func] = getTrue;
+            else
+                s[func] = doNothing;
+        });
+
+        s.init();
+        return s;
+    }
+}
 
 module.exports = Scener;
