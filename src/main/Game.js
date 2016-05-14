@@ -30,7 +30,7 @@ me.update = function(delta) {
 
 me.scener = new Scener(me);
 
-me.scener.start(require("world/scenes/Splash/Splash"));
+// me.scener.start(require("world/scenes/Splash/Splash"));
 // me.scener.start(require("world/scenes/Demo/Demo"));
 // me.scener.start(require("world/scenes/waves/1/1"));
-// me.scener.start(require("world/scenes/waves/2/2"));
+me.scener.start(require("world/scenes/waves/2/2"));

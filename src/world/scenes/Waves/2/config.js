@@ -4,6 +4,10 @@ var Config = {
 
     Scene: {
         MAX_SIMPLE:  30,
+        MAX_AVOIDERS:  30,
+        MAX_MICROS:  10,
+        MAX_ENEMIES:  50,
+
         color:"#efefef",
         spawnDelay: 100
     },
@@ -22,7 +26,8 @@ var Config = {
         // speed : 10 / 17,
         speed : 40 / 17,
 
-        size: { x:20, y:20 },
+        // size: { x:20, y:20 },
+        size: { x:40, y:20 },
 
         // How far like enemies move away from each other
         away: 12,

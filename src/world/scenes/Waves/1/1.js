@@ -9,7 +9,7 @@ var TextBox = require("world/hud/TextBox");
 var Transition = require("world/scenes/waves/transition");
 var Timer = require("engine/Timer");
 var Utils = require("mixins/Utils");
-var Demo = require("world/scenes/Demo/Demo");
+var Wave2 = require("world/scenes/Waves/2/2");
 
 var Scene = Settings.Scene;
 
@@ -57,7 +57,6 @@ Wave.prototype.update = function(delta) {
     // Update score 
     this.scoreBox.text = this.game.scorer.get();
 
-    console.log(this.c.entities.all(Simple).length);
     if (this.playerDead() && !this.game.pauser.isPaused()) {
 
         this.textBox = this.c.entities.create(TextBox, {
@@ -83,7 +82,7 @@ Wave.prototype.exit = function() {
     if (this.playerDead()) {
         game.scener.start(PreWave);
     } else {
-        game.scener.start(Demo);
+        game.scener.start(Wave2);
     }
 
     this.destroyExcept(Player);
