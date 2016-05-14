@@ -17,9 +17,12 @@ var Avoider = function(game, settings) {
     this.boundingBox = game.c.collider.CIRCLE;
 
     // Extend this
-    Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "drawFilledCircle"]);
+    Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "fillCircle"]);
+
+    var senseRadius = settings.radius * settings.sense;
     Utils.extend(this, {
-        size: { x:100, y:100 },
+        size: { x:senseRadius, y:senseRadius },
+        radius: senseRadius,
         color: "rgba(127, 127, 127, 0.05)",
         vel: { x: 0, y: 0 },
         center: settings.center

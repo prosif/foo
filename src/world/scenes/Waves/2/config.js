@@ -27,7 +27,7 @@ var Config = {
         speed : 40 / 17,
 
         // size: { x:20, y:20 },
-        size: { x:40, y:20 },
+        size: { x:30, y:30 },
 
         // How far like enemies move away from each other
         away: 12,
