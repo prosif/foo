@@ -17,7 +17,7 @@ var Avoider = function(game, settings) {
     this.boundingBox = game.c.collider.CIRCLE;
 
     // Extend this
-    Utils.extend(this, Sprite, ["follow", "moveAway", "drawRect", "fillCircle"]);
+    Utils.extend(this, Sprite, ["follow", "moveAway", "drawFilledCircle"]);
 
     var senseRadius = settings.radius * settings.sense;
     Utils.extend(this, {
@@ -30,14 +30,15 @@ var Avoider = function(game, settings) {
 
     // Extend core
     this.core = Utils.extend({
+        size: { x:settings.radius, y:settings.radius },
         vel: this.vel
     }, settings);
 };
 
 Avoider.prototype.draw = function(ctx) {
     if (DEBUG)
-        this.drawFilledCircle(ctx);
-    this.drawFilledCircle.call(this.core, ctx);
+        this.drawFilledCircle(ctx,this.radius);
+    this.drawFilledCircle.call(this.core, ctx, this.core.radius);
 };
 Avoider.prototype.update = function(delta) {
     var temp;
@@ -154,7 +155,7 @@ Avoider.prototype.collision = function(other) {
             this.c.entities.destroy(other);
     } else if (other instanceof Wall) {
         if (Maths.circleAndRectangleIntersecting(this.core, other))
-            other.alignPlayer(this.core);
+            other.alignPlayer(this);
         // this.c.entities.destroy(this);
     } else if (other instanceof Avoider) {
         this.moveAway.call(this.core, other.core, this.away, true);

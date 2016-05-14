@@ -27,7 +27,10 @@ var Config = {
         speed : 40 / 17,
 
         // size: { x:20, y:20 },
-        size: { x:30, y:30 },
+        radius: 20,
+
+        // A multiplier of the radius by which the avoider can detect bullets 
+        sense: 1.5,
 
         // How far like enemies move away from each other
         away: 12,
