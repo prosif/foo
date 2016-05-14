@@ -19,10 +19,6 @@ var Enemy = function(game, settings) {
         }
     }
 
-    this.update = function(delta) {
-        console.log("coin");
-    };
-
     this.collision = function(other) {
         if (other instanceof Player){
             other.grantCoin();

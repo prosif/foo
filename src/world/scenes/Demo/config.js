@@ -61,7 +61,6 @@ var Config = {
             x: 20,
             y: 20,
         },
-
         // How far enemyies move away from each other
         away: 5,
 

@@ -1,26 +1,38 @@
-var Wall         = require("world/wall/Wall");
-var Player       = require("world/player/Player");
-var Micro        = require("world/enemy/Micro/Micro");
-var Simple       = require("world/enemy/Simple/Simple");
-var Bullet       = require("world/bullet/Bullet");
-var Avoid        = require("world/enemy/Avoid/Avoider");
-var TextBox      = require("world/hud/TextBox");
-var Global       = require("main/config");
-var Settings     = require("./config");
-var R            = require("mixins/Random");
-var Utils        = require("mixins/Utils");
+var Wall       = require("world/wall/Wall");
+var Player     = require("world/player/Player");
+var Micro      = require("world/enemy/Micro/Micro");
+var Simple     = require("world/enemy/Simple/Simple");
+var Bullet     = require("world/bullet/Bullet");
+var Avoid      = require("world/enemy/Avoid/Avoider");
+var TextBox    = require("world/hud/TextBox");
+var Global     = require("main/config");
+var Timer      = require("engine/Timer");
+var Transition = require("world/scenes/waves/transition");
+var Settings   = require("./config");
+var R          = require("mixins/Random");
+var Utils      = require("mixins/Utils");
 
 var Scene = Settings.Scene;
 
-var Demo = function (game) {
-    this.c = game.c;
-    this.game = game;
+var PreWave = function(game) {
+    return new Transition(game, {
+        sceneName: "Wave 2",
+        nextScene: Wave
+    });
 };
 
-Demo.prototype = {
+
+var Wave = function (game) {
+    this.c = game.c;
+    this.game = game;
+    this.timer = new Timer();
+};
+
+Wave.prototype = {
     init: function() {
         // define what happens at beginning
         var self = this;
+        this.c.entities.create(Player, Settings.Player);
 
         // this.c.entities.create(Player, Settings.Player);
         this.scoreBox = this.c.entities.create(TextBox, {
@@ -28,18 +40,22 @@ Demo.prototype = {
             x: 15, y: 45,
             text: this.game.scorer.get(),
         });
-        setInterval(function() {
-            makeSimple.call(self, Scene.MAX_SIMPLE);
-            makeMicro.call(self, Scene.MAX_MICROS);
-            makeAvoider.call(self, Simple.MAX_AVOIDERS);
-        }, 100);
+        var makeMicros = Utils.atMost(Scene.MAX_MICROS, makeMicro.bind(this));
+        var makeSimples = Utils.atMost(Scene.MAX_SIMPLE, makeSimple.bind(this));
+        var makeAvoiders = Utils.atMost(Scene.MAX_AVOIDERS, makeAvoider.bind(this));
+        this.timer.every(Scene.spawnDelay, function() {
+            makeMicros();
+            makeSimples();
+            makeAvoiders();
+        }); 
         Wall.makeBoundaries(this);
     },
     active: function() {
         var I = this.c.inputter;
         return !I.isDown(I.R);
     },
-    update: function() {
+    update: function(delta) {
+        this.timer.update(delta);
 
         // Update score
         this.scoreBox.text = this.game.scorer.get();
@@ -70,14 +86,13 @@ Demo.prototype = {
         game.scorer.reset();
         if (game.pauser.isPaused())
             game.pauser.unpause();
-        game.scener.start("Demo");
+        game.scener.start(Wave);
     }
 };
 
-var makeSimple = function (n) {
+var makeSimple = function () {
     var self = this;
-    if (self.c.entities.all(Simple).length >= n ||
-            self.c.entities._entities.length >= Scene.MAX_ENEMIES)
+    if (self.c.entities.all().length >= Scene.MAX_ENEMIES)
         return;
 
     var center = { x: 0, y: 0 };
@@ -97,7 +112,7 @@ var makeSimple = function (n) {
 var makeMicro = function (n) {
     var self = this;
     if (self.c.entities.all(Micro).length >= n ||
-            self.c.entities._entities.length >= Scene.MAX_ENEMIES)
+            self.c.entities.all().length >= Scene.MAX_ENEMIES)
         return;
 
     var center = { x: 0, y: 0 };
@@ -116,7 +131,7 @@ var makeMicro = function (n) {
 var makeAvoider = function (n) {
     var self = this;
     if (self.c.entities.all(Avoid).length >= n ||
-            self.c.entities._entities.length >= Scene.MAX_ENEMIES)
+            self.c.entities.all().length >= Scene.MAX_ENEMIES)
         return;
 
     // var center = R.point(Global.Game.width, Global.Game.height);
@@ -133,5 +148,6 @@ var makeAvoider = function (n) {
     // var center = { x: Global.Game.width - 50, y: Global.Game.height / 2 };
 
     return self.c.entities.create(Avoid, Utils.extend({ center: center }, Settings.Avoid));
-};
-module.exports = ;
+}; 
+
+module.exports = PreWave;

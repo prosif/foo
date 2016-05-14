@@ -1,29 +1,70 @@
-var Wall         = require("world/wall/Wall");
-var Player       = require("world/player/Player");
-var Micro        = require("world/enemy/Micro/Micro");
-var Avoid        = require("world/enemy/Avoid/Avoider");
-var TextBox      = require("world/hud/TextBox");
-var Global       = require("main/config");
-var R            = require("mixins/Random");
-var Utils        = require("mixins/Utils");
+var Wall = require("world/wall/Wall");
+var Player = require("world/player/Player");
+var Micro = require("world/enemy/Micro/Micro");
+var Avoid = require("world/enemy/Avoid/Avoider");
+var TextBox = require("world/hud/TextBox");
+var Timer = require("engine/Timer");
+var Global = require("main/config");
+var R = require("mixins/Random");
+var Wave1 = require("world/scenes/waves/1/1");
+var Utils = require("mixins/Utils");
 
 var Splash = function (game) {
     this.game = game;
     this.c = game.c;
+    this.timer = new Timer();
 };
 
 Splash.prototype = {
     init: function() {
-        makeFoo();
+        // makeFoo.bind(this)();
+        var leftAlign = 200;
+        var topAlign = 130;
         this.c.entities.create(TextBox, {
-            text: "Press S to start", 
-            x: 325, y: 300
+            text: "Foo", 
+            font: '60pt Verdana',
+            x: leftAlign,
+            y: topAlign,
         });
-        Wall.makeBoundaries(this);   
+
+        var pad = 5;
+        var height = 20;
+        var total = topAlign + 5;
+        this.c.entities.create(TextBox, {
+            text: "by cdosborn & prosif",
+            font: '10pt Verdana',
+            x: leftAlign + 6,
+            y: total += height + pad,
+        });
+        this.c.entities.create(TextBox, {
+            text: "v" + Global.VERSION, 
+            font: '10pt Verdana',
+            x: leftAlign + 6,
+            y: total += height + pad,
+        });
+
+        var toggle = true;
+        var pressSTextBox;
+        var me = this;
+        this.timer.every(400, function() {
+            if (toggle)
+                pressSTextBox = me.c.entities.create(TextBox, {
+                    text: "press S to start",
+                    font: '10pt Verdana',
+                    x: leftAlign + 5,
+                    y: total + height + pad + 50,
+                });
+            else
+                me.c.entities.destroy(pressSTextBox);
+            toggle = !toggle;
+        });
     },
     active:function() {
         var In = this.c.inputter;
         return !In.isDown(In.S);;
+    },
+    update: function(delta) {
+        this.timer.update(delta);
     },
     exit: function() {
         var self = this;
@@ -34,12 +75,11 @@ Splash.prototype = {
         ([Micro, Wall, TextBox]).forEach(function(type){
             self.c.entities.all(type).forEach(destroy);
         });
-        this.game.scener.start("Demo");
+        this.game.scener.start(Wave1);
     }
 };
 
 var makeFoo = function(){
-    // f
     for(var i = 0; i < 20; i++){
         this.c.entities.create(Micro, {
             center: {x: 0, y: 0},

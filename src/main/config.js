@@ -1,12 +1,13 @@
 var deepFreeze = require("mixins/Utils").deepFreeze;
 
-var Config = {
+package = require('json!package.json');
+
+module.exports = {
     DEBUG: false,
+    VERSION: package.version,
     Game: {
         width: 800,
         height: 400,
         color:"#efefef"
     },
-}; 
-
-module.exports = deepFreeze(Config);
+}
